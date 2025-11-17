@@ -24,6 +24,7 @@
             android:resource="@array/xposedscope"/>
         <activity
             android:name=".main.MainActivity"
+            android:enabled="true"
             android:exported="true"
             android:theme="@style/Theme.MakeColorGreatAgain">
             <intent-filter>
