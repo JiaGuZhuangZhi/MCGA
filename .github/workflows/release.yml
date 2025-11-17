@@ -44,7 +44,7 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Rename signed APK
-        run: mv "$ANDROID_SIGNED_FILE" "MCGA_${{ github.ref_name }}.apk"
+        run: mv "$ANDROID_SIGNED_FILE" "MCGA_${{ github.ref_name }}_release.apk"
 
       - name: Create Release
         uses: ncipollo/release-action@v1
