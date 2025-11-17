@@ -2,13 +2,17 @@
   <dictionary name="project">
     <words>
       <w>allapps</w>
+      <w>blurability</w>
       <w>heytap</w>
       <w>hotseat</w>
       <w>lpparam</w>
+      <w>oplusos</w>
       <w>quicksearchbox</w>
       <w>recom</w>
+      <w>systemui</w>
       <w>uxicon</w>
       <w>uxicons</w>
+      <w>viewholder</w>
     </words>
   </dictionary>
 </component>
