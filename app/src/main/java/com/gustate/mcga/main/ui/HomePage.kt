@@ -1,91 +1,133 @@
 package com.gustate.mcga.main.ui
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.gustate.mcga.data.viewmodel.HomeViewModel
-import com.gustate.mcga.data.viewmodel.SearchViewModel
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.gustate.mcga.R
+import com.gustate.mcga.data.viewmodel.MainViewModel
 import com.gustate.mcga.ui.widget.SplicedColumnGroup
 import com.gustate.mcga.ui.widget.SwitchWidget
+import com.kyant.capsule.ContinuousRoundedRectangle
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(
     modifier: Modifier,
-    scrollBehavior: TopAppBarScrollBehavior,
-    homeViewModel: HomeViewModel,
-    searchViewModel: SearchViewModel
+    viewModel: MainViewModel
 ) {
-    val homeUiState by homeViewModel.uiState
-    val searchUiState by searchViewModel.uiState
+    val isModuleActive = viewModel.isModuleActive.value ?: false
+    val isRootAvailable = viewModel.isRootAvailable.value ?: false
     Column(
         modifier = modifier
             .verticalScroll(
                 state = rememberScrollState(),
                 enabled = true
-            ).nestedScroll(scrollBehavior.nestedScrollConnection)
+            )
     ) {
-        SplicedColumnGroup(
-            modifier = Modifier,
-            title = "系统桌面",
-            content = listOf(
-                {
-                    SwitchWidget(
-                        icon = Icons.Default.DateRange,
-                        title = "强制启用 Dock 栏模糊",
-                        checked = homeUiState.enableDockBlur,
-                        onCheckedChange = { checked ->
-                            homeViewModel.updateDockBlur(checked)
-                        }
-                    )
-                },
-                {
-                    SwitchWidget(
-                        icon = Icons.Default.Menu,
-                        title = "隐藏“抽屉全部页”应用名称",
-                        checked = homeUiState.hideDrawerName,
-                        onCheckedChange = { checked ->
-                            homeViewModel.updateHideAppName(checked)
-                        }
-                    )
-                }
-            )
+        XpStateCard(
+            isModuleActive,
+            isRootAvailable = isRootAvailable
         )
         SplicedColumnGroup(
             modifier = Modifier,
-            title = "全局搜索",
+            title = stringResource(id = R.string.app_config),
             content = listOf(
                 {
                     SwitchWidget(
-                        icon = Icons.Default.Menu,
-                        title = "隐藏“应用建议”中的应用名称",
-                        checked = searchUiState.hideRecomAppName,
+                        painter = painterResource(id = R.drawable.grid_off_filled),
+                        title = stringResource(id = R.string.hide_desktop_icon),
+                        checked = true,
                         onCheckedChange = { checked ->
-                            searchViewModel.updateHideRecomAppName(checked)
+
                         }
                     )
                 },
-                {
-                    SwitchWidget(
-                        icon = Icons.Default.Build,
-                        title = "修正“应用建议”卡片的高度",
-                        checked = searchUiState.fixRecomCardHeight,
-                        onCheckedChange = { checked ->
-                            searchViewModel.updateFixRecomCardHeight(checked)
-                        }
-                    )
-                }
             )
         )
+    }
+}
+
+@Composable
+private fun XpStateCard(
+    isModuleActive: Boolean,
+    isRootAvailable: Boolean
+) {
+    val cardShape = ContinuousRoundedRectangle(size = 24.dp)
+    val onCardColor = when {
+        !isModuleActive -> MaterialTheme.colorScheme.onErrorContainer
+        !isRootAvailable -> MaterialTheme.colorScheme.onTertiaryContainer
+        else -> MaterialTheme.colorScheme.surfaceBright
+    }
+    val moduleActiveInfo = when {
+        !isModuleActive -> "模块未激活"
+        !isRootAvailable -> "未配置 Root 权限"
+        else -> "主人好厉害！配置好了汪唔！"
+    }
+    Row(
+        modifier = Modifier
+            .padding(
+                start = 12.dp,
+                end = 12.dp,
+                bottom = 16.dp
+            )
+            .fillMaxWidth()
+            .background(
+                color =
+                    when {
+                        !isModuleActive -> MaterialTheme.colorScheme.errorContainer
+                        !isRootAvailable -> MaterialTheme.colorScheme.tertiaryContainer
+                        else -> MaterialTheme.colorScheme.primary
+                    },
+                shape = cardShape
+            )
+            .clip(shape = cardShape)
+            .padding(vertical = 18.dp, horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(
+                id = when {
+                    !isModuleActive -> R.drawable.warning_filled
+                    !isRootAvailable -> R.drawable.info_filled
+                    else -> R.drawable.check_circle
+                }
+            ),
+            contentDescription = moduleActiveInfo,
+            modifier = Modifier
+                .size(size = 24.dp),
+            tint = onCardColor
+        )
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 18.dp)
+        ) {
+            Text(
+                text = moduleActiveInfo,
+                style = MaterialTheme.typography.titleMedium,
+                color = onCardColor
+            )
+            Text(
+                text = "v1.0.0 (1000) - XiaoMeng",
+                modifier = Modifier.padding(top = 2.dp),
+                style = MaterialTheme.typography.labelMedium,
+                color = onCardColor
+            )
+        }
     }
 }
