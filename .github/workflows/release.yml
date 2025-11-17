@@ -37,17 +37,18 @@ jobs:
         id: sign_apk
         uses: ilharp/sign-android-release@v2.0.0
         with:
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          releaseDir: app/build/outputs/apk/release
+          signingKey: ${{ secrets.SIGNING_KEY }}
           keyAlias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-          input: app/build/outputs/apk/release/app-release-unsigned.apk
-          output: MC-GA_v${{ github.ref_name }}.apk
 
-      - name: Create GitHub Release
+      - name: Rename signed APK
+        run: mv app/build/outputs/apk/release/app-release-signed.apk MC-GA_${{ github.ref_name }}.apk
+
+      - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{ steps.sign_apk.outputs.signedFile }}
+          artifacts: "MCGA_*_release.apk"
           token: ${{ github.token }}
           generateReleaseNotes: true
-          tag: ${{ github.ref_name }}
