@@ -1,31 +1,36 @@
 package com.gustate.mcga.main.navgation
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.gustate.mcga.R
 
 enum class Destination(
     val route: String,
     @param:StringRes @field:StringRes
     val label: Int,
-    val icon: ImageVector,
-    val focusIcon: ImageVector,
+    @param:DrawableRes @field:DrawableRes
+    val icon: Int,
+    @param:DrawableRes @field:DrawableRes
+    val focusIcon: Int,
     @param:StringRes @field:StringRes
     val contentDescription: Int
 ) {
+    SETTING(
+        route = "setting", label = R.string.setting,
+        icon = R.drawable.settings_outline,
+        focusIcon = R.drawable.settings_filled,
+        contentDescription = R.string.setting
+    ),
     HOME(
         route = "home", label = R.string.home,
-        icon = Icons.Outlined.Home, focusIcon = Icons.Filled.Home,
+        icon = R.drawable.home_outline,
+        focusIcon = R.drawable.home_filled,
         contentDescription = R.string.home
     ),
     ABOUT(
         route = "about", label = R.string.about,
-        icon = Icons.Outlined.Info, focusIcon = Icons.Filled.Info,
+        icon = R.drawable.info_outline,
+        focusIcon = R.drawable.info_filled,
         contentDescription = R.string.home
     )
 }
