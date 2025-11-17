@@ -1,0 +1,134 @@
+package com.gustate.mcga.ui.widget
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SliderWidget(
+    icon: ImageVector? = null,
+    painter: Painter? = null,
+    title: String,
+    description: String? = null,
+    enabled: Boolean = true,
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    onValueChange: (Float) -> Unit
+) {
+    val haptic = LocalHapticFeedback.current
+    Column(modifier = Modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            if (icon != null)
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically),
+                    imageVector = icon,
+                    contentDescription = null,
+                )
+            else if (painter != null)
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically),
+                    painter = painter,
+                    contentDescription = null,
+                )
+            else
+                Spacer(modifier = Modifier.size(24.dp))
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically)
+            ) {
+                Column {
+                    Text(
+                        text = title,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    description?.let {
+                        Text(
+                            text = it,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+                Text(
+                    text = "%.2f"
+                        .format(value),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                )
+            }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(
+                    top = 0.dp,
+                    start = 56.dp,
+                    end = 18.dp,
+                    bottom = 16.dp
+                )
+        ) {
+            Slider(
+                value = value,
+                valueRange = valueRange,
+                onValueChange = onValueChange,
+                onValueChangeFinished = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                },
+                modifier = Modifier
+                    .weight(1f),
+                enabled = enabled
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun SliderWidgetPreview() {
+    val haptic = LocalHapticFeedback.current
+    /*val sliderState =
+        rememberSliderState(
+            value = 1000f,
+            valueRange = 0f..1000f,
+            onValueChangeFinished = {
+                haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+            },
+        )
+    SliderWidget(
+        sliderState = sliderState,
+        painter = painterResource(R.drawable.dock_to_bottom_filled),
+        title = "Dock 模糊强度",
+    )*/
+}
