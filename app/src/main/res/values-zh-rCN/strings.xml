@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">令 Color 再次伟大</string>
+    <string name="home">首页</string>
+    <string name="about">关于</string>
+    <string name="hook_launcher">系统桌面</string>
+    <string name="hook_search">全局搜索</string>
+    <string name="force_dock_blur">强制启用 Dock 栏模糊</string>
+    <string name="hide_drawer_app_name">隐藏“抽屉全部页”应用名称</string>
+    <string name="hide_advice_app_name">隐藏“应用建议”中的应用名称</string>
+    <string name="adjust_advice_app_card_height">修正“应用建议”卡片的高度</string>
+    <string name="setting">设置</string>
+    <string name="hide_desktop_icon">隐藏软件桌面图标</string>
+    <string name="app_config">应用配置</string>
+    <string name="systemui">系统界面</string>
+    <string name="qs_detail_container">快速设置面板</string>
+    <string name="enable_custom_settings">自定义设置</string>
+    <string name="bkg_blur_radius">背景模糊半径</string>
+    <string name="bkg_corner_radius">背景圆角半径</string>
+    <string name="bkg_cover_color">背景覆盖颜色</string>
+    <string name="color_picker">颜色选择器</string>
+    <string name="main">主要</string>
+    <string name="more">更多</string>
+</resources>

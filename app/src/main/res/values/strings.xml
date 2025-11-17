@@ -2,4 +2,22 @@
     <string name="app_name">Make Color Great Again</string>
     <string name="home">Home</string>
     <string name="about">About</string>
+    <string name="hook_launcher">Android Launcher</string>
+    <string name="hook_search">Quick Search Box</string>
+    <string name="force_dock_blur">Force-enable Dock bar blur</string>
+    <string name="hide_drawer_app_name">Hide the \"All Pages\" app name in \"Drawers\"</string>
+    <string name="hide_advice_app_name">Hide the app name in the \"App Suggestions\" section</string>
+    <string name="adjust_advice_app_card_height">Adjust the height of the \"App Suggestions\" card</string>
+    <string name="setting">Setting</string>
+    <string name="hide_desktop_icon">Hide software desktop icon</string>
+    <string name="app_config">Application Configuration</string>
+    <string name="systemui">System UI</string>
+    <string name="qs_detail_container">Quick Settings (QS) Detail Container</string>
+    <string name="enable_custom_settings">Custom settings</string>
+    <string name="bkg_blur_radius">Background blur radius</string>
+    <string name="bkg_corner_radius">Background corner radius</string>
+    <string name="bkg_cover_color">Background cover color</string>
+    <string name="color_picker">Color Picker</string>
+    <string name="main">Main</string>
+    <string name="more">More</string>
 </resources>
