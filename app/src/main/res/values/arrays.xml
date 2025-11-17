@@ -2,5 +2,6 @@
     <string-array name="xposedscope" >
         <item>com.android.launcher</item>
         <item>com.heytap.quicksearchbox</item>
+        <item>com.android.systemui</item>
     </string-array>
 </resources>
