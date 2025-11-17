@@ -3,20 +3,17 @@ name: Release APK
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
 
 jobs:
-  build:
+  build-and-sign:
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -24,29 +21,30 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Build release APK (unsigned)
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build unsigned release APK
         run: ./gradlew assembleRelease
 
       - name: Sign APK
         id: sign_apk
-        uses: r0adkll/sign-android-release@v1
+        uses: ilharp/sign-android-release@v4
         with:
-          releaseDirectory: app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
+          keyAlias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-
-      - name: Rename signed APK
-        run: mv ${{ steps.sign_apk.outputs.signedReleaseFile }} MCGA_${GITHUB_REF_NAME}.apk
+          input: app/build/outputs/apk/release/app-release-unsigned.apk
+          output: MC-GA_v${{ github.ref_name }}.apk
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "*.apk"
+          artifacts: ${{ steps.sign_apk.outputs.signedFile }}
           token: ${{ github.token }}
           generateReleaseNotes: true
           tag: ${{ github.ref_name }}
