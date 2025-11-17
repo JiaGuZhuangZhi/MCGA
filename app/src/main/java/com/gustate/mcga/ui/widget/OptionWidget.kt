@@ -3,7 +3,6 @@ package com.gustate.mcga.ui.widget
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,54 +11,58 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.gustate.mcga.R
 
 @Composable
-fun BaseWidget(
+fun OptionWidget(
+    modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    iconPlaceholder: Boolean = true,
+    painter: Painter? = null,
     title: String,
     description: String? = null,
     enabled: Boolean = true,
-    isError: Boolean = false,
-    onClick: () -> Unit = {},
-    hapticFeedbackType: HapticFeedbackType = HapticFeedbackType.ContextClick,
-    foreContent: @Composable BoxScope.() -> Unit = {},
-    content: @Composable BoxScope.() -> Unit,
+    onClick: () -> Unit,
+    isError: Boolean = false
 ) {
-    val haptic = LocalHapticFeedback.current
-
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(
                 enabled = enabled,
-                onClick = {
-                    haptic.performHapticFeedback(hapticFeedbackType)
-                    onClick()
-                }
+                onClick = onClick
             )
             .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (icon != null)
             Icon(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(size = 24.dp)
                     .align(Alignment.CenterVertically),
                 imageVector = icon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
-        if (icon == null && iconPlaceholder)
-            Spacer(modifier = Modifier.size(24.dp))
+        else if (painter != null)
+            Icon(
+                modifier = Modifier
+                    .size(size = 24.dp)
+                    .align(Alignment.CenterVertically),
+                painter = painter,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        else Spacer(modifier = Modifier.size(24.dp))
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -75,18 +78,19 @@ fun BaseWidget(
                     Text(
                         text = it,
                         color = if (isError) MaterialTheme.colorScheme.error
-                        else MaterialTheme.colorScheme.onSurfaceVariant, // 保持原有的正常颜色
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
-            foreContent()
         }
-        Box(
+        Icon(
             modifier = Modifier
-                .align(Alignment.CenterVertically)
-        ) {
-            content()
-        }
+                .size(size = 12.dp)
+                .align(Alignment.CenterVertically),
+            painter = painterResource(id = R.drawable.arrow_forward_ios),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
