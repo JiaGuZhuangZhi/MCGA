@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -122,8 +123,12 @@ private fun XpStateCard(
                 style = MaterialTheme.typography.titleMedium,
                 color = onCardColor
             )
+            val context = LocalContext.current
+            val packageInfo = context.packageManager
+                .getPackageInfo(context.packageName, 0)
+
             Text(
-                text = "v1.0.0 (1000) - XiaoMeng",
+                text = "v${packageInfo.versionName} (${packageInfo.longVersionCode}) - XiaoMeng",
                 modifier = Modifier.padding(top = 2.dp),
                 style = MaterialTheme.typography.labelMedium,
                 color = onCardColor
