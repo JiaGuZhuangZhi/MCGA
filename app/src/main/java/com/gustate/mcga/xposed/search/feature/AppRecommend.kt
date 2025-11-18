@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
+import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.utils.ViewUtils.dpToPx
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
@@ -21,37 +22,41 @@ object AppRecommend {
      */
     fun goneAdviceAppName(lpparam: XC_LoadPackage.LoadPackageParam) {
         try {
-            // NewRecommendAppAdapter$LocalAppViewHolder 类
-            val localVHClass = XposedHelpers.findClass(
-                "com.heytap.quicksearchbox.adapter.NewRecommendAppAdapter" +
-                        "\$LocalAppViewHolder",
+            val adapterClass = XposedHelpers.findClass(
+                "com.heytap.quicksearchbox.adapter.NewRecommendAppAdapter",
                 lpparam.classLoader
             )
-            // d 函数: void d(BaseAppInfo, int)
-            val baseAppInfoClass = XposedHelpers.findClass(
-                "com.heytap.quicksearchbox.core.db.entity.BaseAppInfo",
+
+            // Hook onBindViewHolder(ViewHolder, int)
+            val viewHolderClass = XposedHelpers.findClass(
+                "androidx.recyclerview.widget.RecyclerView\$ViewHolder",
                 lpparam.classLoader
             )
-            // Hook d 函数
+
+            val onBindViewHolderMethod = adapterClass.getDeclaredMethod(
+                "onBindViewHolder",
+                viewHolderClass,
+                Int::class.javaPrimitiveType
+            )
+            // Hook onBindViewHolder
             XposedBridge.hookMethod(
-                localVHClass.getDeclaredMethod(
-                    "d",
-                    baseAppInfoClass,
-                    Int::class.javaPrimitiveType
-                ), object : XC_MethodHook() {
+                onBindViewHolderMethod, object : XC_MethodHook() {
                     @SuppressLint("DiscouragedApi")
                     override fun afterHookedMethod(param: MethodHookParam) {
                         // 获取 itemView
-                        val holder = param.thisObject
+                        val viewHolder = param.args[0]
                         val itemView = XposedHelpers
-                            .getObjectField(holder, "itemView") as View
-                        //val context = itemView.context
+                            .getObjectField(viewHolder, "itemView") as View
                         // 获取 app_name 资源 ID
                         val appNameId = itemView.resources.getIdentifier(
-                            "app_name", "id", lpparam.packageName
+                            "app_name",
+                            "id",
+                            lpparam.packageName
                         )
                         val lastNameId = itemView.resources.getIdentifier(
-                            "last_app_name", "id", lpparam.packageName
+                            "last_app_name",
+                            "id",
+                            lpparam.packageName
                         )
                         // GONE app_name
                         if (appNameId != 0 || lastNameId != 0) {
@@ -59,16 +64,14 @@ object AppRecommend {
                             val lastNameTv = itemView.findViewById<TextView>(lastNameId)
                             appNameTv?.visibility = View.GONE
                             lastNameTv?.visibility = View.GONE
-                            XposedBridge.log("✅ 成功隐藏应用建议中应用的名称")
-                            return
+                            log(tag = "全局搜索", message = "✅ 成功隐藏应用建议中应用的名称")
                         } else {
-                            XposedBridge.log("❌ 获取到 app_name 控件的资源id为0")
-                            return
+                            log(tag = "全局搜索", message = "❌ 获取到 app_name 控件的 id 为 0")
                         }
                     }
                 })
         } catch (e: Throwable) {
-            XposedBridge.log("❌ Hook failed: ${e.message}")
+            log(tag = "全局搜索", message = "❌ Hook failed", throwable = e)
             e.printStackTrace()
         }
     }
@@ -81,7 +84,10 @@ object AppRecommend {
 
             // Hook 构造函数：AppSuggestCardView(Context, AttributeSet)
             XposedBridge.hookMethod(
-                clazz.getConstructor(Context::class.java, AttributeSet::class.java),
+                clazz.getConstructor(
+                    Context::class.java,
+                    AttributeSet::class.java
+                ),
                 object : XC_MethodHook() {
                     override fun afterHookedMethod(param: MethodHookParam) {
                         val instance = param.thisObject
@@ -118,22 +124,33 @@ object AppRecommend {
                         if (collapsedField != null && expandedField != null) {
                             collapsedField.setInt(instance, newCollapsedPx)
                             expandedField.setInt(instance, newExpandedPx)
-                            XposedBridge.log("✅ 成功修改 AppSuggestCardView 高度: $newCollapsedPx / $newExpandedPx px")
+                            log(
+                                tag = "全局搜索",
+                                message ="✅ 成功修改 AppSuggestCardView 高度: " +
+                                        "$newCollapsedPx / $newExpandedPx px"
+                            )
                         } else {
-                            XposedBridge.log("❌ 未找匹配到 130dp / 214dp 的字段（此字段在一加Ace5Pro上验证过（204版本））")
+                            log(
+                                tag = "全局搜索",
+                                message = "❌ 未找匹配到 130dp / 214dp 的字段" +
+                                        "（此字段在一加Ace5Pro上验证过（204版本））"
+                            )
                             // 可选：fallback 到排序方式
                             val sortedFields = intFields.sortedBy { it.getInt(instance) }
                             if (sortedFields.size >= 2) {
                                 sortedFields[0].setInt(instance, newCollapsedPx)
                                 sortedFields[1].setInt(instance, newExpandedPx)
-                                XposedBridge.log("⚠️ 使用 fallback 方式设置高度")
+                                log(
+                                    tag = "全局搜索",
+                                    message = "⚠️ 使用 fallback 方式设置高度"
+                                )
                             }
                         }
                     }
                 }
             )
         } catch (e: Throwable) {
-            XposedBridge.log("❌ Hook AppSuggestCardView failed: ${e.message}")
+            log(tag = "全局搜索", message = "❌ Hook AppSuggestCardView failed", throwable = e)
             e.printStackTrace()
         }
     }
