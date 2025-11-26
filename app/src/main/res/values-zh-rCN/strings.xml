@@ -21,4 +21,9 @@
     <string name="color_picker">颜色选择器</string>
     <string name="main">主要</string>
     <string name="more">更多</string>
+    <string name="qs_resizeable_tile">快速设置（QS）可调整大小（双网格）磁贴</string>
+    <string name="enable_all_day_panoramic_aod">启用全天候全景沉浸 AOD</string>
+    <string name="tip_all_day_panoramic_aod">请先将 AOD 设置为全景沉浸</string>
+    <string name="frg_cover_color">前景覆盖颜色</string>
+    <string name="app_suggestions">应用建议</string>
 </resources>

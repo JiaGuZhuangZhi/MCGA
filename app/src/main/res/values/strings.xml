@@ -20,4 +20,10 @@
     <string name="color_picker">Color Picker</string>
     <string name="main">Main</string>
     <string name="more">More</string>
+    <string name="qs_resizeable_tile">Quick Settings (QS) Resizeable (two grid) Tile</string>
+    <string name="aod" translatable="false">AOD</string>
+    <string name="enable_all_day_panoramic_aod">Enable all day panoramic AOD</string>
+    <string name="tip_all_day_panoramic_aod">Please set AOD to panoramic immersion first</string>
+    <string name="frg_cover_color">Foreground cover color</string>
+    <string name="app_suggestions">Application suggestions</string>
 </resources>
