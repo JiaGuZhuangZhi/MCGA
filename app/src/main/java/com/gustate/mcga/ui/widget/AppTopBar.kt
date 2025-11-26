@@ -21,6 +21,7 @@ import com.gustate.mcga.R
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AppTopBar(
+    modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     isHomePage: Boolean = false,
@@ -31,7 +32,7 @@ fun AppTopBar(
 ) {
     LargeTopAppBar(
         title = title,
-        modifier = Modifier.padding(start = 6.dp),
+        modifier = modifier.padding(start = 6.dp),
         navigationIcon = {
             if (isHomePage) {
                 Image(
