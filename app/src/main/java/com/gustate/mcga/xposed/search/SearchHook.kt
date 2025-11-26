@@ -1,9 +1,6 @@
 package com.gustate.mcga.xposed.search
 
-import android.app.AndroidAppHelper
-import android.content.Context
 import com.gustate.mcga.data.keys.SearchKeys
-import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.xposed.search.feature.AppRecommend
 import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.callbacks.XC_LoadPackage
