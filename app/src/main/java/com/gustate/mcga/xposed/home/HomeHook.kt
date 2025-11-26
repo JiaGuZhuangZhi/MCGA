@@ -1,7 +1,6 @@
 package com.gustate.mcga.xposed.home
 
 import com.gustate.mcga.data.keys.HomeKeys
-import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.xposed.home.feature.DockBlur
 import com.gustate.mcga.xposed.home.feature.DrawerAppName
 import de.robv.android.xposed.XSharedPreferences

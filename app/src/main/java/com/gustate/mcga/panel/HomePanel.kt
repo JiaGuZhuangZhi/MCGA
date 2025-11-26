@@ -6,6 +6,8 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +21,7 @@ import com.gustate.mcga.data.viewmodel.HomeViewModel
 import com.gustate.mcga.ui.page.BasePanelPage
 import com.gustate.mcga.ui.widget.SplicedColumnGroup
 import com.gustate.mcga.ui.widget.SwitchWidget
+import dev.chrisbanes.haze.hazeSource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -27,6 +30,7 @@ fun HomePanel(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
+    val scrollState = rememberScrollState()
     val viewModel = viewModel<HomeViewModel>()
     val uiState by viewModel.uiState
     BasePanelPage(
@@ -42,18 +46,18 @@ fun HomePanel(
         sharedKey = "home",
         sharedTransitionScope = sharedTransitionScope,
         animatedVisibilityScope = animatedVisibilityScope
-    ) { paddingValues, scrollBehavior ->
+    ) { paddingValues, scrollBehavior, hazeState ->
         Column(
             modifier = Modifier
-                .nestedScroll(
-                    connection = scrollBehavior.nestedScrollConnection
-                )
+                .hazeSource(state = hazeState)
                 .fillMaxSize()
+                .nestedScroll(connection = scrollBehavior.nestedScrollConnection)
+                .verticalScroll(scrollState)
                 .padding(paddingValues)
         ) {
             SplicedColumnGroup(
                 modifier = Modifier,
-                title = stringResource(id = R.string.qs_detail_container),
+                title = stringResource(id = R.string.hook_launcher),
                 content = listOf(
                     {
                         SwitchWidget(
