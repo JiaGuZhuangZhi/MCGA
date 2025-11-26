@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.compose.animation)
     implementation(libs.kyant0.capsule)
     implementation(libs.compose.colorpicker)
+    implementation(libs.haze)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
