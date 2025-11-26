@@ -26,4 +26,8 @@
     <string name="tip_all_day_panoramic_aod">请先将 AOD 设置为全景沉浸</string>
     <string name="frg_cover_color">前景覆盖颜色</string>
     <string name="app_suggestions">应用建议</string>
+    <string name="module_not_activated">模块未激活</string>
+    <string name="root_permission_not_configured">未配置 Root 权限</string>
+    <string name="configured">主人好厉害！配置好了汪唔！</string>
+    <string name="open_source_address">开源地址</string>
 </resources>

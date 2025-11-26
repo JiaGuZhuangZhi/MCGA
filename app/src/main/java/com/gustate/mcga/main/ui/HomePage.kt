@@ -21,8 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gustate.mcga.R
 import com.gustate.mcga.data.viewmodel.MainViewModel
-import com.gustate.mcga.ui.widget.SplicedColumnGroup
-import com.gustate.mcga.ui.widget.SwitchWidget
 import com.kyant.capsule.ContinuousRoundedRectangle
 
 @Composable
@@ -43,22 +41,6 @@ fun HomePage(
             isModuleActive,
             isRootAvailable = isRootAvailable
         )
-        SplicedColumnGroup(
-            modifier = Modifier,
-            title = stringResource(id = R.string.app_config),
-            content = listOf(
-                {
-                    SwitchWidget(
-                        painter = painterResource(id = R.drawable.grid_off_filled),
-                        title = stringResource(id = R.string.hide_desktop_icon),
-                        checked = true,
-                        onCheckedChange = { checked ->
-
-                        }
-                    )
-                },
-            )
-        )
     }
 }
 
@@ -74,9 +56,9 @@ private fun XpStateCard(
         else -> MaterialTheme.colorScheme.surfaceBright
     }
     val moduleActiveInfo = when {
-        !isModuleActive -> "模块未激活"
-        !isRootAvailable -> "未配置 Root 权限"
-        else -> "主人好厉害！配置好了汪唔！"
+        !isModuleActive -> stringResource(id = R.string.module_not_activated)
+        !isRootAvailable -> stringResource(id = R.string.root_permission_not_configured)
+        else -> stringResource(id = R.string.configured)
     }
     Row(
         modifier = Modifier
