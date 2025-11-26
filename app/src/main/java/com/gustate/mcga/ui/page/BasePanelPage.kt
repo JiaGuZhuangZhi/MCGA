@@ -16,8 +16,12 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import com.gustate.mcga.ui.theme.baseHazeStyle
 import com.gustate.mcga.ui.widget.AppTopBar
+import dev.chrisbanes.haze.HazeProgressive
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.rememberHazeState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -30,15 +34,25 @@ fun BasePanelPage(
     animatedVisibilityScope: AnimatedVisibilityScope,
     content: @Composable (
         paddingValues: PaddingValues,
-        scrollBehavior: TopAppBarScrollBehavior
+        scrollBehavior: TopAppBarScrollBehavior,
+        hazeState: HazeState
     ) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults
         .exitUntilCollapsedScrollBehavior(state = rememberTopAppBarState())
+    val hazeState = rememberHazeState()
     with(receiver = sharedTransitionScope) {
         Scaffold(
             topBar = {
                 AppTopBar(
+                    modifier = Modifier
+                        .hazeEffect(
+                            state = hazeState,
+                            style = baseHazeStyle()
+                        ) {
+                            progressive = HazeProgressive
+                                .verticalGradient(startIntensity = 1f, endIntensity = 0f)
+                        },
                     title = {
                         Text(
                             text = title,
@@ -63,7 +77,7 @@ fun BasePanelPage(
                     resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
                 )
         ) { paddingValues ->
-            content(paddingValues, scrollBehavior)
+            content(paddingValues, scrollBehavior, hazeState)
         }
     }
 }

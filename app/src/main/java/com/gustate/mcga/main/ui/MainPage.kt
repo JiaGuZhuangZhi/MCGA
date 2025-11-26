@@ -2,7 +2,6 @@ package com.gustate.mcga.main.ui
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -57,10 +56,13 @@ fun MainPage(
                             text = when (pagerState.currentPage) {
                                 Destination.SETTING.ordinal ->
                                     stringResource(R.string.setting)
+
                                 Destination.HOME.ordinal ->
                                     stringResource(R.string.app_name)
+
                                 Destination.ABOUT.ordinal ->
                                     stringResource(R.string.about)
+
                                 else -> stringResource(R.string.app_name)
                             },
                             maxLines = 1,
@@ -88,9 +90,10 @@ fun MainPage(
                             },
                             icon = {
                                 Icon(
-                                    painter = painterResource(id =
-                                        if (isTabSelected) destination.focusIcon
-                                        else destination.icon
+                                    painter = painterResource(
+                                        id =
+                                            if (isTabSelected) destination.focusIcon
+                                            else destination.icon
                                     ),
                                     contentDescription =
                                         stringResource(id = destination.contentDescription)
@@ -119,11 +122,13 @@ fun MainPage(
                     sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope
                 )
+
                 Destination.HOME -> HomePage(
                     modifier = pagerModifier
                         .fillMaxSize(),
                     viewModel = viewModel
                 )
+
                 Destination.ABOUT -> AboutPage(
                     modifier = pagerModifier
                         .fillMaxSize()
