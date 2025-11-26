@@ -1,10 +1,10 @@
 package com.gustate.mcga.xposed.home.feature
 
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import de.robv.android.xposed.XC_MethodReplacement
 
 object DockBlur {
 
@@ -24,72 +24,96 @@ object DockBlur {
                 oplusHotseatClass,
                 "setDockerBackground",
                 object : XC_MethodReplacement() {
-                override fun replaceHookedMethod(param: MethodHookParam): Any? {
-                    val instance = param.thisObject
-                    val mContext = XposedHelpers.getObjectField(instance, "mContext")
-                    val mShortcutsAndWidgets = XposedHelpers.getObjectField(instance, "mShortcutsAndWidgets")
+                    override fun replaceHookedMethod(param: MethodHookParam): Any? {
+                        val instance = param.thisObject
+                        val mContext = XposedHelpers.getObjectField(instance, "mContext")
+                        val mShortcutsAndWidgets =
+                            XposedHelpers.getObjectField(instance, "mShortcutsAndWidgets")
 
-                    val childCount = XposedHelpers.callMethod(mShortcutsAndWidgets, "getChildCount") as Int
-                    if (childCount == 0) {
-                        XposedHelpers.callMethod(mShortcutsAndWidgets, "setBackgroundResource", 0)
+                        val childCount =
+                            XposedHelpers.callMethod(mShortcutsAndWidgets, "getChildCount") as Int
+                        if (childCount == 0) {
+                            XposedHelpers.callMethod(
+                                mShortcutsAndWidgets,
+                                "setBackgroundResource",
+                                0
+                            )
+                            return null
+                        }
+
+                        // Force use createBlurDrawable if supported, ignore hasLargeDisplayFeatures
+                        var drawable: Any? = null
+                        try {
+                            val isSupportNewBlur = XposedHelpers.callStaticMethod(
+                                lpparam.classLoader.loadClass("com.android.launcher3.uioverrides.states.blurdrawable.OplusBlurProperties"),
+                                "isSupportNewBlur",
+                                mContext,
+                                true
+                            ) as Boolean
+
+                            if (isSupportNewBlur) {
+                                drawable = XposedHelpers.callMethod(instance, "createBlurDrawable")
+                            }
+                        } catch (e: Throwable) {
+                            XposedBridge.log("DockBlur: createBlurDrawable failed: ${e.message}")
+                        }
+
+                        // fallback
+                        if (drawable == null) {
+                            drawable = XposedHelpers.callStaticMethod(
+                                lpparam.classLoader.loadClass("com.android.launcher3.hotseat.expand.ExpandUtils"),
+                                "getHotseatNormalBgDrawable",
+                                mContext
+                            )
+                        }
+
+                        if (drawable != null) {
+                            XposedHelpers.callMethod(
+                                mShortcutsAndWidgets,
+                                "setBackground",
+                                drawable
+                            )
+                        }
+
+                        val mBackgroundVisible =
+                            XposedHelpers.getBooleanField(instance, "mBackgroundVisible")
+                        val alpha = if (mBackgroundVisible) 1.0f else 0.0f
+                        XposedHelpers.callMethod(instance, "setBackgroundAlpha", alpha)
+
                         return null
                     }
-
-                    // Force use createBlurDrawable if supported, ignore hasLargeDisplayFeatures
-                    var drawable: Any? = null
-                    try {
-                        val isSupportNewBlur = XposedHelpers.callStaticMethod(
-                            lpparam.classLoader.loadClass("com.android.launcher3.uioverrides.states.blurdrawable.OplusBlurProperties"),
-                            "isSupportNewBlur",
-                            mContext,
-                            true
-                        ) as Boolean
-
-                        if (isSupportNewBlur) {
-                            drawable = XposedHelpers.callMethod(instance, "createBlurDrawable")
-                        }
-                    } catch (e: Throwable) {
-                        XposedBridge.log("DockBlur: createBlurDrawable failed: ${e.message}")
-                    }
-
-                    // fallback
-                    if (drawable == null) {
-                        drawable = XposedHelpers.callStaticMethod(
-                            lpparam.classLoader.loadClass("com.android.launcher3.hotseat.expand.ExpandUtils"),
-                            "getHotseatNormalBgDrawable",
-                            mContext
-                        )
-                    }
-
-                    if (drawable != null) {
-                        XposedHelpers.callMethod(mShortcutsAndWidgets, "setBackground", drawable)
-                    }
-
-                    val mBackgroundVisible = XposedHelpers.getBooleanField(instance, "mBackgroundVisible")
-                    val alpha = if (mBackgroundVisible) 1.0f else 0.0f
-                    XposedHelpers.callMethod(instance, "setBackgroundAlpha", alpha)
-
-                    return null
-                }
-            })
+                })
 
             // Step 2: Force call setDockerBackground in key lifecycle methods
-            val methodsToHook = arrayOf("onMeasure", "onAttachedToWindow", "onWallpaperBrightnessChanged")
+            val methodsToHook =
+                arrayOf("onMeasure", "onAttachedToWindow", "onWallpaperBrightnessChanged")
             for (methodName in methodsToHook) {
-                XposedBridge.hookAllMethods(oplusHotseatClass, methodName, object : XC_MethodHook() {
-                    override fun afterHookedMethod(param: MethodHookParam) {
-                        // Only trigger if child count > 0
-                        val mShortcutsAndWidgets = XposedHelpers.getObjectField(param.thisObject, "mShortcutsAndWidgets")
-                        val childCount = XposedHelpers.callMethod(mShortcutsAndWidgets, "getChildCount") as Int
-                        if (childCount > 0) {
-                            try {
-                                XposedHelpers.callMethod(param.thisObject, "setDockerBackground")
-                            } catch (e: Throwable) {
-                                XposedBridge.log("DockBlur: Failed to call setDockerBackground in $methodName: ${e.message}")
+                XposedBridge.hookAllMethods(
+                    oplusHotseatClass,
+                    methodName,
+                    object : XC_MethodHook() {
+                        override fun afterHookedMethod(param: MethodHookParam) {
+                            // Only trigger if child count > 0
+                            val mShortcutsAndWidgets = XposedHelpers.getObjectField(
+                                param.thisObject,
+                                "mShortcutsAndWidgets"
+                            )
+                            val childCount = XposedHelpers.callMethod(
+                                mShortcutsAndWidgets,
+                                "getChildCount"
+                            ) as Int
+                            if (childCount > 0) {
+                                try {
+                                    XposedHelpers.callMethod(
+                                        param.thisObject,
+                                        "setDockerBackground"
+                                    )
+                                } catch (e: Throwable) {
+                                    XposedBridge.log("DockBlur: Failed to call setDockerBackground in $methodName: ${e.message}")
+                                }
                             }
                         }
-                    }
-                })
+                    })
             }
 
             XposedBridge.log("DockBlurHook: Successfully forced Dock blur on phone.")
@@ -97,8 +121,6 @@ object DockBlur {
             XposedBridge.log("DockBlurHook error: ${e.message}")
             e.printStackTrace()
         }
-
-
     }
 
 }
