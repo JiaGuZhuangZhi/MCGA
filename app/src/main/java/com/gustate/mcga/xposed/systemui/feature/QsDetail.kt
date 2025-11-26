@@ -16,6 +16,7 @@ object QsDetail {
         lpparam: XC_LoadPackage.LoadPackageParam,
         blurRadius: Int,
         cornerRadius: Float,
+        foregroundColor: Int,
         backgroundColor: Int
     ) {
 
@@ -55,6 +56,7 @@ object QsDetail {
                             classLoader = lpparam.classLoader,
                             blurRadius = blurRadius,
                             cornerRadiusPx = cornerRadiusPx,
+                            foregroundColor = foregroundColor,
                             backgroundColor = backgroundColor
                         )
 
@@ -85,16 +87,23 @@ object QsDetail {
         classLoader: ClassLoader,
         blurRadius: Int,
         cornerRadiusPx: Float,
+        foregroundColor: Int,
         backgroundColor: Int
     ): Drawable {
 
         // 构造 BlurConfig
-        val blurConfigClass = classLoader.loadClass("com.oplusos.systemui." +
-                "common.blurability.BlurConfig")
-        val noneClass = classLoader.loadClass("com.oplusos.systemui." +
-                "common.blurability.BlurMixConfig\$None")
-        val noneInstance = XposedHelpers.getStaticObjectField(noneClass,
-            "INSTANCE")
+        val blurConfigClass = classLoader.loadClass(
+            "com.oplusos.systemui." +
+                    "common.blurability.BlurConfig"
+        )
+        val noneClass = classLoader.loadClass(
+            "com.oplusos.systemui." +
+                    "common.blurability.BlurMixConfig\$None"
+        )
+        val noneInstance = XposedHelpers.getStaticObjectField(
+            noneClass,
+            "INSTANCE"
+        )
         // 使用默认构造（参数全默认）
         val blurConfig = XposedHelpers.newInstance(
             blurConfigClass,
@@ -112,7 +121,7 @@ object QsDetail {
         val mixColorClass = classLoader
             .loadClass("com.oplusos.systemui.common.blurability.MixColor")
         val foregroundMix = XposedHelpers
-            .newInstance(mixColorClass, 3, 0, backgroundColor)
+            .newInstance(mixColorClass, 3, 0, foregroundColor)
         val backgroundMix = XposedHelpers
             .newInstance(mixColorClass, 5, 0, backgroundColor)
 
@@ -121,23 +130,36 @@ object QsDetail {
             "com.oplusos.systemui.common.blurability.BlurMixConfig\$BlurMixMulti"
         )
         val blurMixMulti = XposedHelpers.newInstance(
-            blurMixMultiClass, foregroundMix, backgroundMix)
+            blurMixMultiClass, foregroundMix, backgroundMix
+        )
 
         // 设置关键参数
-        XposedHelpers.callMethod(blurConfig,
-            "setBlurRadius", blurRadius)
-        XposedHelpers.callMethod(blurConfig,
-            "setCornerRadius", cornerRadiusPx)
-        XposedHelpers.callMethod(blurConfig,
-            "setPlatformMixConfig", blurMixMulti)
-        XposedHelpers.callMethod(blurConfig,
-            "setRadiusWeight", 1.0f)
-        XposedHelpers.callMethod(blurConfig,
-            "setEnableStaticBlurCorner", true)
+        XposedHelpers.callMethod(
+            blurConfig,
+            "setBlurRadius", blurRadius
+        )
+        XposedHelpers.callMethod(
+            blurConfig,
+            "setCornerRadius", cornerRadiusPx
+        )
+        XposedHelpers.callMethod(
+            blurConfig,
+            "setPlatformMixConfig", blurMixMulti
+        )
+        XposedHelpers.callMethod(
+            blurConfig,
+            "setRadiusWeight", 1.0f
+        )
+        XposedHelpers.callMethod(
+            blurConfig,
+            "setEnableStaticBlurCorner", true
+        )
 
         // ViewBlurProxy
-        val viewBlurProxyClass = classLoader.loadClass("com.oplusos.systemui." +
-                "common.blurability.ViewBlurProxy")
+        val viewBlurProxyClass = classLoader.loadClass(
+            "com.oplusos.systemui." +
+                    "common.blurability.ViewBlurProxy"
+        )
         val viewBlurProxy = XposedHelpers.newInstance(
             viewBlurProxyClass,
             view,            // View
@@ -149,8 +171,10 @@ object QsDetail {
 
         // 设置模糊类型为 PlatformStatic
         val blurTypeClass = classLoader
-            .loadClass("com.oplusos.systemui.common.blurability." +
-                    "ViewBlurProxy\$BlurType\$BlurTypePlatformStatic")
+            .loadClass(
+                "com.oplusos.systemui.common.blurability." +
+                        "ViewBlurProxy\$BlurType\$BlurTypePlatformStatic"
+            )
         val blurTypeInstance = XposedHelpers
             .getStaticObjectField(blurTypeClass, "INSTANCE")
         XposedHelpers
@@ -162,4 +186,5 @@ object QsDetail {
         return XposedHelpers.newInstance(autoBlurClass, viewBlurProxy, fallback) as Drawable
 
     }
+
 }
