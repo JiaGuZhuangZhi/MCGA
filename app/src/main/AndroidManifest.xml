@@ -15,13 +15,14 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Hook Toast" />
+            android:value="@string/app_description" />
         <meta-data
             android:name="xposedminversion"
             android:value="93" />
         <meta-data
             android:name="xposedscope"
-            android:resource="@array/xposedscope"/>
+            android:resource="@array/xposedscope" />
+
         <activity
             android:name=".main.MainActivity"
             android:enabled="true"

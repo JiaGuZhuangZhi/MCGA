@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -27,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.gustate.mcga.R
-import com.gustate.mcga.data.viewmodel.MainViewModel
+import com.gustate.mcga.data.viewmodel.ModuleViewModel
 import com.gustate.mcga.main.navgation.Destination
 import com.gustate.mcga.ui.widget.AppTopBar
 import kotlinx.coroutines.launch
@@ -39,9 +40,8 @@ fun MainPage(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-
-    val viewModel = viewModel<MainViewModel>()
-    val isModuleActive = viewModel.isModuleActive.value ?: false
+    val viewModel = viewModel<ModuleViewModel>()
+    val moduleUiState by viewModel.uiState
     val scrollBehavior = TopAppBarDefaults
         .exitUntilCollapsedScrollBehavior(state = rememberTopAppBarState())
     val scope = rememberCoroutineScope()
@@ -78,7 +78,7 @@ fun MainPage(
             BottomAppBar {
                 NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
                     Destination.entries.forEachIndexed { index, destination ->
-                        if (destination == Destination.SETTING && !isModuleActive)
+                        if (destination == Destination.SETTING && !moduleUiState.isModuleActive)
                             return@forEachIndexed
                         val isTabSelected = pagerState.currentPage == index
                         NavigationBarItem(

@@ -20,10 +20,10 @@
     <string name="color_picker">Color Picker</string>
     <string name="main">Main</string>
     <string name="more">More</string>
-    <string name="qs_resizeable_tile">Quick Settings (QS) Resizeable (two grid) Tile</string>
-    <string name="aod" translatable="false">AOD</string>
+    <string name="qs_resizeable_tile">Quick Settings (QS) Resizeable Tile</string>
+    <string name="aod">AOD</string>
     <string name="enable_all_day_panoramic_aod">Enable all day panoramic AOD</string>
-    <string name="tip_all_day_panoramic_aod">Please set AOD to panoramic immersion first</string>
+    <string name="tip_all_day_panoramic_aod">Your device must support a 10s panoramic AOD</string>
     <string name="frg_cover_color">Foreground cover color</string>
     <string name="app_suggestions">Application suggestions</string>
     <string name="module_not_activated">Module not activated</string>
@@ -32,4 +32,22 @@
     <string name="open_source_address">Open Source Address</string>
     <string name="github_link" translatable="false">https://github.com/JiaGuZhuangZhi/MCGA</string>
     <string name="xiaomeng" translatable="false">XiaoMeng (JiaGuZhuangZhi · Gustate)</string>
+    <string name="app_description">A customized Lspose module designed for ColorOS users</string>
+    <string name="magisk" translatable="false">Magisk</string>
+    <string name="kernelsu" translatable="false">KernelSU</string>
+    <string name="unknown_root_manager">Unknown Root Manager</string>
+    <string name="root_manager">Root Manager</string>
+    <string name="root_manager_version">Root Manager Version</string>
+    <string name="activate_aod_display_settings">Activate AOD display settings</string>
+    <string name="enable_aod_display_settings">Enable AOD display settings</string>
+    <string name="only_keep_alpha_channel">Only keep Alpha channel</string>
+    <string name="only_keep_rgb_channel">Only keep RGB channel</string>
+    <string name="qs_1x1_tile">Quick Settings (QS) 1*1 Tile</string>
+    <string name="please_enter_text">Please enter text</string>
+    <string name="icon_bkg_color">Icon background color</string>
+    <string name="icon_bkg_corner_radius">Icon background corner radius</string>
+    <string name="qq_group">QQ Group</string>
+    <string name="telegram_group">Telegram Group</string>
+    <string name="telegram_group_Xiaomeng">Xiaomeng\'s Telegram Group</string>
+    <string name="group">Group</string>
 </resources>

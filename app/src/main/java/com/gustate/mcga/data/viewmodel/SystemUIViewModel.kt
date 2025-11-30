@@ -14,6 +14,14 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
 
     private val _uiState = mutableStateOf(
         value = SystemUIUiState(
+            enableCustomQsTileOneXOne = repo.getBoolean(
+                key = SystemUIKeys.ENABLE_CUSTOM_QS_TILE_ONE_X_ONE,
+                def = false
+            ),
+            qsTileOneXOneCornerRadius = repo.getFloat(
+                key = SystemUIKeys.QS_TILE_ONE_X_ONE_CORNER_RADIUS,
+                def = 24f
+            ),
             enableCustomQsDetail = repo.getBoolean(
                 key = SystemUIKeys.ENABLE_CUSTOM_QS_DETAIL,
                 def = false
@@ -28,11 +36,11 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
             ),
             qsDetailBkgBlurRadius = repo.getInt(
                 key = SystemUIKeys.QS_DETAIL_BKG_BLUR_RADIUS,
-                def = 255
+                def = 1024
             ),
             qsDetailBkgCornerRadius = repo.getFloat(
                 key = SystemUIKeys.QS_DETAIL_BKG_CORNER_RADIUS,
-                def = 28.0f
+                def = 24.0f
             ),
             enableCustomQsResizeableTile = repo.getBoolean(
                 key = SystemUIKeys.ENABLE_CUSTOM_QS_RESIZEABLE_TILE,
@@ -40,15 +48,43 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
             ),
             qsResizeableTileCornerRadius = repo.getFloat(
                 key = SystemUIKeys.QS_RESIZEABLE_TILE_CORNER_RADIUS,
-                def = 28.0f
+                def = 24.0f
+            ),
+            qsResizeableTileIconBkgCornerRadius = repo.getFloat(
+                key = SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_CORNER_RDS,
+                def = 24.0f
+            ),
+            qsResizeableTileIconBkgCoverColor = repo.getInt(
+                key = SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_COVER_COLOR,
+                def = 0X80FFFFFF.toInt()
             ),
             enableAodPanoramicAllDay = repo.getBoolean(
                 key = SystemUIKeys.ENABLE_AOD_PANORAMIC_ALL_DAY,
+                def = false
+            ),
+            enableAllDayAodSettings = repo.getBoolean(
+                key = SystemUIKeys.ENABLE_ALL_DAY_AOD_SETTINGS,
                 def = false
             )
         )
     )
     val uiState: MutableState<SystemUIUiState> get() = _uiState
+
+    fun updateEnableCustomQsTileOneXOne(enabled: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.ENABLE_CUSTOM_QS_TILE_ONE_X_ONE,
+            value = enabled
+        )
+        _uiState.value = _uiState.value.copy(enableCustomQsTileOneXOne = enabled)
+    }
+
+    fun updateQsTileOneXOneCornerRadius(bkgCornerRadius: Float) {
+        repo.setFloat(
+            key = SystemUIKeys.QS_TILE_ONE_X_ONE_CORNER_RADIUS,
+            value = bkgCornerRadius
+        )
+        _uiState.value = _uiState.value.copy(qsTileOneXOneCornerRadius = bkgCornerRadius)
+    }
 
     fun updateEnableCustomQsDetail(enabled: Boolean) {
         repo.setBoolean(
@@ -106,12 +142,36 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
         _uiState.value = _uiState.value.copy(qsResizeableTileCornerRadius = value)
     }
 
+    fun updateQsResizeableTileIconBkgCornerRadius(value: Float) {
+        repo.setFloat(
+            key = SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_CORNER_RDS,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsResizeableTileIconBkgCornerRadius = value)
+    }
+
+    fun updateQsResizeableTileIconBkgCoverColor(value: Int) {
+        repo.setInt(
+            key = SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_COVER_COLOR,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsResizeableTileIconBkgCoverColor = value)
+    }
+
     fun updateEnableAodPanoramicAllDay(value: Boolean) {
         repo.setBoolean(
             key = SystemUIKeys.ENABLE_AOD_PANORAMIC_ALL_DAY,
             value = value
         )
         _uiState.value = _uiState.value.copy(enableAodPanoramicAllDay = value)
+    }
+
+    fun updateEnableAllDayAodSettings(value: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.ENABLE_ALL_DAY_AOD_SETTINGS,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(enableAllDayAodSettings = value)
     }
 
 }

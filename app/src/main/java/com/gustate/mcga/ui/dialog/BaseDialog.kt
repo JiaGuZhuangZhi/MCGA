@@ -24,10 +24,10 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 
 @Composable
 fun BaseDialog(
-    painter: Painter,
+    painter: Painter? = null,
     painterDescription: String? = null,
     title: String,
-    description: String,
+    description: String? = null,
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     content: @Composable () -> Unit
@@ -46,29 +46,38 @@ fun BaseDialog(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(
-                    painter = painter,
-                    contentDescription = painterDescription,
-                    modifier = Modifier
-                        .padding(vertical = 24.dp)
-                        .size(size = 28.dp),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+                if (painter != null) {
+                    Icon(
+                        painter = painter,
+                        contentDescription = painterDescription,
+                        modifier = Modifier
+                            .padding(vertical = 24.dp)
+                            .size(size = 28.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
                 Text(
                     text = title,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
+                    modifier =
+                        if (painter != null)
+                            Modifier
+                                .padding(horizontal = 12.dp)
+                        else
+                            Modifier
+                                .padding(vertical = 24.dp, horizontal = 12.dp)
                 )
-                Text(
-                    text = description,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .padding(top = 12.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
-                )
+                if (description != null) {
+                    Text(
+                        text = description,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .padding(top = 12.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
+                    )
+                }
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {

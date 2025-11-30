@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gustate.mcga.main.ui.MainPage
+import com.gustate.mcga.panel.AodPanel
 import com.gustate.mcga.panel.HomePanel
 import com.gustate.mcga.panel.SearchPanel
 import com.gustate.mcga.panel.SystemUIPanel
@@ -31,7 +32,7 @@ fun MainNavHost(
         }
         composable("detail/{itemId}") { backStackEntry ->
             val itemId = backStackEntry.arguments?.getString("itemId") ?: "unknown"
-            when(itemId) {
+            when (itemId) {
                 "systemui" -> {
                     SystemUIPanel(
                         onBack = {
@@ -41,6 +42,7 @@ fun MainNavHost(
                         animatedVisibilityScope = this
                     )
                 }
+
                 "home" -> {
                     HomePanel(
                         onBack = {
@@ -50,6 +52,17 @@ fun MainNavHost(
                         animatedVisibilityScope = this
                     )
                 }
+
+                "aod" -> {
+                    AodPanel(
+                        onBack = {
+                            navController.popBackStack()
+                        },
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = this
+                    )
+                }
+
                 "search" -> {
                     SearchPanel(
                         onBack = {

@@ -63,6 +63,54 @@ fun AboutPage(
                 }
             )
         )
+        SplicedColumnGroup(
+            modifier = Modifier,
+            title = stringResource(id = R.string.group),
+            content = listOf(
+                {
+                    val qqLink = "https://qm.qq.com/q/yPA0nIaF2g"
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.qq),
+                        title = stringResource(id = R.string.qq_group),
+                        description = qqLink,
+                        onClick = {
+                            openUrlInBrowser(
+                                context = context,
+                                url = qqLink
+                            )
+                        }
+                    )
+                },
+                {
+                    val telegramLink = "https://t.me/+eYK0laXMEiMxMjc1"
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.telegram),
+                        title = stringResource(id = R.string.telegram_group),
+                        description = telegramLink,
+                        onClick = {
+                            openUrlInBrowser(
+                                context = context,
+                                url = telegramLink
+                            )
+                        }
+                    )
+                },
+                {
+                    val telegramLink = "https://t.me/+1FHZSKBrZrU3MTg1"
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.telegram),
+                        title = stringResource(id = R.string.telegram_group_Xiaomeng),
+                        description = telegramLink,
+                        onClick = {
+                            openUrlInBrowser(
+                                context = context,
+                                url = telegramLink
+                            )
+                        }
+                    )
+                }
+            )
+        )
     }
 }
 

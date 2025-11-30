@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,16 +21,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gustate.mcga.R
-import com.gustate.mcga.data.viewmodel.MainViewModel
+import com.gustate.mcga.data.viewmodel.ModuleViewModel
+import com.gustate.mcga.ui.widget.OptionWidget
+import com.gustate.mcga.ui.widget.SplicedColumnGroup
 import com.kyant.capsule.ContinuousRoundedRectangle
 
 @Composable
 fun HomePage(
     modifier: Modifier,
-    viewModel: MainViewModel
+    viewModel: ModuleViewModel
 ) {
-    val isModuleActive = viewModel.isModuleActive.value ?: false
-    val isRootAvailable = viewModel.isRootAvailable.value ?: false
+    val uiState by viewModel.uiState
     Column(
         modifier = modifier
             .verticalScroll(
@@ -38,8 +40,30 @@ fun HomePage(
             )
     ) {
         XpStateCard(
-            isModuleActive,
-            isRootAvailable = isRootAvailable
+            isModuleActive = uiState.isModuleActive,
+            isRootAvailable = uiState.isRootAvailable
+        )
+        SplicedColumnGroup(
+            modifier = Modifier,
+            title = stringResource(id = R.string.app_config),
+            content = listOf(
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.family_history),
+                        title = stringResource(id = R.string.root_manager),
+                        description = stringResource(id = uiState.rootManagerInfo.rootManagerName),
+                        onClick = {}
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.difference),
+                        title = stringResource(id = R.string.root_manager_version),
+                        description = uiState.rootManagerInfo.rootManagerVer,
+                        onClick = {}
+                    )
+                }
+            )
         )
     }
 }

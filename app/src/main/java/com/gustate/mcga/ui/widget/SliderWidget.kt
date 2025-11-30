@@ -1,5 +1,6 @@
 package com.gustate.mcga.ui.widget
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,14 +15,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gustate.mcga.ui.dialog.TextFieldDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +41,31 @@ fun SliderWidget(
     onValueChange: (Float) -> Unit
 ) {
     val haptic = LocalHapticFeedback.current
-    Column(modifier = Modifier) {
+    var showDialog by remember { mutableStateOf(false) }
+    if (showDialog) {
+        TextFieldDialog(
+            painter = painter,
+            painterDescription = description,
+            title = title,
+            description = description,
+            onDismissRequest = {
+                showDialog = false
+            },
+            onConfirmation = {
+                onValueChange(it)
+                showDialog = false
+            }
+        )
+    }
+    Column(
+        modifier = Modifier
+            .clickable(
+                enabled = enabled,
+                onClick = {
+                    showDialog = true
+                }
+            )
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -111,24 +140,4 @@ fun SliderWidget(
             )
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun SliderWidgetPreview() {
-    val haptic = LocalHapticFeedback.current
-    /*val sliderState =
-        rememberSliderState(
-            value = 1000f,
-            valueRange = 0f..1000f,
-            onValueChangeFinished = {
-                haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-            },
-        )
-    SliderWidget(
-        sliderState = sliderState,
-        painter = painterResource(R.drawable.dock_to_bottom_filled),
-        title = "Dock 模糊强度",
-    )*/
 }

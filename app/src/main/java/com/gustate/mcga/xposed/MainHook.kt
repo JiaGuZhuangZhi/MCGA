@@ -1,5 +1,6 @@
 package com.gustate.mcga.xposed
 
+import com.gustate.mcga.xposed.aod.AodHook
 import com.gustate.mcga.xposed.home.HomeHook
 import com.gustate.mcga.xposed.search.SearchHook
 import com.gustate.mcga.xposed.systemui.SystemuiHook
@@ -16,6 +17,7 @@ class MainHook : IXposedHookLoadPackage {
         HomeHook.applySearchFeature(lpparam)
         SearchHook.applySearchFeature(lpparam)
         SystemuiHook.applySystemUiFeature(lpparam)
+        AodHook.applyAodFeature(lpparam)
     }
 
 }

@@ -1,6 +1,5 @@
 package com.gustate.mcga.xposed.systemui
 
-import android.annotation.SuppressLint
 import com.gustate.mcga.data.keys.SystemUIKeys
 import com.gustate.mcga.xposed.systemui.feature.Aod
 import com.gustate.mcga.xposed.systemui.feature.QSTile
@@ -9,8 +8,9 @@ import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 object SystemuiHook {
-    @SuppressLint("PrivateApi")
+
     fun applySystemUiFeature(lpparam: XC_LoadPackage.LoadPackageParam) {
+
         // 以下内容仅 Hook 系统界面 (com.android.systemui)
         if (lpparam.packageName != "com.android.systemui") return
         val prefs = XSharedPreferences(
@@ -18,6 +18,49 @@ object SystemuiHook {
             "xposed_prefs"
         )
         prefs.makeWorldReadable()
+
+        // QS TILE 1X1
+        val enableCustomQsTileOneXOne = prefs.getBoolean(
+            SystemUIKeys.ENABLE_CUSTOM_QS_TILE_ONE_X_ONE,
+            false
+        )
+        val qsTileOneXOneCornerRadius = prefs.getFloat(
+            SystemUIKeys.QS_TILE_ONE_X_ONE_CORNER_RADIUS,
+            24.0f
+        )
+        if (enableCustomQsTileOneXOne) {
+            QSTile.hookQsOneXOneTile(
+                lpparam = lpparam,
+                bkgCornerRadius = qsTileOneXOneCornerRadius
+            )
+        }
+
+        // Resizeable Tile
+        val enableCustomQsResizeableTile = prefs.getBoolean(
+            SystemUIKeys.ENABLE_CUSTOM_QS_RESIZEABLE_TILE,
+            false
+        )
+        val qsResizeableTileCornerRadius = prefs.getFloat(
+            SystemUIKeys.QS_RESIZEABLE_TILE_CORNER_RADIUS,
+            24.0f
+        )
+        val qsResizeableTileIconBkgCoverColor = prefs.getInt(
+            SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_COVER_COLOR,
+            0X80FFFFFF.toInt()
+        )
+        val qsResizeableTileIconBkgCornerRadius = prefs.getFloat(
+            SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_CORNER_RDS,
+            24.0f
+        )
+        if (enableCustomQsResizeableTile) {
+            QSTile.hookQSResizeableTile(
+                lpparam = lpparam,
+                bkgCornerRadius = qsResizeableTileCornerRadius,
+                iconBkgColor = qsResizeableTileIconBkgCoverColor,
+                iconBkgCornerRadius = qsResizeableTileIconBkgCornerRadius
+            )
+        }
+
         // QS DETAIL
         val enableCustomQsDetail = prefs.getBoolean(
             SystemUIKeys.ENABLE_CUSTOM_QS_DETAIL,
@@ -37,7 +80,7 @@ object SystemuiHook {
         )
         val qsDetailCornerRadius = prefs.getFloat(
             SystemUIKeys.QS_DETAIL_BKG_CORNER_RADIUS,
-            28.0f
+            24.0f
         )
         if (enableCustomQsDetail) {
             QsDetail.hookQsDetailContainer(
@@ -48,21 +91,7 @@ object SystemuiHook {
                 backgroundColor = qsDetailCoverColor
             )
         }
-        // Resizeable Tile
-        val enableCustomQsResizeableTile = prefs.getBoolean(
-            SystemUIKeys.ENABLE_CUSTOM_QS_RESIZEABLE_TILE,
-            false
-        )
-        val qsResizeableTileCornerRadius = prefs.getFloat(
-            SystemUIKeys.QS_RESIZEABLE_TILE_CORNER_RADIUS,
-            28.0f
-        )
-        if (enableCustomQsResizeableTile) {
-            QSTile.hookQSResizeableTile(
-                lpparam = lpparam,
-                cornerRadius = qsResizeableTileCornerRadius
-            )
-        }
+
         // AOD
         val enableAodPanoramicAllDay = prefs.getBoolean(
             SystemUIKeys.ENABLE_AOD_PANORAMIC_ALL_DAY,
@@ -71,5 +100,6 @@ object SystemuiHook {
         if (enableAodPanoramicAllDay) {
             Aod.hookPanoramicAodAllDay(lpparam)
         }
+
     }
 }

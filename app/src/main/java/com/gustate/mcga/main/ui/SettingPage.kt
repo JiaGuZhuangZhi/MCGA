@@ -54,7 +54,7 @@ fun SettingPage(
                             painter = painterResource(id = R.drawable.ic_system_ui),
                             title = stringResource(id = R.string.systemui),
                             onClick = {
-                                navController.navigate("detail/systemui")
+                                navController.navigate(route = "detail/systemui")
                             }
                         )
                     }
@@ -76,7 +76,28 @@ fun SettingPage(
                             painter = painterResource(id = R.drawable.ic_home),
                             title = stringResource(id = R.string.hook_launcher),
                             onClick = {
-                                navController.navigate("detail/home")
+                                navController.navigate(route = "detail/home")
+                            }
+                        )
+                    }
+                }, { shape ->
+                    with(receiver = sharedTransitionScope) {
+                        OptionWidget(
+                            modifier = modifier
+                                .clip(shape)
+                                .sharedBounds(
+                                    sharedContentState =
+                                        rememberSharedContentState(key = "aod"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    enter = fadeIn(),
+                                    exit = fadeOut(),
+                                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
+                                    clipInOverlayDuringTransition = OverlayClip(clipShape = shape)
+                                ),
+                            painter = painterResource(id = R.drawable.aod),
+                            title = stringResource(id = R.string.aod),
+                            onClick = {
+                                navController.navigate(route = "detail/aod")
                             }
                         )
                     }

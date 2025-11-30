@@ -1,6 +1,8 @@
 package com.gustate.mcga.data.keys
 
 object SystemUIKeys {
+    const val ENABLE_CUSTOM_QS_TILE_ONE_X_ONE = "enable_custom_qs_tile_1x1"
+    const val QS_TILE_ONE_X_ONE_CORNER_RADIUS = "qs_tile_1x1_corner_radius"
     const val ENABLE_CUSTOM_QS_DETAIL = "enable_custom_qs_detail"
     const val QS_DETAIL_BKG_COVER_COLOR = "qs_detail_cover_color"
     const val QS_DETAIL_FRG_COVER_COLOR = "qs_detail_cover_frg_color"
@@ -8,5 +10,8 @@ object SystemUIKeys {
     const val QS_DETAIL_BKG_CORNER_RADIUS = "qs_detail_corner_radius"
     const val ENABLE_CUSTOM_QS_RESIZEABLE_TILE = "enable_custom_qs_resizeable_tile"
     const val QS_RESIZEABLE_TILE_CORNER_RADIUS = "qs_resizeable_tile_corner_radius"
+    const val QS_RESIZEABLE_TILE_ICON_BKG_CORNER_RDS = "qs_resizeable_tile_icon_bkg_corner_radius"
+    const val QS_RESIZEABLE_TILE_ICON_BKG_COVER_COLOR = "qs_resizeable_tile_icon_bkg_cover_color"
     const val ENABLE_AOD_PANORAMIC_ALL_DAY = "enable_aod_panoramic_all_day"
+    const val ENABLE_ALL_DAY_AOD_SETTINGS = "enable_all_day_aod_settings"
 }
