@@ -1,6 +1,9 @@
 package com.gustate.mcga.data.keys
 
 object SystemUIKeys {
+    const val ENABLE_CUSTOM_QS_PANEL_LAYOUT = "enable_custom_qs_panel_layout"
+    const val QS_PANEL_STATUS_BAR_MARGIN_TOP = "qs_panel_status_bar_margin_top"
+    const val QS_PANEL_CELL_HEIGHT = "qs_panel_cell_height"
     const val ENABLE_CUSTOM_QS_TILE_ONE_X_ONE = "enable_custom_qs_tile_1x1"
     const val QS_TILE_ONE_X_ONE_CORNER_RADIUS = "qs_tile_1x1_corner_radius"
     const val ENABLE_CUSTOM_QS_DETAIL = "enable_custom_qs_detail"

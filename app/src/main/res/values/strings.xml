@@ -50,4 +50,8 @@
     <string name="telegram_group">Telegram Group</string>
     <string name="telegram_group_Xiaomeng">Xiaomeng\'s Telegram Group</string>
     <string name="group">Group</string>
+    <string name="qs_panel">Overall layout of Quick Settings (QS) Panel</string>
+    <string name="qs_panel_status_bar_margin_top">Top margin of Quick Settings (QS) Panel status bar</string>
+    <string name="qs_panel_status_bar_margin_top_tips">Setting values that are too small may cause the Quick Settings (QS) Panel to fail to display properly</string>
+    <string name="qs_panel_cell_height">Quick Settings (QS) Panel Cell height (without trimming content)</string>
 </resources>

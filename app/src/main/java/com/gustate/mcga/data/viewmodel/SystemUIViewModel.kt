@@ -14,6 +14,18 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
 
     private val _uiState = mutableStateOf(
         value = SystemUIUiState(
+            enableCustomQsPanelLayout = repo.getBoolean(
+                key = SystemUIKeys.ENABLE_CUSTOM_QS_PANEL_LAYOUT,
+                def = false
+            ),
+            qsPanelStatusBarMarginTop = repo.getFloat(
+                key = SystemUIKeys.QS_PANEL_STATUS_BAR_MARGIN_TOP,
+                def = 18.0f
+            ),
+            qsPanelCellHeight = repo.getFloat(
+                key = SystemUIKeys.QS_PANEL_CELL_HEIGHT,
+                def = 76.0f
+            ),
             enableCustomQsTileOneXOne = repo.getBoolean(
                 key = SystemUIKeys.ENABLE_CUSTOM_QS_TILE_ONE_X_ONE,
                 def = false
@@ -69,6 +81,30 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
         )
     )
     val uiState: MutableState<SystemUIUiState> get() = _uiState
+
+    fun updateEnableCustomQsPanelLayout(enabled: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.ENABLE_CUSTOM_QS_PANEL_LAYOUT,
+            value = enabled
+        )
+        _uiState.value = _uiState.value.copy(enableCustomQsPanelLayout = enabled)
+    }
+
+    fun updateQsPanelStatusBarMarginTop(marginTop: Float) {
+        repo.setFloat(
+            key = SystemUIKeys.QS_PANEL_STATUS_BAR_MARGIN_TOP,
+            value = marginTop
+        )
+        _uiState.value = _uiState.value.copy(qsPanelStatusBarMarginTop = marginTop)
+    }
+
+    fun updateQsPanelCellHeight(height: Float) {
+        repo.setFloat(
+            key = SystemUIKeys.QS_PANEL_CELL_HEIGHT,
+            value = height
+        )
+        _uiState.value = _uiState.value.copy(qsPanelCellHeight = height)
+    }
 
     fun updateEnableCustomQsTileOneXOne(enabled: Boolean) {
         repo.setBoolean(

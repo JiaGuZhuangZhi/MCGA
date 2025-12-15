@@ -56,14 +56,13 @@ object QSTile {
                             )
                             setCircleShapeMethod.invoke(outlineProvider, false)
                         } catch (_: Exception) {
-                            // 可能类结构不同，忽略
                         }
                     }
                 }
             )
             log(
                 message = "✅ QsTile1x1 已修改为半径为 " +
-                        "$bkgCornerRadius dp 的圆角矩形，",
+                        "$bkgCornerRadius dp 的圆角矩形",
                 tag = logTag
             )
         } catch (e: Exception) {

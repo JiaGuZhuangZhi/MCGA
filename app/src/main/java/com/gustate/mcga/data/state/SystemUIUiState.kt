@@ -1,6 +1,9 @@
 package com.gustate.mcga.data.state
 
 data class SystemUIUiState(
+    val enableCustomQsPanelLayout: Boolean = false,
+    val qsPanelStatusBarMarginTop: Float = 18.0f,
+    val qsPanelCellHeight: Float = 76.0f,
     val enableCustomQsTileOneXOne: Boolean = false,
     val qsTileOneXOneCornerRadius: Float = 24.0f,
     val enableCustomQsDetail: Boolean = false,

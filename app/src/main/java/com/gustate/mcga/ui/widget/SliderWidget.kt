@@ -2,7 +2,6 @@ package com.gustate.mcga.ui.widget
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -90,12 +89,15 @@ fun SliderWidget(
                 )
             else
                 Spacer(modifier = Modifier.size(24.dp))
-            Box(
+            Row(
                 modifier = Modifier
                     .weight(1f)
                     .align(Alignment.CenterVertically)
             ) {
-                Column {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
                     Text(
                         text = title,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -113,7 +115,7 @@ fun SliderWidget(
                     text = "%.2f"
                         .format(value),
                     modifier = Modifier
-                        .align(Alignment.CenterEnd)
+                        .align(Alignment.CenterVertically)
                 )
             }
         }

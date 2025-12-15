@@ -47,4 +47,8 @@
     <string name="telegram_group">电报群</string>
     <string name="telegram_group_Xiaomeng">孟の电报小窝</string>
     <string name="group">群组</string>
+    <string name="qs_panel">控制中心整体布局</string>
+    <string name="qs_panel_status_bar_margin_top">控制中心状态栏上外边距</string>
+    <string name="qs_panel_status_bar_margin_top_tips">设置过小的值可能会导致控制中心无法正常显示</string>
+    <string name="qs_panel_cell_height">控制中心单元格高度 (不裁切内容)</string>
 </resources>

@@ -2,6 +2,7 @@ package com.gustate.mcga.xposed.systemui
 
 import com.gustate.mcga.data.keys.SystemUIKeys
 import com.gustate.mcga.xposed.systemui.feature.Aod
+import com.gustate.mcga.xposed.systemui.feature.ControlPanel
 import com.gustate.mcga.xposed.systemui.feature.QSTile
 import com.gustate.mcga.xposed.systemui.feature.QsDetail
 import de.robv.android.xposed.XSharedPreferences
@@ -18,6 +19,29 @@ object SystemuiHook {
             "xposed_prefs"
         )
         prefs.makeWorldReadable()
+
+        // QS PANEL LAYOUT
+        val enableCustomQsPanelLayout = prefs.getBoolean(
+            SystemUIKeys.ENABLE_CUSTOM_QS_PANEL_LAYOUT,
+            false
+        )
+        val qsPanelStatusBarMarginTop = prefs.getFloat(
+            SystemUIKeys.QS_PANEL_STATUS_BAR_MARGIN_TOP,
+            18.0f
+        )
+        val qsPanelCellHeight = prefs.getFloat(
+            SystemUIKeys.QS_PANEL_CELL_HEIGHT,
+            76.0f
+        )
+        if (enableCustomQsPanelLayout) {
+            ControlPanel.hookQsPanelStatusBarMarginTop(
+                marginTopDp = qsPanelStatusBarMarginTop
+            )
+            ControlPanel.hookCellHeight(
+                lpparam = lpparam,
+                cellHeightDp = qsPanelCellHeight
+            )
+        }
 
         // QS TILE 1X1
         val enableCustomQsTileOneXOne = prefs.getBoolean(

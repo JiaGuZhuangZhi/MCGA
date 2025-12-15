@@ -2,8 +2,10 @@ package com.gustate.mcga.xposed.helper
 
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
+import com.gustate.mcga.utils.ViewUtils.dpToPx
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
+import kotlin.math.roundToInt
 
 object ResourceHelper {
 
@@ -65,13 +67,15 @@ object ResourceHelper {
     /**
      * Hook getDimensionPixelSize(int) → 返回自定义尺寸（px）
      */
-    fun hookDimensionPixelSize(resId: Int, newSizePx: Int, classLoader: ClassLoader) {
+    fun hookDimensionPixelSize(resId: Int, newSizeDp: Float) {
         XposedHelpers.findAndHookMethod(
             Resources::class.java,
             "getDimensionPixelSize",
             Int::class.javaPrimitiveType,
             object : XC_MethodHook() {
                 override fun beforeHookedMethod(param: MethodHookParam) {
+                    val context = ContextHelper.getContext()
+                    val newSizePx = newSizeDp.dpToPx(context).roundToInt()
                     if (param.args[0] == resId) {
                         param.result = newSizePx
                     }

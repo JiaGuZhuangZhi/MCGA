@@ -65,6 +65,7 @@ fun SystemUIPanel(
                 .verticalScroll(scrollState)
                 .padding(paddingValues)
         ) {
+            QsPanelLayoutSettings(uiState, viewModel)
             QsTileOneXOneSettings(uiState, viewModel)
             QsResizeableTileSettings(uiState, viewModel)
             QsDetailContainerSettings(uiState, viewModel)
@@ -113,6 +114,54 @@ fun SystemUIPanel(
             )
         }
     }
+}
+
+@Composable
+private fun QsPanelLayoutSettings(
+    uiState: SystemUIUiState,
+    viewModel: SystemUIViewModel
+) {
+    SplicedColumnGroup(
+        modifier = Modifier,
+        title = stringResource(id = R.string.qs_panel),
+        content = listOf(
+            {
+                SwitchWidget(
+                    painter = painterResource(id = R.drawable.architecture),
+                    title = stringResource(id = R.string.enable_custom_settings),
+                    checked = uiState.enableCustomQsPanelLayout,
+                    onCheckedChange = { checked ->
+                        viewModel.updateEnableCustomQsPanelLayout(enabled = checked)
+                    }
+                )
+            },
+            {
+                SliderWidget(
+                    painter = painterResource(id = R.drawable.panels_outline),
+                    enabled = uiState.enableCustomQsPanelLayout,
+                    title = stringResource(id = R.string.qs_panel_status_bar_margin_top),
+                    description = stringResource(id = R.string.qs_panel_status_bar_margin_top_tips),
+                    value = uiState.qsPanelStatusBarMarginTop,
+                    valueRange = 8f..64f,
+                    onValueChange = {
+                        viewModel.updateQsPanelStatusBarMarginTop(marginTop = it)
+                    }
+                )
+            },
+            {
+                SliderWidget(
+                    painter = painterResource(id = R.drawable.height),
+                    enabled = uiState.enableCustomQsPanelLayout,
+                    title = stringResource(id = R.string.qs_panel_cell_height),
+                    value = uiState.qsPanelCellHeight,
+                    valueRange = 48f..96f,
+                    onValueChange = {
+                        viewModel.updateQsPanelCellHeight(height = it)
+                    }
+                )
+            }
+        )
+    )
 }
 
 @Composable
