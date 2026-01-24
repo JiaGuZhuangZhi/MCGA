@@ -85,10 +85,6 @@ object QSTile {
                         "OplusQSResizeableTileView",
                 lpparam.classLoader
             )
-            val oplusQSIconViewClass = XposedHelpers.findClass(
-                "com.oplus.systemui.plugins.qs.customize.view.tile.OplusQSIconView",
-                lpparam.classLoader
-            )
             XposedBridge.hookMethod(
                 clazz.getDeclaredMethod("getRadius"),
                 object : XC_MethodReplacement() {
