@@ -13,8 +13,6 @@ object SystemUIKeys {
     const val QS_DETAIL_BKG_CORNER_RADIUS = "qs_detail_corner_radius"
     const val ENABLE_CUSTOM_QS_RESIZEABLE_TILE = "enable_custom_qs_resizeable_tile"
     const val QS_RESIZEABLE_TILE_CORNER_RADIUS = "qs_resizeable_tile_corner_radius"
-    const val QS_RESIZEABLE_TILE_ICON_BKG_CORNER_RDS = "qs_resizeable_tile_icon_bkg_corner_radius"
-    const val QS_RESIZEABLE_TILE_ICON_BKG_COVER_COLOR = "qs_resizeable_tile_icon_bkg_cover_color"
     const val ENABLE_AOD_PANORAMIC_ALL_DAY = "enable_aod_panoramic_all_day"
     const val ENABLE_ALL_DAY_AOD_SETTINGS = "enable_all_day_aod_settings"
 }

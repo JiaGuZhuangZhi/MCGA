@@ -68,20 +68,10 @@ object SystemuiHook {
             SystemUIKeys.QS_RESIZEABLE_TILE_CORNER_RADIUS,
             24.0f
         )
-        val qsResizeableTileIconBkgCoverColor = prefs.getInt(
-            SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_COVER_COLOR,
-            0X80FFFFFF.toInt()
-        )
-        val qsResizeableTileIconBkgCornerRadius = prefs.getFloat(
-            SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_CORNER_RDS,
-            24.0f
-        )
         if (enableCustomQsResizeableTile) {
             QSTile.hookQSResizeableTile(
                 lpparam = lpparam,
-                bkgCornerRadius = qsResizeableTileCornerRadius,
-                iconBkgColor = qsResizeableTileIconBkgCoverColor,
-                iconBkgCornerRadius = qsResizeableTileIconBkgCornerRadius
+                bkgCornerRadius = qsResizeableTileCornerRadius
             )
         }
 

@@ -62,14 +62,6 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
                 key = SystemUIKeys.QS_RESIZEABLE_TILE_CORNER_RADIUS,
                 def = 24.0f
             ),
-            qsResizeableTileIconBkgCornerRadius = repo.getFloat(
-                key = SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_CORNER_RDS,
-                def = 24.0f
-            ),
-            qsResizeableTileIconBkgCoverColor = repo.getInt(
-                key = SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_COVER_COLOR,
-                def = 0X80FFFFFF.toInt()
-            ),
             enableAodPanoramicAllDay = repo.getBoolean(
                 key = SystemUIKeys.ENABLE_AOD_PANORAMIC_ALL_DAY,
                 def = false
@@ -176,22 +168,6 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
             value = value
         )
         _uiState.value = _uiState.value.copy(qsResizeableTileCornerRadius = value)
-    }
-
-    fun updateQsResizeableTileIconBkgCornerRadius(value: Float) {
-        repo.setFloat(
-            key = SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_CORNER_RDS,
-            value = value
-        )
-        _uiState.value = _uiState.value.copy(qsResizeableTileIconBkgCornerRadius = value)
-    }
-
-    fun updateQsResizeableTileIconBkgCoverColor(value: Int) {
-        repo.setInt(
-            key = SystemUIKeys.QS_RESIZEABLE_TILE_ICON_BKG_COVER_COLOR,
-            value = value
-        )
-        _uiState.value = _uiState.value.copy(qsResizeableTileIconBkgCoverColor = value)
     }
 
     fun updateEnableAodPanoramicAllDay(value: Boolean) {

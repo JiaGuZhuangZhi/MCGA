@@ -13,8 +13,6 @@ data class SystemUIUiState(
     val qsDetailBkgCornerRadius: Float = 24.0f,
     val enableCustomQsResizeableTile: Boolean = false,
     val qsResizeableTileCornerRadius: Float = 24.0f,
-    val qsResizeableTileIconBkgCornerRadius: Float = 24.0f,
-    val qsResizeableTileIconBkgCoverColor: Int = 0X80FFFFFF.toInt(),
     val enableAodPanoramicAllDay: Boolean = false,
     val enableAllDayAodSettings: Boolean = false
 )

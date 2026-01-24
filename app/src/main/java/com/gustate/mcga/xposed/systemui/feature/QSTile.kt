@@ -1,7 +1,6 @@
 package com.gustate.mcga.xposed.systemui.feature
 
 import android.content.Context
-import android.graphics.drawable.GradientDrawable
 import android.view.View
 import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.utils.ViewUtils.dpToPx
@@ -78,9 +77,7 @@ object QSTile {
 
     fun hookQSResizeableTile(
         lpparam: XC_LoadPackage.LoadPackageParam,
-        bkgCornerRadius: Float,
-        iconBkgCornerRadius: Float,
-        iconBkgColor: Int
+        bkgCornerRadius: Float
     ) {
         try {
             val clazz = XposedHelpers.findClass(
@@ -108,29 +105,9 @@ object QSTile {
                     }
                 }
             )
-            XposedBridge.hookMethod(
-                oplusQSIconViewClass.getDeclaredMethod("getIconBackground"),
-                object : XC_MethodReplacement() {
-                    override fun replaceHookedMethod(param: MethodHookParam): Any {
-                        val view = param.thisObject
-                        val context = XposedHelpers.getObjectField(
-                            view, "mContext"
-                        ) as? Context
-                            ?: throw IllegalStateException("Context is null")
-                        val radiusPx = iconBkgCornerRadius.dpToPx(context)
-                        val drawable = GradientDrawable().apply {
-                            shape = GradientDrawable.RECTANGLE
-                            cornerRadius = radiusPx
-                            setColor(iconBkgColor)
-                        }
-                        return drawable
-                    }
-                }
-            )
             log(
                 message = "✅ 成功修改 QSResizeableTile" +
-                        "整体背景圆角半径：$bkgCornerRadius" +
-                        "图标背景圆角半径：$iconBkgCornerRadius",
+                        "整体背景圆角半径：$bkgCornerRadius",
                 tag = "QSResizeableTile"
             )
         } catch (e: Throwable) {

@@ -229,48 +229,6 @@ private fun QsResizeableTileSettings(
                         viewModel.updateQsResizeableTileCornerRadius(value = it)
                     }
                 )
-            },
-            {
-                var showDialog by remember { mutableStateOf(false) }
-                OptionWidget(
-                    painter = painterResource(id = R.drawable.format_color_fill),
-                    enabled = uiState.enableCustomQsDetail,
-                    title = stringResource(id = R.string.icon_bkg_color),
-                    description = String.format(
-                        "#%08X",
-                        uiState.qsResizeableTileIconBkgCoverColor.and(0xFFFFFFFF.toInt())
-                    ),
-                    onClick = {
-                        showDialog = true
-                    }
-                )
-                if (showDialog) {
-                    ColorPickDialog(
-                        painter = painterResource(id = R.drawable.format_color_fill),
-                        title = stringResource(id = R.string.icon_bkg_color),
-                        description = stringResource(id = R.string.color_picker),
-                        initialColor = uiState.qsResizeableTileIconBkgCoverColor,
-                        onConfirmation = {
-                            viewModel.updateQsResizeableTileIconBkgCoverColor(value = it)
-                            showDialog = false
-                        },
-                        onDismissRequest = {
-                            showDialog = false
-                        }
-                    )
-                }
-            },
-            {
-                SliderWidget(
-                    painter = painterResource(id = R.drawable.rounded_corner),
-                    enabled = uiState.enableCustomQsResizeableTile,
-                    title = stringResource(id = R.string.icon_bkg_corner_radius),
-                    value = uiState.qsResizeableTileIconBkgCornerRadius,
-                    valueRange = 0f..36f,
-                    onValueChange = {
-                        viewModel.updateQsResizeableTileIconBkgCornerRadius(value = it)
-                    }
-                )
             }
         )
     )
