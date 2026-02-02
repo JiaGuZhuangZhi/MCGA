@@ -116,4 +116,32 @@ object QSTile {
             throw e
         }
     }
+
+    fun hookCustomizeQsTileRowColumns(
+        lpparam: XC_LoadPackage.LoadPackageParam,
+        columns: Int
+    ) {
+        try {
+            XposedHelpers.findAndHookMethod(
+                "com.oplus.systemui.plugins.qs.CellCalculatorManager",
+                lpparam.classLoader,
+                "setNoPersonalRowCountPort",
+                Int::class.java,
+                object : XC_MethodHook() {
+                    override fun beforeHookedMethod(param: MethodHookParam?) {
+                        super.beforeHookedMethod(param)
+                        param?.args[0] = 5
+                    }
+                }
+            )
+        } catch (e: Exception) {
+            log(
+                message = "❌ 修改 QSResizeableTile 失败" +
+                        "错误信息: ${e.message}," +
+                        "详情可在 com.gustate.mcga 中查看",
+                tag = "QSResizeableTile"
+            )
+            throw e
+        }
+    }
 }
