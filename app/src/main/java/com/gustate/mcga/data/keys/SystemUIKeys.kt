@@ -6,6 +6,7 @@ object SystemUIKeys {
     const val QS_PANEL_CELL_HEIGHT = "qs_panel_cell_height"
     const val ENABLE_CUSTOM_QS_TILE_ONE_X_ONE = "enable_custom_qs_tile_1x1"
     const val QS_TILE_ONE_X_ONE_CORNER_RADIUS = "qs_tile_1x1_corner_radius"
+    const val QS_TILE_ONE_X_ONE_ROW_COLUMNS = "qs_tile_1x1_row_columns"
     const val ENABLE_CUSTOM_QS_DETAIL = "enable_custom_qs_detail"
     const val QS_DETAIL_BKG_COVER_COLOR = "qs_detail_cover_color"
     const val QS_DETAIL_FRG_COVER_COLOR = "qs_detail_cover_frg_color"

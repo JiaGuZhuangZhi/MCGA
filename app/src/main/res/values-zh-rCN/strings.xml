@@ -51,4 +51,5 @@
     <string name="qs_panel_status_bar_margin_top">控制中心状态栏上外边距</string>
     <string name="qs_panel_status_bar_margin_top_tips">设置过小的值可能会导致控制中心无法正常显示</string>
     <string name="qs_panel_cell_height">控制中心单元格高度 (不裁切内容)</string>
+    <string name="list_row_count">列表行数</string>
 </resources>

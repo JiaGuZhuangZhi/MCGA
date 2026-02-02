@@ -194,6 +194,19 @@ private fun QsTileOneXOneSettings(
                         viewModel.updateQsTileOneXOneCornerRadius(bkgCornerRadius = it)
                     }
                 )
+            },
+            {
+                SliderWidget(
+                    painter = painterResource(id = R.drawable.table_rows_narrow),
+                    enabled = uiState.enableCustomQsTileOneXOne,
+                    title = stringResource(id = R.string.list_row_count),
+                    value = uiState.qsTileOneXOneRowColumns.toFloat(),
+                    steps = 7,
+                    valueRange = 0f..8f,
+                    onValueChange = {
+                        viewModel.updateQsTileOneXOneRowColumns(columns = it.toInt())
+                    }
+                )
             }
         )
     )

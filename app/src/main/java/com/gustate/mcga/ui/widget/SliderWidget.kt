@@ -36,6 +36,7 @@ fun SliderWidget(
     description: String? = null,
     enabled: Boolean = true,
     value: Float,
+    steps: Int = 0,
     valueRange: ClosedFloatingPointRange<Float>,
     onValueChange: (Float) -> Unit
 ) {
@@ -132,6 +133,7 @@ fun SliderWidget(
             Slider(
                 value = value,
                 valueRange = valueRange,
+                steps = steps,
                 onValueChange = onValueChange,
                 onValueChangeFinished = {
                     haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)

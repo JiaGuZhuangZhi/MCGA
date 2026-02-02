@@ -34,6 +34,10 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
                 key = SystemUIKeys.QS_TILE_ONE_X_ONE_CORNER_RADIUS,
                 def = 24f
             ),
+            qsTileOneXOneRowColumns = repo.getInt(
+                key = SystemUIKeys.QS_TILE_ONE_X_ONE_ROW_COLUMNS,
+                def = 4
+            ),
             enableCustomQsDetail = repo.getBoolean(
                 key = SystemUIKeys.ENABLE_CUSTOM_QS_DETAIL,
                 def = false
@@ -112,6 +116,14 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
             value = bkgCornerRadius
         )
         _uiState.value = _uiState.value.copy(qsTileOneXOneCornerRadius = bkgCornerRadius)
+    }
+
+    fun updateQsTileOneXOneRowColumns(columns: Int) {
+        repo.setInt(
+            key = SystemUIKeys.QS_TILE_ONE_X_ONE_ROW_COLUMNS,
+            value = columns
+        )
+        _uiState.value = _uiState.value.copy(qsTileOneXOneRowColumns = columns)
     }
 
     fun updateEnableCustomQsDetail(enabled: Boolean) {

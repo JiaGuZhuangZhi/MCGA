@@ -52,10 +52,18 @@ object SystemuiHook {
             SystemUIKeys.QS_TILE_ONE_X_ONE_CORNER_RADIUS,
             24.0f
         )
+        val qsTileOneXOneRowColumns = prefs.getInt(
+            SystemUIKeys.QS_TILE_ONE_X_ONE_ROW_COLUMNS,
+            4
+        )
         if (enableCustomQsTileOneXOne) {
             QSTile.hookQsOneXOneTile(
                 lpparam = lpparam,
                 bkgCornerRadius = qsTileOneXOneCornerRadius
+            )
+            QSTile.hookQsTileOneXOneRowColumns(
+                lpparam = lpparam,
+                columns = qsTileOneXOneRowColumns
             )
         }
 

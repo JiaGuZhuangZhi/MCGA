@@ -1,9 +1,12 @@
 package com.gustate.mcga.xposed.systemui.feature
 
+import android.view.View
+import androidx.core.view.updateLayoutParams
 import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.utils.ViewUtils.dpToPx
 import com.gustate.mcga.xposed.helper.ContextHelper
 import com.gustate.mcga.xposed.helper.ResourceHelper
+import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
@@ -45,7 +48,7 @@ object ControlPanel {
     ) {
         val logTag = "ControlPanel"
         try {
-            // 加载内部类
+            // 修改布局行高
             val cellSizeClass = XposedHelpers.findClass(
                 "com.oplus.systemui.plugins.qs.CellCalculatorManager\$CellSize",
                 lpparam.classLoader
@@ -63,6 +66,43 @@ object ControlPanel {
                             tag = logTag
                         )
                         return cellHeightPx
+                    }
+                }
+            )
+            // 修改媒体卡片行高
+            XposedHelpers.findAndHookMethod(
+                "com.oplus.systemui.qs.media.OplusQsBaseMediaPanelView",
+                lpparam.classLoader,
+                "onMeasure",
+                Int::class.java,
+                Int::class.java,
+                object : XC_MethodHook() {
+                    override fun afterHookedMethod(param: MethodHookParam) {
+                        super.afterHookedMethod(param)
+                        val view = param.thisObject
+                        val customHeightPx =
+                            ((cellHeightDp * 2) - (cellHeightDp - 61))
+                                .dpToPx(ContextHelper.getContext())
+                        (view as View).updateLayoutParams {
+                            height = customHeightPx.roundToInt()
+                        }
+                    }
+                }
+            )
+            // 修改那俩 Seekbar 行高
+            XposedHelpers.findAndHookMethod(
+                "com.oplus.systemui.qs.base.seek.OplusQsBaseToggleSliderLayout",
+                lpparam.classLoader,
+                "onAttachedToWindow",
+                object : XC_MethodHook() {
+                    override fun afterHookedMethod(param: MethodHookParam) {
+                        val layout = param.thisObject as View
+                        val customHeightPx =
+                            ((cellHeightDp * 2) - (cellHeightDp - 61))
+                                .dpToPx(ContextHelper.getContext())
+                        layout.updateLayoutParams {
+                            height = customHeightPx.roundToInt()
+                        }
                     }
                 }
             )

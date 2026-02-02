@@ -6,6 +6,7 @@ data class SystemUIUiState(
     val qsPanelCellHeight: Float = 76.0f,
     val enableCustomQsTileOneXOne: Boolean = false,
     val qsTileOneXOneCornerRadius: Float = 24.0f,
+    val qsTileOneXOneRowColumns: Int = 4,
     val enableCustomQsDetail: Boolean = false,
     val qsDetailBkgCoverColor: Int = 0X80000000.toInt(),
     val qsDetailFrgCoverColor: Int = 0X80000000.toInt(),
