@@ -74,7 +74,6 @@ object QsDetail {
                                     "详情可在 com.gustate.mcga 中查看",
                             tag = "QsDetail"
                         )
-                        throw e
                     }
                 }
             }

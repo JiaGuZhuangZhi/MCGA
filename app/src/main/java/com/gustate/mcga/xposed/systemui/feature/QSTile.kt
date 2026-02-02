@@ -71,7 +71,6 @@ object QSTile {
                         "详情可在 com.gustate.mcga 中查看",
                 tag = logTag
             )
-            throw e
         }
     }
 
@@ -113,7 +112,6 @@ object QSTile {
                         "详情可在 com.gustate.mcga 中查看",
                 tag = "QSResizeableTile"
             )
-            throw e
         }
     }
 
@@ -141,7 +139,6 @@ object QSTile {
                         "详情可在 com.gustate.mcga 中查看",
                 tag = "QSResizeableTile"
             )
-            throw e
         }
     }
 }

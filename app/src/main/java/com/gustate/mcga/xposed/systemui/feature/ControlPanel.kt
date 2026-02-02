@@ -33,7 +33,6 @@ object ControlPanel {
                         "错误信息: ${e.message}," +
                         "详情可在 com.gustate.mcga 中查看"
             )
-            throw e
         }
     }
 
@@ -73,7 +72,6 @@ object ControlPanel {
                 tag = logTag,
                 throwable = e
             )
-            throw e
         }
     }
 

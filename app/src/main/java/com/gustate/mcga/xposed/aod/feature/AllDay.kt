@@ -32,7 +32,6 @@ object AllDay {
                         "详情可在 com.gustate.mcga 中查看",
                 tag = "息屏"
             )
-            throw e
         }
     }
 }

@@ -37,7 +37,7 @@ object Aod {
                                     message = "✅ 成功启用 Panoramic All-Day AOD",
                                     tag = "PanoramicAllDay"
                                 )
-                                hasPatchedPanoramicAllDay ++
+                                hasPatchedPanoramicAllDay++
                             }
                         } catch (e: Exception) {
                             log(
@@ -46,7 +46,6 @@ object Aod {
                                         "详情可在 com.gustate.mcga 中查看",
                                 tag = "PanoramicAllDay"
                             )
-                            throw e
                         }
                     }
                 }
