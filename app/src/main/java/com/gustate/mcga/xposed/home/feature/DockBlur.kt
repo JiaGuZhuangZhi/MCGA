@@ -118,7 +118,7 @@ object DockBlur {
 
             XposedBridge.log("DockBlurHook: Successfully forced Dock blur on phone.")
         } catch (e: Throwable) {
-            XposedBridge.log("DockBlurHook error: ${e.message}")
+            XposedBridge.log("DockBlurHook 发生错误: ${e.message}")
             e.printStackTrace()
         }
     }
