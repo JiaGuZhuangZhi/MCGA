@@ -14,8 +14,7 @@ class HomeViewModel(context: Application) : AndroidViewModel(context) {
     private val _uiState = mutableStateOf(
         value = HomeUiState(
             enableDockBlur = repo.getBoolean(HomeKeys.ENABLE_DOCK_BLUR),
-            hideDrawerName = repo.getBoolean(HomeKeys.HIDE_DRAWER_NAME),
-            clearAllButton = repo.getBoolean(HomeKeys.CLEAR_ALL_BUTTON)
+            hideDrawerName = repo.getBoolean(HomeKeys.HIDE_DRAWER_NAME)
         )
     )
     val uiState: MutableState<HomeUiState> = _uiState
@@ -28,10 +27,5 @@ class HomeViewModel(context: Application) : AndroidViewModel(context) {
     fun updateHideAppName(enabled: Boolean) {
         repo.setBoolean(HomeKeys.HIDE_DRAWER_NAME, enabled)
         _uiState.value = _uiState.value.copy(hideDrawerName = enabled)
-    }
-
-    fun updateClearAllButton(enabled: Boolean) {
-        repo.setBoolean(HomeKeys.CLEAR_ALL_BUTTON, enabled)
-        _uiState.value = _uiState.value.copy(clearAllButton = enabled)
     }
 }

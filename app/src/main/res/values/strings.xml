@@ -55,12 +55,4 @@
     <string name="qs_panel_status_bar_margin_top_tips">Setting values that are too small may cause the Quick Settings (QS) Panel to fail to display properly</string>
     <string name="qs_panel_cell_height">Quick Settings (QS) Panel Cell height (without trimming content)</string>
     <string name="list_row_count">Number of rows in the list</string>
-    <string name="wallet">Wallet</string>
-    <string name="nfc_page">NFC Page</string>
-    <string name="dark">Dark</string>
-    <string name="light">Light</string>
-    <string name="enable_option_smooth_rounded_corners">Enable tab smooth rounded corners</string>
-    <string name="option_corner_radius">Option Corner Radius</string>
-    <string name="option_alpha">Option Alpha</string>
-    <string name="modify_the_clear_all_apps_button">Modify the Clear All Apps button</string>
 </resources>

@@ -78,16 +78,6 @@ fun HomePanel(
                                 viewModel.updateHideAppName(checked)
                             }
                         )
-                    },
-                    {
-                        SwitchWidget(
-                            painter = painterResource(id = R.drawable.family_history),
-                            title = stringResource(R.string.modify_the_clear_all_apps_button),
-                            checked = uiState.clearAllButton,
-                            onCheckedChange = { checked ->
-                                viewModel.updateClearAllButton(checked)
-                            }
-                        )
                     }
                 )
             )

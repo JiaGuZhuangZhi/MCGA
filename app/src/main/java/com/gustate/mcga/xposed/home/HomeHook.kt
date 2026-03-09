@@ -3,7 +3,6 @@ package com.gustate.mcga.xposed.home
 import com.gustate.mcga.data.keys.HomeKeys
 import com.gustate.mcga.xposed.home.feature.DockBlur
 import com.gustate.mcga.xposed.home.feature.DrawerAppName
-import com.gustate.mcga.xposed.home.feature.Recent
 import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
@@ -24,12 +23,7 @@ object HomeHook {
             HomeKeys.HIDE_DRAWER_NAME,
             false
         )
-        val clearAllButton = prefs.getBoolean(
-            HomeKeys.CLEAR_ALL_BUTTON,
-            false
-        )
         if (enableBlur) DockBlur.enableDockBlur(lpparam)
         if (goneDrawerAppName) DrawerAppName.goneDrawerAppName(lpparam)
-        if (clearAllButton) Recent.changeClearAllButton(lpparam)
     }
 }

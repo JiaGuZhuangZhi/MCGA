@@ -115,28 +115,6 @@ fun SettingPage(
                                 .clip(shape)
                                 .sharedBounds(
                                     sharedContentState =
-                                        rememberSharedContentState(key = "wallet"),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    enter = fadeIn(),
-                                    exit = fadeOut(),
-                                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
-                                    clipInOverlayDuringTransition = OverlayClip(clipShape = shape)
-                                ),
-                            painter = painterResource(id = R.drawable.ic_wallet),
-                            title = stringResource(id = R.string.wallet),
-                            onClick = {
-                                navController.navigate("detail/wallet")
-                            }
-                        )
-                    }
-                },
-                { shape ->
-                    with(receiver = sharedTransitionScope) {
-                        OptionWidget(
-                            modifier = modifier
-                                .clip(shape)
-                                .sharedBounds(
-                                    sharedContentState =
                                         rememberSharedContentState(key = "search"),
                                     animatedVisibilityScope = animatedVisibilityScope,
                                     enter = fadeIn(),
