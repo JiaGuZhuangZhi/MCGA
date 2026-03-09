@@ -11,6 +11,7 @@ import com.gustate.mcga.panel.AodPanel
 import com.gustate.mcga.panel.HomePanel
 import com.gustate.mcga.panel.SearchPanel
 import com.gustate.mcga.panel.SystemUIPanel
+import com.gustate.mcga.panel.WalletPanel
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -65,6 +66,16 @@ fun MainNavHost(
 
                 "search" -> {
                     SearchPanel(
+                        onBack = {
+                            navController.popBackStack()
+                        },
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = this
+                    )
+                }
+
+                "wallet" -> {
+                    WalletPanel(
                         onBack = {
                             navController.popBackStack()
                         },

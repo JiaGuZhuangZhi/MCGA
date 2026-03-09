@@ -4,5 +4,6 @@
         <item>com.heytap.quicksearchbox</item>
         <item>com.android.systemui</item>
         <item>com.oplus.aod</item>
+        <item>com.finshell.wallet</item>
     </string-array>
 </resources>
