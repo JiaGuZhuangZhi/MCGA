@@ -52,4 +52,12 @@
     <string name="qs_panel_status_bar_margin_top_tips">设置过小的值可能会导致控制中心无法正常显示</string>
     <string name="qs_panel_cell_height">控制中心单元格高度 (不裁切内容)</string>
     <string name="list_row_count">列表行数</string>
+    <string name="wallet">钱包</string>
+    <string name="nfc_page">NFC 刷卡页面</string>
+    <string name="dark">深色模式</string>
+    <string name="light">浅色模式</string>
+    <string name="enable_option_smooth_rounded_corners">启用选项卡平滑圆角</string>
+    <string name="option_corner_radius">选项卡圆角半径</string>
+    <string name="option_alpha">选项卡透明度</string>
+    <string name="modify_the_clear_all_apps_button">修改清除全部应用按钮</string>
 </resources>
