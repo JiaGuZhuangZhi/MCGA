@@ -5,5 +5,6 @@
         <item>com.android.systemui</item>
         <item>com.oplus.aod</item>
         <item>com.finshell.wallet</item>
+        <item>com.tencent.wetype</item>
     </string-array>
 </resources>

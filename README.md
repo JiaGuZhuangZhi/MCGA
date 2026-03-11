@@ -1,5 +1,7 @@
 # 🚀 MCGA - Make Color Great Again!
 
+> **"在默认的荒原之上，重筑秩序的方舟。"**
+
 <p align="center">
   <img src="./icon.svg" alt="MCGA Logo" width="128" />
 </p>
@@ -24,7 +26,14 @@
   </a>
 </p>
 
-## 📦 下载方式
+## 📜 序幕 前言
+
+我们生活在一个被预设好的时代。
+冗余的 UI 堆砌、消失的模糊动效、被禁锢的 AOD。
+**MCGA** 的诞生，并非为了增加功能，而是为了「减去」平庸。
+它是一把手术刀，精准地切开系统框架，在逻辑的缝隙里，还原色彩与光影最本真的样子。
+
+## 📦 序奏 下载方式
 
 你可以通过以下任一方式获取 MCGA 模块：
 
@@ -36,33 +45,36 @@
 - **第三方分发链接（提取码 MCGA）**  
   👉 [https://www.123865.com/s/qQ9uVv-Eugo?pwd=MCGA](https://www.123865.com/s/qQ9uVv-Eugo?pwd=MCGA)
 
-## ✨ 功能特性
+## 🧪 间奏 炼金术
 
-| 作用域  | 功能类别        | 功能名称           |
-|------|-------------|----------------|
-| 系统界面 | 快速设置面板      | 背景覆盖颜色         |
-| 系统界面 | 快速设置面板      | 前景覆盖颜色         |
-| 系统界面 | 快速设置面板      | 背景模糊半径         |
-| 系统界面 | 快速设置面板      | 背景圆角半径         |
-| 系统界面 | 快速设置可调整大小磁贴 | 背景圆角半径         |
-| 系统界面 | AOD         | 启用全天候全景沉浸AOD   |
-| 系统桌面 | 桌面          | 强制启用 Dock 栏模糊  |
-| 系统桌面 | 桌面          | 隐藏“抽屉全部页”应用名称  |
-| 全局搜索 | 应用建议        | 隐藏“应用建议”中的应用名称 |
-| 全局搜索 | 应用建议        | 修正“应用建议”卡片的高度  |
+### ✦ 幽影律动 (System Interface)
 
-## 🛠️ 技术栈
+* **色彩重构**：自定义 QS 面板覆盖色，打破非黑即白的视觉禁锢。
+* **光影流转**：控制中心的色彩如我们所书。
+* **永恒凝视**：破除锁屏限制，赋予 AOD 全天候的全景沉浸。
 
-本模块基于以下开源技术构建：
+### ✦ 几何美学 (Desktop & Logic)
 
-```kotlin
-implementation(libs.androidx.core.ktx)
-implementation(libs.androidx.recyclerview)
-implementation(libs.androidx.compose)
-implementation(libs.kyant0.capsule)
-implementation(libs.compose.colorpicker)
-compileOnly(libs.xposed.api)
-```
+* **平滑之径**：引入连续性算法，为选项卡注入 G2 级圆角灵魂。
+* **视觉消隐**：隐藏抽屉与搜索栏的冗余文本，让图标本身说话。
+* **支付诗学**：针对钱包刷卡页的深度渲染 Hook，让每一次交互都带有毛玻璃的质感。
+
+## 🛠️ 幕间 技术栈
+
+本模块基于开源技术构建
+
+站在巨人的肩膀之上：
+
+> **借由代码的意志，对抗系统的熵增**
+
+- [**LSPosed**](https://github.com/LSPosed/LSPosed) – 现代化 Xposed 实现
+- [**Xposed Bridge**](https://github.com/rovo89/XposedBridge) – Hook 框架基石
+- [**AndroidX**](https://developer.android.com/jetpack/androidx) – Jetpack 核心组件
+- [**Capsule**](https://github.com/kyant0/Capsule) – 平滑圆角
+- [**haze**](https://github.com/chrisbanes/haze) – 模糊
+- [**Compose ColorPicker**](https://github.com/SmartToolFactory/Compose-Colorful) – 颜色选择器
+
+以及 ———— 反编译工具（JADX）和开源社区的无私分享。
 
 ### 核心依赖说明
 
@@ -73,7 +85,7 @@ compileOnly(libs.xposed.api)
 | `Capsule`    | 平滑圆角       |
 | `haze`       | 模糊效果       |
 
-## ⚠️ 安全须知与法律声明
+## ⚠️ 主旋律 安全须知与法律声明
 
 ### 🔒 安全说明
 
@@ -87,7 +99,7 @@ compileOnly(libs.xposed.api)
 - **禁止用于商业用途、二次分发牟利或破坏系统安全**。
 - 使用本模块即表示你已阅读并同意：
     - 遵守所在国家/地区的法律法规。
-    - **不向设备厂商（OPPO/一加/realme）投诉因本模块导致的问题**。
+    - **不向设备厂商（OPPO/OnePlus/Realme）投诉因本模块导致的问题**。
     - 项目仓库涉及对系统 APK 的分析，仅用于理解内部逻辑，**未包含任何反编译代码**。
     - **请勿用于商业用途**，亦不得用于破坏系统稳定性或侵犯他人设备安全。
     - 作者 **不承担** 因使用本模块导致的任何设备损坏、数据丢失或违反厂商保修条款的责任。
@@ -96,51 +108,28 @@ compileOnly(libs.xposed.api)
 
 > 📜 本项目 **不隶属于 OPPO、OnePlus、ColorOS 或任何商业实体**。
 
-## 🙏 致谢
-
-本项目站在巨人的肩膀上，特别感谢以下开源项目：
-
-- [**LSPosed**](https://github.com/LSPosed/LSPosed) – 现代化 Xposed 实现
-- [**Xposed Bridge**](https://github.com/rovo89/XposedBridge) – Hook 框架基石
-- [**AndroidX**](https://developer.android.com/jetpack/androidx) – Jetpack 核心组件
-- [**Capsule**](https://github.com/kyant0/Capsule) – 平滑圆角
-- [**haze**](https://github.com/chrisbanes/haze) – 模糊
-- [**Compose ColorPicker**](https://github.com/SmartToolFactory/Compose-Colorful) – 颜色选择器
-
-同时也感谢所有反编译工具（JADX）和开源社区的无私分享。
+## 🕊️ 变奏 关于民主、自由与土地
 
 <div align="center"><a href="https://github.com/Safouene1/support-palestine-banner/blob/master/Markdown-pages/Support.md"><img src="https://raw.githubusercontent.com/Safouene1/support-palestine-banner/master/banner-support.svg" alt="Support Palestine" style="width: 100%;"></a></div>
 
-## 📬 反馈与贡献
+在编译器文字的律动之外，我们听得见时代与人民的歌声。
+
+我们歌颂**巴勒斯坦土地上不屈的人民**，愿苦难在**正义**中终结；
+我们倾听**东欧平原的最终乐章**，愿**主权与和平**重回宁静的家园。
+
+我们**拒绝帝国主义的傲慢意志**，**拒绝犹太复国主义的扩张暴行**，
+更**警惕一切以「民族」为幌子**的极端狂热。
+
+世界应当是 **多样的**，如同我们手中的代码，**不应只有一种预设**。
+
+## 📬 终幕 反馈与贡献
 
 - 🐞 发现 Bug？ → [提交 Issue](https://github.com/JiaGuZhuangZhi/MCGA/issues)
 - 💡 有新想法？ → 欢迎 PR！
 - ❓ 使用问题？ → 请先查阅 [Wiki](https://github.com/JiaGuZhuangZhi/MCGA/wiki)（建设中）
 
+### 感谢 [@tikaliu](http://www.coolapk.com/u/36684465)
+
+### 感谢 [@Perpetual-Memories](https://github.com/Perpetual-Memories)
+
 > 🌟 如果你觉得 MCGA 好用，请点个 **Star**！这是对我最大的鼓励！
-
-## 📄 许可证
-
-> Made with ❤️ by a 16-year-old high school student who just wants a cleaner home screen.  
-> Keep coding, keep customizing!
-
-本项目采用 [**Apache License 2.0**](LICENSE) 开源协议。
-
-```
-Copyright 2025 JiaGuZhuangZhi
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
-
-> **Make Color Great Again.**  
-> —— 致敬每一个不甘于默认界面的灵魂。
