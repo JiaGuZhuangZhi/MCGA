@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.gustate.mcga.R
+import com.gustate.mcga.ui.navgation.Destination
 import com.gustate.mcga.ui.widget.OptionWidget
 import com.gustate.mcga.ui.widget.SplicedColumnGroup
 
@@ -54,7 +55,7 @@ fun SettingPage(
                             painter = painterResource(id = R.drawable.ic_system_ui),
                             title = stringResource(id = R.string.systemui),
                             onClick = {
-                                navController.navigate(route = "detail/systemui")
+                                navController.navigate(route = Destination.SYSTEMUI_HOST.route)
                             }
                         )
                     }

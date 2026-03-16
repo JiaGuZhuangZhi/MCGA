@@ -15,7 +15,7 @@ import kotlin.math.pow
  * 针对 View 系统优化的 G2 平滑圆角 Drawable
  * 适用于 Xposed 注入 Wallet 等应用，实现 iOS/HyperOS 风格的超椭圆效果
  */
-class SquircleDrawable(private val cornerRadiusDp: Int) : Drawable() {
+class SquircleDrawable(private val cornerRadiusPx: Int) : Drawable() {
 
     // 配置：哪些角需要保持直角（用于卡片拼接）
     var skipTopLeft = false
@@ -63,7 +63,7 @@ class SquircleDrawable(private val cornerRadiusDp: Int) : Drawable() {
         val right = bounds.right.toFloat()
         val bottom = bounds.bottom.toFloat()
 
-        val radius = cornerRadiusDp.toFloat()
+        val radius = cornerRadiusPx.toFloat()
         val smooth = 0.6f // G2 平滑系数
 
         // 核心数学推导
@@ -147,4 +147,11 @@ class SquircleDrawable(private val cornerRadiusDp: Int) : Drawable() {
         ReplaceWith("PixelFormat.TRANSLUCENT", "android.graphics.PixelFormat")
     )
     override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
+
+    fun getClipPath(bounds: Rect): Path {
+        updatePath(bounds)
+        return path
+    }
+
+
 }

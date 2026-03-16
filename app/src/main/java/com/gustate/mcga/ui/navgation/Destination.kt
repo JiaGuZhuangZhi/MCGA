@@ -2,5 +2,7 @@ package com.gustate.mcga.ui.navgation
 
 enum class Destination(val route: String) {
     MAIN(route = "main"),
-    DETAIL(route = "detail")
+    SYSTEMUI(route = "systemui"),
+    SYSTEMUI_HOST(route = "systemui_host"),
+    SYSTEMUI_TILE(route = "systemui/tile"),
 }

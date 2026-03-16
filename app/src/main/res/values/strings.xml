@@ -20,7 +20,7 @@
     <string name="color_picker">Color Picker</string>
     <string name="main">Main</string>
     <string name="more">More</string>
-    <string name="qs_resizeable_tile">Quick Settings (QS) Resizeable Tile</string>
+    <string name="qs_resizeable_tile">Quick Settings (QS) 2*1 Tile</string>
     <string name="aod">AOD</string>
     <string name="enable_all_day_panoramic_aod">Enable all day panoramic AOD</string>
     <string name="tip_all_day_panoramic_aod">Your device must support a 10s panoramic AOD</string>
@@ -63,4 +63,12 @@
     <string name="option_corner_radius">Option Corner Radius</string>
     <string name="option_alpha">Option Alpha</string>
     <string name="modify_the_clear_all_apps_button">Modify the Clear All Apps button</string>
+    <string name="tile">Tile</string>
+    <string name="hide_the_background_of_tile_icons">Hide the background of tile icons</string>
+    <string name="fill_the_tile_state_with_tiles">Fill the tile state with tiles</string>
+    <string name="change_tile_icon_size">Change tile icon size</string>
+    <string name="title_color_in_inactive_state_of_tile">Title color in inactive state of tile</string>
+    <string name="title_color_in_active_state_of_tile">Title color in active state of tile</string>
+    <string name="des_color_in_inactive_state_of_tile">Description color inactive state of tile</string>
+    <string name="des_color_in_active_state_of_tile">Description color active state of tile</string>
 </resources>

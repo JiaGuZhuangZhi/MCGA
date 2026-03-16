@@ -21,7 +21,7 @@
     <string name="color_picker">颜色选择器</string>
     <string name="main">主要</string>
     <string name="more">更多</string>
-    <string name="qs_resizeable_tile">快速设置（QS）可调整大小磁贴</string>
+    <string name="qs_resizeable_tile">快速设置（QS）2*1 磁贴</string>
     <string name="aod">息屏</string>
     <string name="enable_all_day_panoramic_aod">启用全天候全景沉浸 AOD</string>
     <string name="tip_all_day_panoramic_aod">您的设备必须支持 10s 的全景沉浸 AOD</string>
@@ -60,4 +60,12 @@
     <string name="option_corner_radius">选项卡圆角半径</string>
     <string name="option_alpha">选项卡透明度</string>
     <string name="modify_the_clear_all_apps_button">修改清除全部应用按钮</string>
+    <string name="tile">磁贴</string>
+    <string name="hide_the_background_of_tile_icons">隐藏磁贴图标背景</string>
+    <string name="fill_the_tile_state_with_tiles">使磁贴状态填满磁贴</string>
+    <string name="change_tile_icon_size">修改磁贴图标大小</string>
+    <string name="title_color_in_inactive_state_of_tile">磁贴非激活状态下标题颜色</string>
+    <string name="title_color_in_active_state_of_tile">磁贴激活状态下标题颜色</string>
+    <string name="des_color_in_inactive_state_of_tile">磁贴非激活状态下标签颜色</string>
+    <string name="des_color_in_active_state_of_tile">磁贴激活状态下标签颜色</string>
 </resources>

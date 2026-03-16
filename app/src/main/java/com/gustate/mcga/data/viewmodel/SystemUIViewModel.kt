@@ -66,6 +66,34 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
                 key = SystemUIKeys.QS_RESIZEABLE_TILE_CORNER_RADIUS,
                 def = 24.0f
             ),
+            qsTwoXOneTileFillStateFullBkg = repo.getBoolean(
+                key = SystemUIKeys.QS_TWO_X_ONE_TILE_FILL_STATE_FULL_BKG,
+                def = true
+            ),
+            qsTwoXOneTileHideIconBkg = repo.getBoolean(
+                key = SystemUIKeys.QS_TWO_X_ONE_TILE_HIDE_ICON_BKG,
+                def = true
+            ),
+            qsTwoXOneTileIconSize = repo.getFloat(
+                key = SystemUIKeys.QS_TWO_X_ONE_TILE_ICON_SIZE,
+                def = 28f
+            ),
+            qsTwoXOneTileInactiveTitleColor = repo.getInt(
+                key = SystemUIKeys.QS_TWO_X_ONE_TILE_INACTIVE_TITLE_COLOR,
+                def = 0XE6ffffff.toInt()
+            ),
+            qsTwoXOneTileActiveTitleColor = repo.getInt(
+                key = SystemUIKeys.QS_TWO_X_ONE_TILE_ACTIVE_TITLE_COLOR,
+                def = 0XE6000000.toInt()
+            ),
+            qsTwoXOneTileInactiveDesColor = repo.getInt(
+                key = SystemUIKeys.QS_TWO_X_ONE_TILE_INACTIVE_DES_COLOR,
+                def = 0X89ffffff.toInt()
+            ),
+            qsTwoXOneTileActiveDesColor = repo.getInt(
+                key = SystemUIKeys.QS_TWO_X_ONE_TILE_INACTIVE_DES_COLOR,
+                def = 0X89000000.toInt()
+            ),
             enableAodPanoramicAllDay = repo.getBoolean(
                 key = SystemUIKeys.ENABLE_AOD_PANORAMIC_ALL_DAY,
                 def = false
@@ -182,6 +210,63 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
         _uiState.value = _uiState.value.copy(qsResizeableTileCornerRadius = value)
     }
 
+    fun updateQsTwoXOneTileFillStateFullBkg(value: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.QS_TWO_X_ONE_TILE_FILL_STATE_FULL_BKG,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsTwoXOneTileFillStateFullBkg = value)
+    }
+
+
+    fun updateQsTwoXOneTileHideIconBkg(value: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.QS_TWO_X_ONE_TILE_HIDE_ICON_BKG,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsTwoXOneTileHideIconBkg = value)
+    }
+
+    fun updateQsTwoXOneTileIconSize(value: Float) {
+        repo.setFloat(
+            key = SystemUIKeys.QS_TWO_X_ONE_TILE_ICON_SIZE,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsTwoXOneTileIconSize = value)
+    }
+
+    fun updateQsTwoXOneTileInactiveTitleColor(value: Int) {
+        repo.setInt(
+            key = SystemUIKeys.QS_TWO_X_ONE_TILE_INACTIVE_TITLE_COLOR,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsTwoXOneTileInactiveTitleColor = value)
+    }
+
+    fun updateQsTwoXOneTileActiveTitleColor(value: Int) {
+        repo.setInt(
+            key = SystemUIKeys.QS_TWO_X_ONE_TILE_ACTIVE_TITLE_COLOR,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsTwoXOneTileActiveTitleColor = value)
+    }
+
+    fun updateQsTwoXOneTileInactiveDesColor(value: Int) {
+        repo.setInt(
+            key = SystemUIKeys.QS_TWO_X_ONE_TILE_INACTIVE_DES_COLOR,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsTwoXOneTileInactiveDesColor = value)
+    }
+
+    fun updateQsTwoXOneTileActiveDesColor(value: Int) {
+        repo.setInt(
+            key = SystemUIKeys.QS_TWO_X_ONE_TILE_ACTIVE_DES_COLOR,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsTwoXOneTileActiveDesColor = value)
+    }
+
     fun updateEnableAodPanoramicAllDay(value: Boolean) {
         repo.setBoolean(
             key = SystemUIKeys.ENABLE_AOD_PANORAMIC_ALL_DAY,
@@ -197,5 +282,4 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
         )
         _uiState.value = _uiState.value.copy(enableAllDayAodSettings = value)
     }
-
 }
