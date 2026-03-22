@@ -12,6 +12,7 @@ import com.gustate.mcga.ui.navgation.MainNavHost
 import com.gustate.mcga.ui.theme.MakeColorGreatAgainTheme
 
 class MainActivity : ComponentActivity() {
+
     @OptIn(ExperimentalSharedTransitionApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,4 +30,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }

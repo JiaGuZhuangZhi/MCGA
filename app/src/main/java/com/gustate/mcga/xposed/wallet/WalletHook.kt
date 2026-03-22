@@ -1,20 +1,42 @@
 package com.gustate.mcga.xposed.wallet
 
+import android.content.SharedPreferences
 import com.gustate.mcga.data.keys.WalletKeys
-import com.gustate.mcga.xposed.wallet.feature.Nearme
-import de.robv.android.xposed.XSharedPreferences
-import de.robv.android.xposed.callbacks.XC_LoadPackage
+import com.gustate.mcga.xposed.wallet.feature.NearmeHook
+import io.github.libxposed.api.XposedModule
+import io.github.libxposed.api.XposedModuleInterface
 
-object WalletHook {
-    fun applyWalletFeature(lpparam: XC_LoadPackage.LoadPackageParam) {
+class WalletHook : XposedModule() {
+
+    private val nearmeHook = NearmeHook()
+
+    /**
+     * 成功实例化软件包加载器
+     * @param param 正在装载的软件包信息
+     */
+    override fun onPackageReady(param: XposedModuleInterface.PackageReadyParam) {
+        super.onPackageReady(param)
+
         // 以下内容仅 Hook 钱包 (com.finshell.wallet)
-        if (lpparam.packageName != "com.finshell.wallet") return
-        val prefs = XSharedPreferences(
-            "com.gustate.mcga",
-            "xposed_prefs"
-        )
-        prefs.makeWorldReadable()
+        if (param.packageName != "com.finshell.wallet") return
 
+        // 获取 Lsposed 远程配置
+        val prefs = getRemotePreferences("mcga_prefs")
+
+        // 应用配置
+        applyNearmeFeature(param = param, prefs = prefs)
+
+    }
+
+    /**
+     * 应用 NFC 消费界面外观配置
+     * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
+     */
+    fun applyNearmeFeature(
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
         val enableCustomNfcCardPage = prefs.getBoolean(
             WalletKeys.ENABLE_CUSTOM_NFC_CARD_PAGE,
             false
@@ -45,8 +67,9 @@ object WalletHook {
         )
 
         if (enableCustomNfcCardPage) {
-            Nearme.changeNfcConsume(
-                lpparam = lpparam,
+            nearmeHook.changeNfcConsume(
+                module = this,
+                param = param,
                 blurRadius = nfcCardPageBkgBlurRadius,
                 blurScrimLight = nfcCardPageBkgScrimLight,
                 blurScrimDark = nfcCardPageBkgScrimDark,

@@ -1,0 +1,5 @@
+com.gustate.mcga.xposed.aod.AodHook
+com.gustate.mcga.xposed.home.HomeHook
+com.gustate.mcga.xposed.search.SearchHook
+com.gustate.mcga.xposed.systemui.SystemuiHook
+com.gustate.mcga.xposed.wallet.WalletHook

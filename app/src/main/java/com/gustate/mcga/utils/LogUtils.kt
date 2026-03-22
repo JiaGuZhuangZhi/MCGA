@@ -1,18 +1,24 @@
 package com.gustate.mcga.utils
 
-import de.robv.android.xposed.XposedBridge
+import android.util.Log
+import io.github.libxposed.api.XposedModule
 
 object LogUtils {
-    fun log(message: String, tag: String, throwable: Throwable) {
-        val fullMessage = "[MCGA-$tag] $message " +
-                "\n throwable: " +
-                "\n ${throwable.message}"
-        XposedBridge.log(fullMessage)
-        throw throwable
+
+    /**
+     * 输出 Log
+     * @param module 模块入口类
+     * @param priority [Log] 等级
+     * @param tag log 标签
+     * @param message log 信息
+     */
+    fun log(
+        module: XposedModule,
+        priority: Int = Log.DEBUG,
+        tag: String = "未设置",
+        message: String
+    ) {
+        module.log(priority, "MCGA-$tag", message)
     }
 
-    fun log(tag: String, message: String) {
-        val fullMessage = "[MCGA-$tag] $message"
-        XposedBridge.log(fullMessage)
-    }
 }

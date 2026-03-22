@@ -1,7 +1,7 @@
 [versions]
 agp = "8.13.0"
 animation = "1.9.4"
-api = "82"
+libxposed-api = "101.0.0"
 capsule = "2.1.1"
 haze = "1.7.1"
 kotlin = "2.2.0"
@@ -24,7 +24,8 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 kyant0-capsule = { module = "io.github.kyant0:capsule", version.ref = "capsule" }
-xposed-api = { module = "de.robv.android.xposed:api", version.ref = "api" }
+xposed-service = { module = "io.github.libxposed:service", version.ref = "libxposed-api" }
+xposed-api = { module = "io.github.libxposed:api", version.ref = "libxposed-api" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

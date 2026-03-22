@@ -68,5 +68,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.xposed.service)
     compileOnly(libs.xposed.api)
 }

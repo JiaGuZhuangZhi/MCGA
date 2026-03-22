@@ -1,26 +1,19 @@
 package com.gustate.mcga.xposed
 
-import com.gustate.mcga.xposed.aod.AodHook
-import com.gustate.mcga.xposed.home.HomeHook
-import com.gustate.mcga.xposed.search.SearchHook
-import com.gustate.mcga.xposed.systemui.SystemuiHook
-import com.gustate.mcga.xposed.wallet.WalletHook
-import de.robv.android.xposed.IXposedHookLoadPackage
-import de.robv.android.xposed.callbacks.XC_LoadPackage
 
+/*class MainHook : XposedModule() {
 
-class MainHook() : IXposedHookLoadPackage {
-
-    override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
-        applyAllFeature(lpparam)
+    override fun onPackageReady(param: XposedModuleInterface.PackageReadyParam) {
+        super.onPackageReady(param)
+        applyAllFeature(param = param)
     }
 
-    fun applyAllFeature(lpparam: XC_LoadPackage.LoadPackageParam) {
-        HomeHook.applySearchFeature(lpparam)
-        SearchHook.applySearchFeature(lpparam)
-        SystemuiHook.applySystemUiFeature(lpparam)
-        AodHook.applyAodFeature(lpparam)
-        WalletHook.applyWalletFeature(lpparam)
+    private fun applyAllFeature(param: XposedModuleInterface.PackageReadyParam) {
+        HomeHook.applySearchFeature(param)
+        SearchHook.applySearchFeature(param)
+        SystemuiHook.applySystemUiFeature(param)
+        AodHook.applyAodFeature(param)
+        WalletHook.applyWalletFeature(param)
     }
 
-}
+}*/

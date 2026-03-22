@@ -36,6 +36,11 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
                 rootManagerInfo = RootUtils.getRootManager()
             )
         }
+
+        _repo.onActiveChanged = { active ->
+            _uiState.value = _uiState.value.copy(isModuleActive = active)
+        }
+
     }
 
 }
