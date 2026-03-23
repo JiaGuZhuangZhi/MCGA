@@ -73,4 +73,7 @@
     <string name="des_color_in_active_state_of_tile">Description color active state of tile</string>
     <string name="dock_bar">Dock Bar</string>
     <string name="force_dock_bkg">Force the use of Dock background</string>
+    <string name="verbose_logs">Verbose logs</string>
+    <string name="verbose_logs_desc">Report issues request to include verbose logs</string>
+    <string name="show_launcher_icon">Show app launcher icon</string>
 </resources>
