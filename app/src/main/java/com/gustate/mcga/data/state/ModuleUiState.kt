@@ -6,6 +6,8 @@ import com.gustate.mcga.data.model.RootManager
 data class ModuleUiState(
     val isModuleActive: Boolean = false,
     val isRootAvailable: Boolean = false,
+    val isLogEnabled: Boolean = true,
+    val isLauncherIconShowing: Boolean = true,
     val rootManagerInfo: RootManager = RootManager(
         rootManagerName = R.string.kernelsu,
         rootManagerVer = "100"
