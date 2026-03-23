@@ -68,4 +68,7 @@
     <string name="title_color_in_active_state_of_tile">磁贴激活状态下标题颜色</string>
     <string name="des_color_in_inactive_state_of_tile">磁贴非激活状态下标签颜色</string>
     <string name="des_color_in_active_state_of_tile">磁贴激活状态下标签颜色</string>
+    <string name="verbose_logs">详细日志</string>
+    <string name="verbose_logs_desc">报告问题要求包含详细日志</string>
+    <string name="show_launcher_icon">显示应用桌面图标</string>
 </resources>

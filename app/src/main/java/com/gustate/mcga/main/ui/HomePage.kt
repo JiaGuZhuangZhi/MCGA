@@ -24,6 +24,7 @@ import com.gustate.mcga.R
 import com.gustate.mcga.data.viewmodel.ModuleViewModel
 import com.gustate.mcga.ui.widget.OptionWidget
 import com.gustate.mcga.ui.widget.SplicedColumnGroup
+import com.gustate.mcga.ui.widget.SwitchWidget
 import com.kyant.capsule.ContinuousRoundedRectangle
 
 @Composable
@@ -61,6 +62,27 @@ fun HomePage(
                         title = stringResource(id = R.string.root_manager_version),
                         description = uiState.rootManagerInfo.rootManagerVer,
                         onClick = {}
+                    )
+                },
+                {
+                    SwitchWidget(
+                        painter = painterResource(id = R.drawable.log),
+                        title = stringResource(id = R.string.verbose_logs),
+                        description = stringResource(id = R.string.verbose_logs_desc),
+                        checked = uiState.isLogEnabled,
+                        onCheckedChange = { checked ->
+                            viewModel.updateIsLogEnabled(checked)
+                        }
+                    )
+                },
+                {
+                    SwitchWidget(
+                        painter = painterResource(id = R.drawable.shortcut),
+                        title = stringResource(id = R.string.show_launcher_icon),
+                        checked = uiState.isLauncherIconShowing,
+                        onCheckedChange = { checked ->
+                            viewModel.updateIsLauncherIconShowing(checked)
+                        }
                     )
                 }
             )
