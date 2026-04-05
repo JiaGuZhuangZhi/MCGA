@@ -12,7 +12,7 @@ import com.gustate.mcga.xposed.systemui.feature.QsDetailHook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
-class SystemuiHook : XposedModule() {
+object SystemuiHook {
 
     // 实例化相关 Feature 类
     private val controlPanelHook = ControlPanelHook()
@@ -21,33 +21,36 @@ class SystemuiHook : XposedModule() {
     private val qsTileHook = QSTileHook()
 
     /**
-     * 成功实例化软件包加载器
+     * 应用系统界面 Hook 设置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
      */
-    override fun onPackageReady(param: XposedModuleInterface.PackageReadyParam) {
-        super.onPackageReady(param)
-
+    fun applySystemuiFeature(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
         // 以下内容仅 Hook 系统界面 (com.android.systemui)
         if (param.packageName != "com.android.systemui") return
 
-        // 获取 Lsposed 远程配置
-        val prefs = getRemotePreferences("mcga_prefs")
-
         // 应用配置
-        applyControlPanelFeature(param = param, prefs = prefs)
-        applyQsTileOneXOneFeature(param = param, prefs = prefs)
-        applyQsTileTwoXOneFeature(param = param, prefs = prefs)
-        applyQsDetailFeature(param = param, prefs = prefs)
-        applyAodFeature(param = param, prefs = prefs)
+        applyControlPanelFeature(module = module, param = param, prefs = prefs)
+        applyQsTileOneXOneFeature(module = module, param = param, prefs = prefs)
+        applyQsTileTwoXOneFeature(module = module, param = param, prefs = prefs)
+        applyQsDetailFeature(module = module, param = param, prefs = prefs)
+        applyAodFeature(module = module, param = param, prefs = prefs)
 
     }
 
     /**
      * 应用控制中心背景配置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
      * @param prefs 本地配置缓存
      */
     private fun applyControlPanelFeature(
+        module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
@@ -56,12 +59,12 @@ class SystemuiHook : XposedModule() {
         val qsPanelCellHeight = prefs.getFloat(QS_PANEL_CELL_HEIGHT, 76.0f)
         if (customQsPanelLayout) {
             controlPanelHook.hookQsPanelStatusBarMarginTop(
-                module = this,
+                module = module,
                 param = param,
                 marginTopDp = qsPanelTopBarMarginTop
             )
             controlPanelHook.hookCellHeight(
-                module = this,
+                module = module,
                 param = param,
                 cellHeightDp = qsPanelCellHeight
             )
@@ -70,10 +73,12 @@ class SystemuiHook : XposedModule() {
 
     /**
      * 应用 1*1 磁贴配置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
      * @param prefs 本地配置缓存
      */
     private fun applyQsTileOneXOneFeature(
+        module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
@@ -91,12 +96,12 @@ class SystemuiHook : XposedModule() {
         )
         if (enableCustomQsTileOneXOne) {
             qsTileHook.hookQsOneXOneTile(
-                module = this,
+                module = module,
                 param = param,
                 bkgCornerRadius = qsTileOneXOneCornerRadius
             )
             qsTileHook.hookQsTileOneXOneRowColumns(
-                module = this,
+                module = module,
                 param = param,
                 columns = qsTileOneXOneRowColumns
             )
@@ -105,10 +110,12 @@ class SystemuiHook : XposedModule() {
 
     /**
      * 应用 2*1 磁贴配置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
      * @param prefs 本地配置缓存
      */
     private fun applyQsTileTwoXOneFeature(
+        module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
@@ -151,7 +158,7 @@ class SystemuiHook : XposedModule() {
         )
         if (enableCustomQsResizeableTile) {
             qsTileHook.hookTwoXOneTile(
-                module = this,
+                module = module,
                 param = param,
                 cornerRadiusDp = qsResizeableTileCornerRadius,
                 fillTileStateFullBkg = qsTwoXOneTileFillStateFullBkg,
@@ -167,10 +174,12 @@ class SystemuiHook : XposedModule() {
 
     /**
      * 应用快速设置面板配置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
      * @param prefs 本地配置缓存
      */
     private fun applyQsDetailFeature(
+        module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
@@ -196,7 +205,7 @@ class SystemuiHook : XposedModule() {
         )
         if (enableCustomQsDetail) {
             qsDetailHook.hookQsDetailContainer(
-                module = this,
+                module = module,
                 param = param,
                 blurRadius = qsDetailBlurRadius,
                 cornerRadius = qsDetailCornerRadius,
@@ -208,10 +217,12 @@ class SystemuiHook : XposedModule() {
 
     /**
      * 应用息屏配置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
      * @param prefs 本地配置缓存
      */
     private fun applyAodFeature(
+        module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
@@ -221,7 +232,7 @@ class SystemuiHook : XposedModule() {
         )
         if (enableAodPanoramicAllDay) {
             panoramicHook.hookPanoramicAodAllDay(
-                module = this,
+                module = module,
                 param = param
             )
         }
