@@ -1,5 +1,6 @@
 package com.gustate.mcga.main.ui
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -19,6 +20,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -45,7 +47,21 @@ fun MainPage(
     val scrollBehavior = TopAppBarDefaults
         .exitUntilCollapsedScrollBehavior(state = rememberTopAppBarState())
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(initialPage = 1) { Destination.entries.size }
+
+    val availableDestinations = remember(key1 = moduleUiState.isModuleActive) {
+        Destination.entries.filter {
+            // 如果是设置页且模块未激活 过滤掉
+            !(it == Destination.SETTING && !moduleUiState.isModuleActive)
+        }
+    }
+    Log.e("moduleState", moduleUiState.isModuleActive.toString())
+    val pagerState = rememberPagerState(
+        initialPage =
+            if (moduleUiState.isModuleActive) 1
+            else 0
+    ) {
+        availableDestinations.size
+    }
 
     Scaffold(
         topBar = {
@@ -77,9 +93,7 @@ fun MainPage(
         bottomBar = {
             BottomAppBar {
                 NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
-                    Destination.entries.forEachIndexed { index, destination ->
-                        if (destination == Destination.SETTING && !moduleUiState.isModuleActive)
-                            return@forEachIndexed
+                    availableDestinations.forEachIndexed { index, destination ->
                         val isTabSelected = pagerState.currentPage == index
                         NavigationBarItem(
                             selected = isTabSelected,
@@ -114,14 +128,16 @@ fun MainPage(
         ) { page ->
             val pagerModifier = Modifier
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
-            when (Destination.entries[page]) {
-                Destination.SETTING -> SettingPage(
-                    modifier = pagerModifier
-                        .fillMaxSize(),
-                    navController = navController,
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedVisibilityScope = animatedVisibilityScope
-                )
+            when (availableDestinations[page]) {
+                Destination.SETTING -> {
+                    SettingPage(
+                        modifier = pagerModifier
+                            .fillMaxSize(),
+                        navController = navController,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+                }
 
                 Destination.HOME -> HomePage(
                     modifier = pagerModifier
