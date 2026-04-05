@@ -6,34 +6,38 @@ import com.gustate.mcga.xposed.search.feature.AppRecommendHook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
-class SearchHook : XposedModule() {
+object SearchHook {
 
+    // 实例化相关 Feature 类
     private val appRecommendHook = AppRecommendHook()
 
     /**
-     * 成功实例化软件包加载器
+     * 应用全局搜索 Hook 设置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
      */
-    override fun onPackageReady(param: XposedModuleInterface.PackageReadyParam) {
-        super.onPackageReady(param)
-
+    fun applySearchFeature(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
         // 以下内容仅 Hook 全局搜索 (com.heytap.quicksearchbox)
         if (param.packageName != "com.heytap.quicksearchbox") return
 
-        // 获取 Lsposed 远程配置
-        val prefs = getRemotePreferences("mcga_prefs")
-
         // 应用配置
-        applyAppRecommendFeature(param = param, prefs = prefs)
+        applyAppRecommendFeature(module = module, param = param, prefs = prefs)
 
     }
 
     /**
      * 应用应用推荐外观配置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
      * @param prefs 本地配置缓存
      */
     fun applyAppRecommendFeature(
+        module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
@@ -46,9 +50,9 @@ class SearchHook : XposedModule() {
             false
         )
         if (goneAdviceAppName) appRecommendHook
-            .goneAdviceAppName(module = this, param = param)
+            .goneAdviceAppName(module = module, param = param)
         if (fixAdviceAppCard) appRecommendHook
-            .fixAdviceAppCard(module = this, param = param)
+            .fixAdviceAppCard(module = module, param = param)
     }
 
 }
