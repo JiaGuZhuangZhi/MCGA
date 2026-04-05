@@ -6,34 +6,38 @@ import com.gustate.mcga.xposed.wallet.feature.NearmeHook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
-class WalletHook : XposedModule() {
+object WalletHook {
 
+    // 实例化相关 Feature 类
     private val nearmeHook = NearmeHook()
 
     /**
-     * 成功实例化软件包加载器
+     * 应用钱包 Hook 设置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
      */
-    override fun onPackageReady(param: XposedModuleInterface.PackageReadyParam) {
-        super.onPackageReady(param)
-
+    fun applyWalletFeature(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
         // 以下内容仅 Hook 钱包 (com.finshell.wallet)
         if (param.packageName != "com.finshell.wallet") return
 
-        // 获取 Lsposed 远程配置
-        val prefs = getRemotePreferences("mcga_prefs")
-
         // 应用配置
-        applyNearmeFeature(param = param, prefs = prefs)
+        applyNearmeFeature(module = module, param = param, prefs = prefs)
 
     }
 
     /**
      * 应用 NFC 消费界面外观配置
+     * @param module 当前 XposedModule 实例
      * @param param 正在装载的软件包信息
      * @param prefs 本地配置缓存
      */
     fun applyNearmeFeature(
+        module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
@@ -68,7 +72,7 @@ class WalletHook : XposedModule() {
 
         if (enableCustomNfcCardPage) {
             nearmeHook.changeNfcConsume(
-                module = this,
+                module = module,
                 param = param,
                 blurRadius = nfcCardPageBkgBlurRadius,
                 blurScrimLight = nfcCardPageBkgScrimLight,
