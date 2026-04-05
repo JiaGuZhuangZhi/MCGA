@@ -6,25 +6,38 @@ import com.gustate.mcga.xposed.aod.feature.PanoramicHook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
-class AodHook : XposedModule() {
+object AodHook {
 
+    // 实例化相关 Feature 类
     private val panoramicHook = PanoramicHook()
 
-    override fun onPackageReady(param: XposedModuleInterface.PackageReadyParam) {
-        super.onPackageReady(param)
-
+    /**
+     * 应用息屏 Hook 设置
+     * @param module 当前 XposedModule 实例
+     * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
+     */
+    fun applyAodFeature(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
         // 以下内容仅 Hook 息屏 (com.oplus.aod)
         if (param.packageName != "com.oplus.aod") return
 
-        // 获取 Lsposed 远程配置
-        val prefs = getRemotePreferences("mcga_prefs")
-
         // 应用配置
-        applyAodFeature(param = param, prefs = prefs)
+        applyPanoramicFeature(module = module, param = param, prefs = prefs)
 
     }
 
-    private fun applyAodFeature(
+    /**
+     * 应用全景息屏配置配置
+     * @param module 当前 XposedModule 实例
+     * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
+     */
+    private fun applyPanoramicFeature(
+        module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
@@ -32,6 +45,6 @@ class AodHook : XposedModule() {
             AodKeys.ENABLE_ALL_DAY_AOD_SETTINGS, false
         )
         if (enableAllDayAodSettings)
-            panoramicHook.enableAllDayAodSettings(module = this, param = param)
+            panoramicHook.enableAllDayAodSettings(module = module, param = param)
     }
 }
