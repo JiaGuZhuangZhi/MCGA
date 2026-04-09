@@ -68,17 +68,4 @@ class MainHook : XposedModule() {
             prefs = prefs
         )
     }
-
-    /**
-     * 我 Hook 我自己
-     */
-    private fun hookMine() {
-        if (BuildConfig.APPLICATION_ID == packageName) {
-            MainActivity.Companion::class.java.name.hookMethod(
-                classLoader,
-                "isModuleActive"
-            ) { true }
-            return
-        }
-    }
 }
