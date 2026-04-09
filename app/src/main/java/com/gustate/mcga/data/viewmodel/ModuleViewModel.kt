@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class ModuleViewModel(context: Application) : AndroidViewModel(application = context) {
 
-    private val _repo = XposedRepo(context)
+    private val _repo = XposedRepo.getInstance(context = context)
 
     private val _uiState = mutableStateOf(
         value = ModuleUiState(
@@ -29,18 +29,15 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
     val uiState: MutableState<ModuleUiState> = _uiState
 
     init {
+        _repo.onActiveChanged = { active ->
+            _uiState.value = _uiState.value.copy(isModuleActive = active)
+        }
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
-                isModuleActive = _repo.isModuleActive(),
                 isRootAvailable = RootUtils.isRootAvailable(),
                 rootManagerInfo = RootUtils.getRootManager()
             )
         }
-
-        _repo.onActiveChanged = { active ->
-            _uiState.value = _uiState.value.copy(isModuleActive = active)
-        }
-
     }
 
 }
