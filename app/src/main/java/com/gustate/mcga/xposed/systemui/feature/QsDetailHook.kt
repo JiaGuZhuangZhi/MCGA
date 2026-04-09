@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.View
 import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.utils.ViewUtils.dpToPx
+import com.gustate.mcga.xposed.helper.ClassHelper.callAnyMethod
 import com.gustate.mcga.xposed.helper.ClassHelper.getStaticField
 import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
 import com.gustate.mcga.xposed.helper.ClassHelper.setAnyField
@@ -109,12 +110,12 @@ class QsDetailHook {
             Boolean::class.javaPrimitiveType, // enableStaticBlurCorner
             classLoader.loadClass(
                 "com.oplusos.systemui.common.blurability.BlurMixConfig"
-            ), // backgroundMixConfig
-            classLoader.loadClass(
-                "com.oplusos.systemui.common.blurability.BlurMixConfig\$MotionBlurMixConfig"
             ),
             classLoader.loadClass(
-                "com.oplusos.systemui.common.blurability.BlurConfig\$WindowBlurConfig"
+                "com.oplusos.systemui.common.blurability.BlurMixConfig\$BlurMixSingle"
+            ),
+            classLoader.loadClass(
+                "com.oplusos.systemui.common.blurability.WindowBlurConfig"
             ),
             Int::class.javaPrimitiveType // mask
         ).newInstance(
@@ -149,18 +150,21 @@ class QsDetailHook {
             .newInstance(foregroundMix, backgroundMix)
 
         // 使用你的 ClassHelper.setAnyField 暴力注入
-        blurConfig.setAnyField("blurRadius", blurRadius)
-        blurConfig.setAnyField("cornerRadius", cornerRadiusPx)
-        blurConfig.setAnyField("platformMixConfig", blurMixMulti)
-        blurConfig.setAnyField("radiusWeight", 1.0f)
-        blurConfig.setAnyField("enableStaticBlurCorner", true)
+        blurConfig.callAnyMethod<Unit>("setBlurRadius", blurRadius)
+        blurConfig.callAnyMethod<Unit>("setCornerRadius", cornerRadiusPx)
+        blurConfig.callAnyMethod<Unit>("setPlatformMixConfig", blurMixMulti)
+        blurConfig.callAnyMethod<Unit>("setRadiusWeight", 1.0f)
+        blurConfig.callAnyMethod<Unit>("setEnableStaticBlurCorner", true)
 
         // 4. ViewBlurProxy
         val viewBlurProxyClass = classLoader.loadClass(
             "com.oplusos.systemui.common.blurability.ViewBlurProxy"
         )
-        val proxyConstructor = viewBlurProxyClass.constructors.first() // 拿第一个匹配的构造函数
-        val viewBlurProxy = proxyConstructor.newInstance(
+        val proxyConstructor = viewBlurProxyClass.constructors.firstOrNull { ctor ->
+            val types = ctor.parameterTypes
+            types.size == 5 && View::class.java.isAssignableFrom(types[0])
+        }
+        val viewBlurProxy = proxyConstructor?.newInstance(
             view,
             blurConfig,
             null,
