@@ -1,8 +1,10 @@
 package com.gustate.mcga.xposed.helper
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import com.gustate.mcga.utils.ViewUtils.dpToPx
+import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
 import io.github.libxposed.api.XposedModule
 import kotlin.math.roundToInt
 
@@ -13,25 +15,114 @@ import kotlin.math.roundToInt
 object ResourceHelper {
 
     /**
-     * 通过 ClassLoader 反射获取目标包的资源 ID
+     * 目标资源包获取目标包的资源 ID
+     * @param resources 目标资源包
+     * @param pkgName 目标包名 (如 "com.android.systemui")
+     * @param resType 资源类型 (如 "bool", "dimen", "string")
+     * @param resName 资源名称 (如 "config_panoramic_all_day")
+     * @param onReadyResId 获取成功时包含资源 ID 的回调
+     */
+    @SuppressLint("DiscouragedApi")
+    fun getIdentifier(
+        res: Resources,
+        pkgName: String,
+        resType: String,
+        resName: String,
+        onReadyResId: (resId: Int) -> Unit
+    ) {
+        val resId = res.getIdentifier(resName, resType, pkgName)
+        onReadyResId(resId)
+    }
+
+    /**
+     * 目标资源包获取目标包的资源 ID 列表
+     * @param resources 目标资源包
+     * @param pkgName 目标包名 (如 "com.android.systemui")
+     * @param resType 资源类型 (如 "bool", "dimen", "string")
+     * @param resNames 资源名称列表 (如 "config_panoramic_all_day")
+     * @param onReadyResIds 获取成功时包含资源 ID 的回调
+     */
+    @SuppressLint("DiscouragedApi")
+    fun getIdentifier(
+        res: Resources,
+        pkgName: String,
+        resType: String,
+        resNames: List<String>,
+        onReadyResIds: (resIds: Map<String, Int>) -> Unit
+    ) {
+        resNames.associateWith { name ->
+            res.getIdentifier(name, resType, pkgName)
+        }.let(block = onReadyResIds)
+    }
+
+    /**
+     * 通过资源名称获取目标包的资源 ID
+     * @param module 当前 XposedModule 实例
      * @param classLoader 目标进程的 ClassLoader
      * @param pkgName 目标包名 (如 "com.android.systemui")
      * @param resType 资源类型 (如 "bool", "dimen", "string")
      * @param resName 资源名称 (如 "config_panoramic_all_day")
-     * @return 资源 ID，找不到则返回 0
+     * @param onReadyResId 获取成功时包含资源 ID 的回调
      */
+    @SuppressLint("DiscouragedApi")
     fun getIdentifier(
+        module: XposedModule,
         classLoader: ClassLoader,
         pkgName: String,
         resType: String,
-        resName: String
-    ): Int {
-        return runCatching {
-            val rClass = classLoader.loadClass("$pkgName.R\$$resType")
-            val field = rClass.getDeclaredField(resName)
-            field.isAccessible = true
-            field.getInt(null)
-        }.getOrDefault(0)
+        resName: String,
+        onReadyResId: (resId: Int) -> Unit
+    ) {
+        val application = loadClass(
+            className = "android.app.Application",
+            classLoader = classLoader
+        )
+        val onCreateMethod = application
+            ?.getDeclaredMethod("onCreate")
+            ?: throw NullPointerException()
+        module.hook(onCreateMethod).intercept { chain ->
+            chain.proceed()
+            val context = ContextHelper.getContext(classLoader)
+            val resId = context.resources
+                .getIdentifier(resName, resType, pkgName)
+            onReadyResId(resId)
+        }
+    }
+
+    /**
+     * 通过资源名称列表获取目标包的资源 ID 列表
+     * @param module 当前 XposedModule 实例
+     * @param classLoader 目标进程的 ClassLoader
+     * @param pkgName 目标包名 (如 "com.android.systemui")
+     * @param resType 资源类型 (如 "bool", "dimen", "string")
+     * @param resNames 资源名称列表 (如 "config_panoramic_all_day")
+     * @param onReadyResIds 获取成功时包含资源 ID 的回调
+     */
+    @SuppressLint("DiscouragedApi")
+    fun getIdentifier(
+        module: XposedModule,
+        classLoader: ClassLoader,
+        pkgName: String,
+        resType: String,
+        resNames: List<String>,
+        onReadyResIds: (resIds: Map<String, Int>) -> Unit
+    ) {
+        val application = loadClass(
+            className = "android.app.Application",
+            classLoader = classLoader
+        )
+        val onCreateMethod = application
+            ?.getDeclaredMethod("onCreate")
+            ?: throw NullPointerException()
+        module.hook(onCreateMethod)
+            .intercept { chain ->
+                chain.proceed()
+                val context = ContextHelper.getContext(classLoader)
+                resNames.associateWith { name ->
+                    context.resources
+                        .getIdentifier(name, resType, pkgName)
+                }.let(block = onReadyResIds)
+            }
     }
 
     /**
@@ -102,15 +193,16 @@ object ResourceHelper {
             .getDeclaredMethod(
                 "getDimensionPixelSize",
                 Int::class.javaPrimitiveType
-            )
-        module.hook(method).intercept { chain ->
-            if (chain.args[0] == resId) {
-                val context = ContextHelper.getContext(classLoader)
-                newSizeDp.dpToPx(context).roundToInt()
-            } else {
-                chain.proceed()
+            ) ?: throw NullPointerException()
+        module.hook(method)
+            .intercept { chain ->
+                if (chain.args[0] == resId) {
+                    val context = ContextHelper.getContext(classLoader)
+                    newSizeDp.dpToPx(context).roundToInt()
+                } else {
+                    chain.proceed()
+                }
             }
-        }
     }
 
     /**
