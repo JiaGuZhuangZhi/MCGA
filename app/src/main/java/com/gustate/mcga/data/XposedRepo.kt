@@ -2,11 +2,24 @@ package com.gustate.mcga.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import io.github.libxposed.service.XposedService
 import io.github.libxposed.service.XposedServiceHelper
 
-class XposedRepo(context: Context) {
+class XposedRepo private constructor(context: Context) {
+
+    // 唯一实例
+    companion object {
+        @Volatile
+        private var instance: XposedRepo? = null
+        fun getInstance(context: Context): XposedRepo {
+            return instance ?: synchronized(lock = this) {
+                instance ?: XposedRepo(context.applicationContext)
+                    .also { instance = it }
+            }
+        }
+    }
 
     // 本地私有存储
     private val prefs = context
@@ -15,9 +28,10 @@ class XposedRepo(context: Context) {
             Context.MODE_PRIVATE
         )
 
-    // Lsposed 远程服务
-    private var xposedService: XposedService? = null
+    // Lsposed 远程存储
+    private var xposedPrefs: SharedPreferences? = null
 
+    // 模块激活时的回调
     var onActiveChanged: ((Boolean) -> Unit)? = null
 
     init {
@@ -25,32 +39,27 @@ class XposedRepo(context: Context) {
         XposedServiceHelper.registerListener(
             object : XposedServiceHelper.OnServiceListener {
                 override fun onServiceBind(service: XposedService) {
-                    xposedService = service
                     // 把本地所有配置同步一次到远程
+                    xposedPrefs = service
+                        .getRemotePreferences("mcga_prefs")
                     syncAllToRemote()
                     onActiveChanged?.invoke(true)
                 }
 
                 override fun onServiceDied(service: XposedService) {
-                    //xposedService = null
-                    //onActiveChanged?.invoke(false)
+                    onActiveChanged?.invoke(false)
+                    xposedPrefs = null
                 }
             }
         )
     }
-
-    /**
-     * 模块是否激活
-     * @return 模块激活状态 - [Boolean]
-     */
-    fun isModuleActive(): Boolean = xposedService != null
 
     fun getBoolean(key: String, def: Boolean = false): Boolean =
         prefs?.getBoolean(key, def) ?: def
 
     fun setBoolean(key: String, value: Boolean) {
         prefs?.edit { putBoolean(key, value) }
-        getRemotePrefs()?.edit { putBoolean(key, value) }
+        xposedPrefs?.edit { putBoolean(key, value) } ?: Log.e("setBoolean() is error", "11")
     }
 
     fun getFloat(key: String, def: Float = 0f): Float =
@@ -58,7 +67,7 @@ class XposedRepo(context: Context) {
 
     fun setFloat(key: String, value: Float) {
         prefs?.edit { putFloat(key, value) }
-        getRemotePrefs()?.edit { putFloat(key, value) }
+        xposedPrefs?.edit { putFloat(key, value) }
     }
 
     fun getInt(key: String, def: Int = 0): Int =
@@ -66,15 +75,14 @@ class XposedRepo(context: Context) {
 
     fun setInt(key: String, value: Int) {
         prefs?.edit { putInt(key, value) }
-        getRemotePrefs()?.edit { putInt(key, value) }
+        xposedPrefs?.edit { putInt(key, value) }
     }
 
     /**
      * 同步本地全部参数至 Lsposed 仓库
      */
     private fun syncAllToRemote() {
-        val remotePrefs = getRemotePrefs()
-        remotePrefs?.edit {
+        xposedPrefs?.edit {
             prefs.all.forEach { (k, v) ->
                 when (v) {
                     is Boolean -> putBoolean(k, v)
@@ -85,16 +93,4 @@ class XposedRepo(context: Context) {
             }
         }
     }
-
-    /**
-     * 取 Lsposed 远程仓库 SP
-     * @return 本地数据库 - [SharedPreferences]
-     */
-    private fun getRemotePrefs(): SharedPreferences? {
-        val service = xposedService
-        val remotePrefs = service
-            ?.getRemotePreferences("mcga_prefs")
-        return remotePrefs
-    }
-
 }
