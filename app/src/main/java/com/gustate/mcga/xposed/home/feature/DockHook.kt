@@ -31,10 +31,8 @@ class DockHook {
         blurRadius: Int,
         cornerRadius: Float
     ) {
-
         // 获取 ClassLoader 实例
         val classLoader = param.classLoader
-
         // 换算单位
         val cornerRadiusPx = cornerRadius
             .dpToPx(ContextHelper.getContext(classLoader))
@@ -44,22 +42,34 @@ class DockHook {
         val dockClass = loadClass(
             className = "com.android.launcher3.OplusHotseat",
             classLoader = classLoader
+        ) ?: return log(
+            module = module, tag = DOCK_BKG,
+            message = "❌ 未获取到 OplusHotseat 类"
         )
         // 加载模糊工具类
         val blurUtils = loadClass(
             className = "com.oplus.utils.OplusBlurProperties",
             classLoader = classLoader
+        ) ?: return log(
+            module = module, tag = DOCK_BKG,
+            message = "❌ 未获取到 OplusBlurProperties 类"
         )
         // 加载屏幕工具类
         val screenUtils = loadClass(
             className = "com.oplus.utils.ScreenUtils",
             classLoader = classLoader
+        ) ?: return log(
+            module = module, tag = DOCK_BKG,
+            message = "❌ 未获取到 ScreenUtils 类"
         )
 
         // hook 设置 Dock 背景方法, 执行时标记
         val setDockBkgMethod = dockClass
-            ?.getDeclaredMethod("setDockerBackground")
-            ?: throw NullPointerException()
+            .getDeclaredMethod("setDockerBackground")
+            ?: return log(
+                module = module, tag = DOCK_BKG,
+                message = "❌ 未获取到 setDockerBackground 函数"
+            )
         module.hook(setDockBkgMethod)
             .intercept { chain ->
                 // 标记一下, 正在创建背景
@@ -75,6 +85,10 @@ class DockHook {
         // hook 创建模糊背景方法, 登记所属 Properties
         val createBlurMethod = dockClass
             .getDeclaredMethod("createBlurDrawable")
+            ?: return log(
+                module = module, tag = DOCK_BKG,
+                message = "❌ 未获取到 createBlurDrawable 函数"
+            )
         module.hook(createBlurMethod).intercept { chain ->
             // 执行原逻辑
             val result = chain.proceed()
@@ -83,7 +97,13 @@ class DockHook {
             // 从 Hotseat 实例里拿走它的 mBlurProp
             val mBlurProp = instance
                 ?.getAnyField<Any>(fieldName = "mBlurProp")
-                ?: throw NullPointerException()
+                ?: run {
+                    log(
+                        module = module, tag = DOCK_BKG,
+                        message = "❌ 未获取到 mBlurProp 字段 已使用默认 Dock 栏"
+                    )
+                    return@intercept result
+                }
             // 登记：这个 Properties 对象是属于 Dock 的
             dockPropertiesMap[mBlurProp] = true
             // 直接返回原结果
@@ -127,7 +147,10 @@ class DockHook {
         // hook 是否为大屏判断之函数
         val hasLargeMethod = screenUtils
             ?.getDeclaredMethod("hasLargeDisplayFeatures")
-            ?: throw NullPointerException()
+            ?: return log(
+                module = module, tag = DOCK_BKG,
+                message = "❌ 未获取到 hasLargeDisplayFeatures 函数"
+            )
         module.hook(hasLargeMethod).intercept { chain ->
             // 当被 setDockerBackground() 调用时强制返回 true
             if (isCreatingDockBkg) true
@@ -140,7 +163,10 @@ class DockHook {
             "isSupportNewBlur",
             Context::class.java,
             Boolean::class.javaPrimitiveType
-        ) ?: throw NullPointerException()
+        ) ?: return log(
+            module = module, tag = DOCK_BKG,
+            message = "❌ 未获取到 isSupportNewBlur 函数"
+        )
         if (enableDockBlur) {
             module.hook(isSupportMethod).intercept { chain ->
                 // 当被 setDockerBackground() 调用时强制返回 true
@@ -150,17 +176,26 @@ class DockHook {
             }
         }
 
-        // 联防联动, 把所有重载方法都直接调用 setDockerBackground
+        // 联防联控, 把所有重载方法都直接调用 setDockerBackground
         val measureMethods = arrayOf(
             dockClass?.getDeclaredMethod("onAttachedToWindow")
-                ?: throw NullPointerException(),
+                ?: return log(
+                    module = module, tag = DOCK_BKG,
+                    message = "❌ 未获取到 onAttachedToWindow 函数"
+                ),
             dockClass.getDeclaredMethod("onWallpaperBrightnessChanged")
-                ?: throw NullPointerException(),
+                ?: return log(
+                    module = module, tag = DOCK_BKG,
+                    message = "❌ 未获取到 onWallpaperBrightnessChanged 函数"
+                ),
             dockClass.getDeclaredMethod(
                 "onMeasure",
                 Int::class.java,
                 Int::class.java
-            ) ?: throw NullPointerException()
+            ) ?: return log(
+                module = module, tag = DOCK_BKG,
+                message = "❌ 未获取到 onMeasure 函数"
+            )
         )
         measureMethods.forEach { method ->
             module.hook(method).intercept { chain ->
@@ -179,7 +214,6 @@ class DockHook {
                 result
             }
         }
-
     }
 
     /**
@@ -203,7 +237,10 @@ class DockHook {
         val toUXRadius = blurUtils?.getDeclaredMethod(
             "toUXRadius",
             Int::class.javaPrimitiveType
-        ) ?: throw NullPointerException()
+        ) ?: return log(
+            module = module, tag = DOCK_BKG,
+            message = "❌ 未获取到 toUXRadius 函数"
+        )
         module.hook(toUXRadius).intercept { chain ->
             var result = chain.proceed() as? String ?: "800"
             // 获取当前 BlurParams 实例
@@ -226,7 +263,10 @@ class DockHook {
             Int::class.javaPrimitiveType,
             Int::class.javaPrimitiveType,
             Int::class.javaPrimitiveType,
-        ) ?: throw NullPointerException()
+        ) ?: return log(
+            module = module, tag = DOCK_BKG,
+            message = "❌ 未获取到 setBlurParams 函数"
+        )
         // 修改模糊半径
         module.hook(setParamsMethod).intercept { chain ->
             // 拷贝一份原参数使其可变
@@ -255,7 +295,10 @@ class DockHook {
                 className = "com.android.launcher3.model.data.ItemInfo",
                 classLoader = classLoader
             ),
-        ) ?: throw NullPointerException()
+        ) ?: return log(
+            module = module, tag = DOCK_BKG,
+            message = "❌ 未获取到 setBlurCornerRadius 函数或其参数"
+        )
         module.hook(setCornerRadiusMethod).intercept { chain ->
             // 拷贝一份原参数使其可变
             val newArgs = chain.args.toMutableList()
@@ -273,7 +316,5 @@ class DockHook {
             // 将修改后的参数列表传给 proceed
             chain.proceed(newArgs.toTypedArray())
         }
-
     }
-
 }
