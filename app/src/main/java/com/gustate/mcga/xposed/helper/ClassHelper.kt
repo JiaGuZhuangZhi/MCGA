@@ -22,12 +22,22 @@ object ClassHelper {
     fun <T> Any?.getAnyField(fieldName: String): T? {
         val target = this ?: return null
         return runCatching {
-            // 从对象的类里找字段的位置
-            val field = target.javaClass.getDeclaredField(fieldName)
-            // 忽略 private 等安全检查
-            field.isAccessible = true
-            // 从对象中拿走字段
-            field.get(target) as T?
+            var clazz: Class<*>? = target.javaClass
+            // 往父类找一找
+            while (clazz != null) {
+                // 从对象的类里找字段的位置
+                val field = runCatching {
+                    clazz.getDeclaredField(fieldName)
+                }.getOrNull()
+                if (field != null) {
+                    // 忽略 private 等安全检查
+                    field.isAccessible = true
+                    // 从对象中拿走字段
+                    return@runCatching field.get(target) as T?
+                }
+                clazz = clazz.superclass  // 往父类走
+            }
+            null
         }.getOrNull()
     }
 
