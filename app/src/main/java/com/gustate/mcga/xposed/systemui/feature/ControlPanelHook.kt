@@ -32,49 +32,42 @@ class ControlPanelHook {
         marginTopDp: Float
     ) {
         val classLoader = param.classLoader
+        val resNames = listOf(
+            "qs_panel_status_bar_margin_top_fixed",
+            "qs_panel_status_bar_margin_top_max",
+            "qs_panel_status_bar_margin_top_min"
+        )
         try {
-            // 动态获取 ID
-            val resIdFixed = ResourceHelper
-                .getIdentifier(
-                    classLoader,
-                    "com.android.systemui",
-                    "dimen",
-                    "qs_panel_status_bar_margin_top_fixed"
-                )
-            val resIdMax = ResourceHelper
-                .getIdentifier(
-                    classLoader,
-                    "com.android.systemui",
-                    "dimen",
-                    "qs_panel_status_bar_margin_top_max"
-                )
-            val resIdMin = ResourceHelper
-                .getIdentifier(
-                    classLoader,
-                    "com.android.systemui",
-                    "dimen",
-                    "qs_panel_status_bar_margin_top_min"
-                )
-
-            if (resIdFixed != 0) ResourceHelper
-                .hookDimensionPixelSize(
-                    module, classLoader,
-                    resIdFixed, marginTopDp
-                )
-            if (resIdMax != 0) ResourceHelper
-                .hookDimensionPixelSize(
-                    module, classLoader,
-                    resIdMax, marginTopDp
-                )
-            if (resIdMin != 0) ResourceHelper
-                .hookDimensionPixelSize(
-                    module, classLoader,
-                    resIdMin, marginTopDp
-                )
-
+            ResourceHelper.getIdentifier(
+                module = module,
+                classLoader = classLoader,
+                pkgName = "com.android.systemui",
+                resType = "dimen",
+                resNames = resNames,
+                onReadyResIds = { resIds ->
+                    // 分类正确与错误的 ids
+                    val (valid, invalid) = resIds.entries.partition { it.value != 0 }
+                    // 错误报日志
+                    invalid.forEach {
+                        log(
+                            module = module, tag = CONTROL_PANEL_LOG,
+                            message = "❌ 获取 ${it.key} 资源 ID 失败 (ID 为 0)"
+                        )
+                    }
+                    // 走流程
+                    valid.forEach {
+                        ResourceHelper.hookDimensionPixelSize(
+                            module = module,
+                            classLoader = classLoader,
+                            resId = it.value,
+                            newSizeDp = marginTopDp
+                        )
+                    }
+                }
+            )
             log(
                 module = module, tag = CONTROL_PANEL_LOG,
-                message = "✅ 控制中心状态栏边距已设置为 ${marginTopDp}dp"
+                message = "✅ 控制中心状态栏边距已设置为 $marginTopDp dp"
             )
         } catch (e: Exception) {
             log(
@@ -96,66 +89,87 @@ class ControlPanelHook {
         cellHeightDp: Float
     ) {
         try {
-            val context = ContextHelper.getContext(param.classLoader)
-            val cellHeightPx = cellHeightDp.dpToPx(context).roundToInt()
-
-            // 1. 修改布局行高插件逻辑
+            // 修改布局行高插件逻辑
             val cellSizeClass = loadClass(
-                "com.oplus.systemui.plugins.qs.CellCalculatorManager\$CellSize",
-                param.classLoader
+                className = "com.oplus.systemui.plugins.qs.CellCalculatorManager\$CellSize",
+                classLoader = param.classLoader
+            ) ?: return log(
+                module = module, tag = CONTROL_PANEL_LOG,
+                message = "❌ 未获取到 CellCalculatorManager\$CellSize 类"
             )
-            if (cellSizeClass != null) {
-                val getCellHeightMethod = cellSizeClass.getDeclaredMethod("getCellHeight")
-                // 使用 intercept 替代 XC_MethodReplacement
-                module.hook(getCellHeightMethod).intercept {
-                    log(
-                        module = module, tag = CONTROL_PANEL_LOG,
-                        message = "✅ 磁贴高度计算已拦截: ${cellHeightPx}px"
-                    )
-                    cellHeightPx
-                }
-            }
-
-            // 计算复合高度 (复用原逻辑)
-            val customHeightPx =
-                ((cellHeightDp * 2) - (cellHeightDp - 61)).dpToPx(context).roundToInt()
-
-            // 2. 修改媒体卡片行高 (OplusQsBaseMediaPanelView)
-            val mediaPanelViewClass = loadClass(
-                "com.oplus.systemui.qs.media.OplusQsBaseMediaPanelView",
-                param.classLoader
+            val getCellHeightMethod = cellSizeClass.getDeclaredMethod(
+                "getCellHeight"
+            ) ?: return log(
+                module = module, tag = CONTROL_PANEL_LOG,
+                message = "❌ 未获取到 getCellHeight 方法"
             )
-            if (mediaPanelViewClass != null) {
-                val onMeasure = mediaPanelViewClass.getDeclaredMethod(
-                    "onMeasure",
-                    Int::class.javaPrimitiveType,
-                    Int::class.javaPrimitiveType
+            module.hook(getCellHeightMethod).intercept {
+                val context = ContextHelper.getContext(classLoader = param.classLoader)
+                val cellHeightPx = cellHeightDp.dpToPx(context).roundToInt()
+                log(
+                    module = module, tag = CONTROL_PANEL_LOG,
+                    message = "✅ 磁贴高度计算已拦截: $cellHeightPx px"
                 )
-                module.hook(onMeasure).intercept { chain ->
-                    val result = chain.proceed()
-                    (chain.thisObject as View).updateLayoutParams {
-                        height = customHeightPx
-                    }
-                    result
-                }
+                cellHeightPx
             }
 
-            // 3. 修改 SeekBar 容器高度 (OplusQsBaseToggleSliderLayout)
-            val sliderLayoutClass = loadClass(
-                "com.oplus.systemui.qs.base.seek.OplusQsBaseToggleSliderLayout",
-                param.classLoader
+            // 修改媒体卡片行高 (OplusQsBaseMediaPanelView)
+            val mediaPanelViewClass = loadClass(
+                className = "com.oplus.systemui.qs.media.OplusQsBaseMediaPanelView",
+                classLoader = param.classLoader
+            ) ?: return log(
+                module = module, tag = CONTROL_PANEL_LOG,
+                message = "❌ 未获取到 OplusQsBaseMediaPanelView 类"
             )
-            if (sliderLayoutClass != null) {
-                val onAttachedToWindow = sliderLayoutClass.getDeclaredMethod("onAttachedToWindow")
-                module.hook(onAttachedToWindow).intercept { chain ->
-                    val result = chain.proceed()
-                    (chain.thisObject as View).updateLayoutParams {
-                        height = customHeightPx
-                    }
-                    result
-                }
+            val onMeasure = mediaPanelViewClass.getDeclaredMethod(
+                "onMeasure",
+                Int::class.javaPrimitiveType,
+                Int::class.javaPrimitiveType
+            ) ?: return log(
+                module = module, tag = CONTROL_PANEL_LOG,
+                message = "❌ 未获取到 onMeasure 方法"
+            )
+            module.hook(onMeasure).intercept { chain ->
+                val result = chain.proceed()
+                val context = ContextHelper.getContext(classLoader = param.classLoader)
+                // 计算媒体卡片高度
+                val customHeightPx =
+                    ((cellHeightDp * 2) - (cellHeightDp - 61)).dpToPx(context).roundToInt()
+                (chain.thisObject as View).updateLayoutParams { height = customHeightPx }
+                log(
+                    module = module, tag = CONTROL_PANEL_LOG,
+                    message = "✅ 媒体卡片高度已修改: $customHeightPx px"
+                )
+                result
             }
 
+            // 修改 SeekBar 容器高度
+            val sliderLayoutClass = loadClass(
+                className = "com.oplus.systemui.qs.base.seek.OplusQsBaseToggleSliderLayout",
+                classLoader = param.classLoader
+            ) ?: return log(
+                module = module, tag = CONTROL_PANEL_LOG,
+                message = "❌ 未获取到 OplusQsBaseToggleSliderLayout 类"
+            )
+            val onAttachedToWindow = sliderLayoutClass.getDeclaredMethod(
+                "onAttachedToWindow"
+            ) ?: return log(
+                module = module, tag = CONTROL_PANEL_LOG,
+                message = "❌ 未获取到 onAttachedToWindow 方法"
+            )
+            module.hook(onAttachedToWindow).intercept { chain ->
+                val result = chain.proceed()
+                val context = ContextHelper.getContext(classLoader = param.classLoader)
+                // 计算 SeekBar 高度
+                val customHeightPx =
+                    ((cellHeightDp * 2) - (cellHeightDp - 61)).dpToPx(context).roundToInt()
+                (chain.thisObject as View).updateLayoutParams { height = customHeightPx }
+                log(
+                    module = module, tag = CONTROL_PANEL_LOG,
+                    message = "✅ 媒体卡片高度已修改: $customHeightPx px"
+                )
+                result
+            }
         } catch (e: Exception) {
             log(
                 module = module, tag = CONTROL_PANEL_LOG,
@@ -164,120 +178,3 @@ class ControlPanelHook {
         }
     }
 }
-
-/*import android.view.View
-import androidx.core.view.updateLayoutParams
-import com.gustate.mcga.utils.LogUtils.log
-import com.gustate.mcga.utils.ViewUtils.dpToPx
-import com.gustate.mcga.xposed.helper.ContextHelper
-import com.gustate.mcga.xposed.helper.ResourceHelper
-import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XC_MethodReplacement
-import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedHelpers
-import de.robv.android.xposed.callbacks.XC_LoadPackage
-import kotlin.math.roundToInt
-
-class ControlPanelHook {
-
-    /**
-     * 修改控制中心状态栏上外边距
-     * qs_panel_status_bar_margin_top_fixed 0x7f0717c4
-     * qs_panel_status_bar_margin_top_max   0x7f0717c5
-     * qs_panel_status_bar_margin_top_min   0x7f0717c6
-     */
-    fun hookQsPanelStatusBarMarginTop(
-        marginTopDp: Float
-    ) {
-        val logTag = "CellSize"
-        try {
-            ResourceHelper.hookDimensionPixelSize(0x7f0717c4, marginTopDp)
-            ResourceHelper.hookDimensionPixelSize(0x7f0717c5, marginTopDp)
-            ResourceHelper.hookDimensionPixelSize(0x7f0717c6, marginTopDp)
-        } catch (e: Exception) {
-            log(
-                tag = logTag,
-                message = "❌ 修改修改控制中心磁贴紧凑程度失败" +
-                        "错误信息: ${e.message}," +
-                        "详情可在 com.gustate.mcga 中查看"
-            )
-        }
-    }
-
-    /**
-     * 修改控制中心网格高度 (不剪切内容)
-     */
-    fun hookCellHeight(
-        lpparam: XC_LoadPackage.LoadPackageParam,
-        cellHeightDp: Float
-    ) {
-        val logTag = "ControlPanel"
-        try {
-            // 修改布局行高
-            val cellSizeClass = XposedHelpers.findClass(
-                "com.oplus.systemui.plugins.qs.CellCalculatorManager\$CellSize",
-                lpparam.classLoader
-            )
-            // Hook getCellHeight
-            XposedBridge.hookMethod(
-                cellSizeClass.getDeclaredMethod("getCellHeight"),
-                object : XC_MethodReplacement() {
-                    override fun replaceHookedMethod(param: MethodHookParam): Any {
-                        val context = ContextHelper.getContext()
-                        val cellHeightPx = cellHeightDp.dpToPx(context).roundToInt()
-                        log(
-                            message = "✅ 控制中心磁贴高度已修改为 " +
-                                    "${cellHeightDp}dp ($cellHeightPx px)",
-                            tag = logTag
-                        )
-                        return cellHeightPx
-                    }
-                }
-            )
-            // 修改媒体卡片行高
-            XposedHelpers.findAndHookMethod(
-                "com.oplus.systemui.qs.media.OplusQsBaseMediaPanelView",
-                lpparam.classLoader,
-                "onMeasure",
-                Int::class.java,
-                Int::class.java,
-                object : XC_MethodHook() {
-                    override fun afterHookedMethod(param: MethodHookParam) {
-                        super.afterHookedMethod(param)
-                        val view = param.thisObject
-                        val customHeightPx =
-                            ((cellHeightDp * 2) - (cellHeightDp - 61))
-                                .dpToPx(ContextHelper.getContext())
-                        (view as View).updateLayoutParams {
-                            height = customHeightPx.roundToInt()
-                        }
-                    }
-                }
-            )
-            // 修改那俩 Seekbar 行高
-            XposedHelpers.findAndHookMethod(
-                "com.oplus.systemui.qs.base.seek.OplusQsBaseToggleSliderLayout",
-                lpparam.classLoader,
-                "onAttachedToWindow",
-                object : XC_MethodHook() {
-                    override fun afterHookedMethod(param: MethodHookParam) {
-                        val layout = param.thisObject as View
-                        val customHeightPx =
-                            ((cellHeightDp * 2) - (cellHeightDp - 61))
-                                .dpToPx(ContextHelper.getContext())
-                        layout.updateLayoutParams {
-                            height = customHeightPx.roundToInt()
-                        }
-                    }
-                }
-            )
-        } catch (e: Exception) {
-            log(
-                message = "❌ Hook getCellHeight 失败: ${e.message}",
-                tag = logTag,
-                throwable = e
-            )
-        }
-    }
-
-}*/
