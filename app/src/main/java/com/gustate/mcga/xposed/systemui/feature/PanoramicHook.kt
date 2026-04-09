@@ -13,8 +13,6 @@ class PanoramicHook {
         private const val ALL_DAY_AOD_LOG = "全天候全景息屏"
     }
 
-    private var hasPatchedPanoramicAllDay = 0
-
     fun hookPanoramicAodAllDay(
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam
@@ -43,14 +41,6 @@ class PanoramicHook {
                     instance.setAnyField(
                         fieldName = "isSupportPanoramicAllDayByPanelFeature", value = true
                     )
-
-                    if (hasPatchedPanoramicAllDay < 5) {
-                        log(
-                            module = module, tag = ALL_DAY_AOD_LOG,
-                            message = "✅ 成功启用全天候全景 AOD"
-                        )
-                        hasPatchedPanoramicAllDay++
-                    }
                 } catch (e: Exception) {
                     log(
                         module = module, tag = ALL_DAY_AOD_LOG,
