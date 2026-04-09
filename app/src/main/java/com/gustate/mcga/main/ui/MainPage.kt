@@ -1,6 +1,5 @@
 package com.gustate.mcga.main.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -19,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.gustate.mcga.R
 import com.gustate.mcga.data.viewmodel.ModuleViewModel
 import com.gustate.mcga.main.navgation.Destination
 import com.gustate.mcga.ui.widget.AppTopBar
@@ -48,48 +47,54 @@ fun MainPage(
         .exitUntilCollapsedScrollBehavior(state = rememberTopAppBarState())
     val scope = rememberCoroutineScope()
 
-    val availableDestinations = remember(key1 = moduleUiState.isModuleActive) {
+    val availableDestinations = remember(
+        key1 = moduleUiState.isModuleActive
+    ) {
         Destination.entries.filter {
             // 如果是设置页且模块未激活 过滤掉
             !(it == Destination.SETTING && !moduleUiState.isModuleActive)
         }
     }
-    Log.e("moduleState", moduleUiState.isModuleActive.toString())
     val pagerState = rememberPagerState(
-        initialPage =
-            if (moduleUiState.isModuleActive) 1
-            else 0
+        initialPage = availableDestinations
+            .indexOf(element = Destination.HOME)
     ) {
         availableDestinations.size
+    }
+    val currentDestination = remember(
+        key1 = pagerState.currentPage,
+        key2 = moduleUiState.isModuleActive
+    ) {
+        availableDestinations
+            .getOrNull(index = pagerState.currentPage)
+            ?: Destination.HOME
+    }
+    LaunchedEffect(
+        key1 = moduleUiState.isModuleActive
+    ) {
+        if (moduleUiState.isModuleActive) {
+            pagerState.animateScrollToPage(
+                page = availableDestinations.indexOf(Destination.HOME)
+            )
+        }
     }
 
     Scaffold(
         topBar = {
             AppTopBar(
-                title =
-                    {
-                        Text(
-                            text = when (pagerState.currentPage) {
-                                Destination.SETTING.ordinal ->
-                                    stringResource(R.string.setting)
-
-                                Destination.HOME.ordinal ->
-                                    stringResource(R.string.app_name)
-
-                                Destination.ABOUT.ordinal ->
-                                    stringResource(R.string.about)
-
-                                else -> stringResource(R.string.app_name)
-                            },
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
+                title = {
+                    Text(
+                        text = stringResource(id = currentDestination.label),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 scrollBehavior = scrollBehavior,
-                isHomePage = pagerState.currentPage == Destination.HOME.ordinal
+                isHomePage = currentDestination == Destination.HOME
             )
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         bottomBar = {
             BottomAppBar {
                 NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
@@ -114,7 +119,9 @@ fun MainPage(
                                 )
                             },
                             label = {
-                                Text(text = stringResource(id = destination.label))
+                                Text(
+                                    text = stringResource(id = destination.navLabel)
+                                )
                             }
                         )
                     }
