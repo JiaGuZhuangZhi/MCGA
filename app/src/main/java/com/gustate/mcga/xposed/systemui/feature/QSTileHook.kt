@@ -26,6 +26,7 @@ class QSTileHook {
     /**
      * Hook 1x1 磁贴的外观逻辑
      * * @param module 当前 XposedModule 实例
+     * @param module XposedModule 实例
      * @param param 软件包加载参数
      * @param bkgCornerRadius 圆角半径 (dp)
      */
@@ -34,9 +35,11 @@ class QSTileHook {
         param: XposedModuleInterface.PackageReadyParam,
         bkgCornerRadius: Float
     ) {
+        // 获取相关类
         val tileViewClass = loadClass(
-            "com.oplus.systemui.plugins.qs.customize.view.tile.OplusQSResizeableTileViewOneXOne",
-            param.classLoader
+            className = "com.oplus.systemui.plugins.qs.customize.view.tile." +
+                    "OplusQSResizeableTileViewOneXOne",
+            classLoader = param.classLoader
         ) ?: return
 
         try {
@@ -94,7 +97,10 @@ class QSTileHook {
         columns: Int
     ) {
         val calculatorClass =
-            loadClass("com.oplus.systemui.plugins.qs.CellCalculatorManager", param.classLoader)
+            loadClass(
+                "com.oplus.systemui.plugins.qs.CellCalculatorManager",
+                param.classLoader
+            )
                 ?: return
         try {
             val method = calculatorClass.getDeclaredMethod(
@@ -103,7 +109,7 @@ class QSTileHook {
             )
             module.hook(method).intercept { chain ->
                 val args = chain.args.toMutableList()
-                args[0] = columns // 暴力改参数
+                args[0] = columns
                 chain.proceed(args.toTypedArray())
             }
             log(
