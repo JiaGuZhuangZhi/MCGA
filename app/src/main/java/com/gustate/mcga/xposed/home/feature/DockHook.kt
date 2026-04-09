@@ -33,9 +33,6 @@ class DockHook {
     ) {
         // 获取 ClassLoader 实例
         val classLoader = param.classLoader
-        // 换算单位
-        val cornerRadiusPx = cornerRadius
-            .dpToPx(ContextHelper.getContext(classLoader))
 
         // 加载所需类
         // 加载 Dock 类
@@ -48,7 +45,7 @@ class DockHook {
         )
         // 加载模糊工具类
         val blurUtils = loadClass(
-            className = "com.oplus.utils.OplusBlurProperties",
+            className = "com.android.launcher3.uioverrides.states.blurdrawable.OplusBlurProperties",
             classLoader = classLoader
         ) ?: return log(
             module = module, tag = DOCK_BKG,
@@ -56,7 +53,7 @@ class DockHook {
         )
         // 加载屏幕工具类
         val screenUtils = loadClass(
-            className = "com.oplus.utils.ScreenUtils",
+            className = "com.android.common.util.ScreenUtils",
             classLoader = classLoader
         ) ?: return log(
             module = module, tag = DOCK_BKG,
@@ -121,7 +118,7 @@ class DockHook {
         modifyDockBkg(
             module = module,
             blurRadius = blurRadius,
-            cornerRadiusPx = cornerRadiusPx,
+            cornerRadius = cornerRadius,
             classLoader = classLoader,
             blurUtils = blurUtils,
         )
@@ -143,7 +140,6 @@ class DockHook {
         blurUtils: Class<*>?,
         dockClass: Class<*>?
     ) {
-
         // hook 是否为大屏判断之函数
         val hasLargeMethod = screenUtils
             ?.getDeclaredMethod("hasLargeDisplayFeatures")
@@ -220,18 +216,17 @@ class DockHook {
      * 修改 Dock 栏背景
      * @param module 模块入口类
      * @param blurRadius 背景模糊半径
-     * @param cornerRadiusPx 背景圆角半径 (像素)
+     * @param cornerRadius 背景圆角半径
      * @param classLoader [ClassLoader] 实例
      * @param blurUtils 模糊工具类
      */
     private fun modifyDockBkg(
         module: XposedModule,
         blurRadius: Int,
-        cornerRadiusPx: Float,
+        cornerRadius: Float,
         classLoader: ClassLoader,
         blurUtils: Class<*>?
     ) {
-
         // 这里对 BlurRadius 进行了傻逼般的硬编码
         // hook toUXRadius 方法取消硬编码
         val toUXRadius = blurUtils?.getDeclaredMethod(
@@ -304,7 +299,9 @@ class DockHook {
             val newArgs = chain.args.toMutableList()
             // 获取当前 BlurParams 实例
             val currentProp = chain.thisObject
-                ?: return@intercept chain.proceed()
+                ?: return@intercept chain.proceed()// 换算单位
+            val cornerRadiusPx = cornerRadius
+                .dpToPx(ContextHelper.getContext(classLoader))
             // 是 Dock 创建的实例进行参数修改
             if (dockPropertiesMap[currentProp] == true) {
                 newArgs[0] = cornerRadiusPx
