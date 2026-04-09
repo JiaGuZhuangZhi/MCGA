@@ -71,4 +71,6 @@
     <string name="title_color_in_active_state_of_tile">Title color in active state of tile</string>
     <string name="des_color_in_inactive_state_of_tile">Description color inactive state of tile</string>
     <string name="des_color_in_active_state_of_tile">Description color active state of tile</string>
+    <string name="dock_bar">Dock Bar</string>
+    <string name="force_dock_bkg">Force the use of Dock background</string>
 </resources>
