@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isNotEmpty
 import com.gustate.mcga.utils.LogUtils.log
@@ -101,15 +102,14 @@ class NearmeHook {
                     blurBehindRadius = blurRadius
                     dimAmount = 0f
                 }.also { window.attributes = it }
-
-                // 延迟处理根布局，因为 SystemStateManager 可能会动态插入 View
-                window.decorView.postDelayed({
-                    val content = activity.findViewById<ViewGroup>(android.R.id.content)
-                    // 循环清理所有层级的背景
+                // 清除背景色
+                val content = activity.findViewById<ViewGroup>(android.R.id.content)
+                content.viewTreeObserver.addOnGlobalLayoutListener {
+                    // 清理所有层级的背景
                     var current: View? = content
-                    while (current != null) {
+                    while (current is FrameLayout) {
                         current.setBackgroundColor(Color.TRANSPARENT)
-                        if (current is ViewGroup && current.isNotEmpty()) {
+                        if (current.isNotEmpty()) {
                             current = current.getChildAt(0)
                         } else break
                     }
@@ -148,7 +148,7 @@ class NearmeHook {
                             }
                         }
                     )
-                }, 60)
+                }
                 result
             }
         } catch (e: Exception) {
