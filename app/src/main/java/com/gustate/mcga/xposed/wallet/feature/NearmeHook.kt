@@ -75,6 +75,7 @@ class NearmeHook {
         ) ?: return
         // 处理窗口模糊与背景
         try {
+
             val onCreate = nfcActivityClass
                 .getDeclaredMethod("onCreate", Bundle::class.java)
             module.hook(onCreate).intercept { chain ->
@@ -101,51 +102,53 @@ class NearmeHook {
                     dimAmount = 0f
                 }.also { window.attributes = it }
 
-                // 延迟处理根布局，防范 SystemStateManager 动态插帧
-                val content = activity.findViewById<ViewGroup>(android.R.id.content)
-                // 循环清理所有层级的背景
-                var current: View? = content
-                while (current != null) {
-                    current.setBackgroundColor(Color.TRANSPARENT)
-                    if (current is ViewGroup && current.isNotEmpty()) {
-                        current = current.getChildAt(0)
-                    } else break
-                }
-                // 为卡片设置背景
-                val cards = listOf("bus_detail", "layout_operate", "root_layout")
-                getIdentifier(
-                    res = res,
-                    pkgName = param.packageName,
-                    resType = "id",
-                    resNames = cards,
-                    onReadyResIds = { resIds ->
-                        // 分类正确与错误的 ids
-                        val (valid, invalid) = resIds.entries.partition { it.value != 0 }
-                        // 错误报日志
-                        invalid.forEach {
-                            log(
-                                module = module, tag = NFC_LOG,
-                                message = "❌ 获取 ${it.key} 资源 ID 失败"
-                            )
-                        }
-                        // 正确走流程
-                        valid.forEach {
-                            activity.findViewById<ViewGroup>(it.value)?.let { parent ->
-                                parent.background = if (widgetSquircle) {
-                                    SquircleDrawable(widgetCornerPx).apply {
-                                        val baseColor =
-                                            if (isDark) Color.BLACK else Color.WHITE
-                                        setColors(normal = baseColor, pressed = baseColor)
-                                        alpha = (widgetAlpha * 255).toInt()
+                // 延迟处理根布局，因为 SystemStateManager 可能会动态插入 View
+                window.decorView.postDelayed({
+                    val content = activity.findViewById<ViewGroup>(android.R.id.content)
+                    // 循环清理所有层级的背景
+                    var current: View? = content
+                    while (current != null) {
+                        current.setBackgroundColor(Color.TRANSPARENT)
+                        if (current is ViewGroup && current.isNotEmpty()) {
+                            current = current.getChildAt(0)
+                        } else break
+                    }
+                    // 为卡片设置背景
+                    val cards = listOf("bus_detail", "layout_operate", "root_layout")
+                    getIdentifier(
+                        res = res,
+                        pkgName = param.packageName,
+                        resType = "id",
+                        resNames = cards,
+                        onReadyResIds = { resIds ->
+                            // 分类正确与错误的 ids
+                            val (valid, invalid) = resIds.entries.partition { it.value != 0 }
+                            // 错误报日志
+                            invalid.forEach {
+                                log(
+                                    module = module, tag = NFC_LOG,
+                                    message = "❌ 获取 ${it.key} 资源 ID 失败"
+                                )
+                            }
+                            // 正确走流程
+                            valid.forEach {
+                                activity.findViewById<ViewGroup>(it.value)?.let { parent ->
+                                    parent.background = if (widgetSquircle) {
+                                        SquircleDrawable(widgetCornerPx).apply {
+                                            val baseColor =
+                                                if (isDark) Color.BLACK else Color.WHITE
+                                            setColors(normal = baseColor, pressed = baseColor)
+                                            alpha = (widgetAlpha * 255).toInt()
+                                        }
+                                    } else {
+                                        parent.background
+                                            ?.apply { alpha = (widgetAlpha * 255).toInt() }
                                     }
-                                } else {
-                                    parent.background
-                                        ?.apply { alpha = (widgetAlpha * 255).toInt() }
                                 }
                             }
                         }
-                    }
-                )
+                    )
+                }, 60)
                 result
             }
         } catch (e: Exception) {
@@ -155,29 +158,32 @@ class NearmeHook {
             )
         }
         // 隐藏刷卡页面功能列表中的按压背景
-        val viewHolderClass =
-            loadClass("com.nearme.operate.widget.OperateViewHolder", param.classLoader)
-        if (viewHolderClass != null) {
-            try {
-                val constructor = viewHolderClass.getDeclaredConstructor(
-                    View::class.java
-                ) ?: return log(
-                    module = module, tag = NFC_LOG,
-                    message = "❌ 获取 OperateViewHolder 构造函数失败"
-                )
-                module.hook(constructor).intercept { chain ->
-                    val result = chain.proceed()
-                    val itemView = chain.args[0] as? ViewGroup
-                    // 干掉子 View 的背景
-                    itemView?.getChildAt(0)?.background = 0.toDrawable()
-                    result
-                }
-            } catch (e: Exception) {
-                log(
-                    module = module, tag = NFC_LOG,
-                    message = "❌ Hook OperateViewHolder 失败: ${e.message}"
-                )
+        val viewHolderClass = loadClass(
+            className = "com.nearme.operate.widget.OperateViewHolder",
+            classLoader = param.classLoader
+        ) ?: return log(
+            module = module, tag = NFC_LOG,
+            message = "❌ 获取 OperateViewHolder 类失败"
+        )
+        try {
+            val constructor = viewHolderClass.getDeclaredConstructor(
+                View::class.java
+            ) ?: return log(
+                module = module, tag = NFC_LOG,
+                message = "❌ 获取 OperateViewHolder 构造函数失败"
+            )
+            module.hook(constructor).intercept { chain ->
+                val result = chain.proceed()
+                val itemView = chain.args[0] as? ViewGroup
+                // 干掉子 View 的背景
+                itemView?.getChildAt(0)?.background = 0.toDrawable()
+                result
             }
+        } catch (e: Exception) {
+            log(
+                module = module, tag = NFC_LOG,
+                message = "❌ Hook OperateViewHolder 失败: ${e.message}"
+            )
         }
     }
 }
