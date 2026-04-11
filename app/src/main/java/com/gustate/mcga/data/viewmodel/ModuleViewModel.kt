@@ -75,24 +75,6 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
 
     fun updateIsLauncherIconShowing(enabled: Boolean) {
         application.packageManager.setComponentEnabledSetting(
-            ComponentName(
-                application.packageName,
-                "${CommonUtils.PACKAGE_NAME}.Home"
-            ),
-            if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-            else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
-        _uiState.value = _uiState.value.copy(isLauncherIconShowing = enabled)
-    }
-
-    fun updateIsLogEnabled(enabled: Boolean) {
-        _repo.setBoolean("log_enabled", enabled)
-        _uiState.value = _uiState.value.copy(isLogEnabled = enabled)
-    }
-
-    fun updateIsLauncherIconShowing(enabled: Boolean) {
-        application.packageManager.setComponentEnabledSetting(
             ComponentName(application.packageName, "${CommonUtils.PACKAGE_NAME}.Home"),
             if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
