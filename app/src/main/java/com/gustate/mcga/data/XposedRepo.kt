@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
-import com.gustate.mcga.utils.LogUtils
 import io.github.libxposed.service.XposedService
 import io.github.libxposed.service.XposedServiceHelper
 
@@ -36,7 +35,6 @@ class XposedRepo private constructor(context: Context) {
     var onActiveChanged: ((Boolean) -> Unit)? = null
 
     init {
-        LogUtils.init(context = context)
         // 自动连接服务
         XposedServiceHelper.registerListener(
             object : XposedServiceHelper.OnServiceListener {

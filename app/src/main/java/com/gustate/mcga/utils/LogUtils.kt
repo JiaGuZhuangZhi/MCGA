@@ -1,24 +1,10 @@
 package com.gustate.mcga.utils
 
-import android.content.Context
 import android.util.Log
-import com.gustate.mcga.data.XposedRepo
 import com.gustate.mcga.data.keys.ModuleKeys
 import io.github.libxposed.api.XposedModule
 
 object LogUtils {
-
-    private lateinit var xposedRepo: XposedRepo
-
-    fun init(context: Context) {
-        xposedRepo = XposedRepo
-            .getInstance(context = context.applicationContext)
-    }
-
-    private val logEnabled by lazy {
-        xposedRepo
-            .getBoolean(key = ModuleKeys.ENABLE_LOG)
-    }
 
     /**
      * 输出 Log
@@ -33,6 +19,9 @@ object LogUtils {
         tag: String = "未设置",
         message: String
     ) {
+        val logEnabled = module
+            .getRemotePreferences("mcga_prefs")
+            .getBoolean(ModuleKeys.ENABLE_LOG, true)
         if (!logEnabled) return
         module.log(priority, "MCGA-$tag", message)
     }
