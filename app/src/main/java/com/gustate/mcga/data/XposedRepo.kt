@@ -35,6 +35,7 @@ class XposedRepo private constructor(context: Context) {
     var onActiveChanged: ((Boolean) -> Unit)? = null
 
     init {
+        Log.e("e", "111")
         // 自动连接服务
         XposedServiceHelper.registerListener(
             object : XposedServiceHelper.OnServiceListener {
@@ -43,6 +44,7 @@ class XposedRepo private constructor(context: Context) {
                     xposedPrefs = service
                         .getRemotePreferences("mcga_prefs")
                     syncAllToRemote()
+                    Log.e("e", "success")
                     onActiveChanged?.invoke(true)
                 }
 

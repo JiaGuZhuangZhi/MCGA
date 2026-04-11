@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,7 +26,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.gustate.mcga.data.viewmodel.ModuleViewModel
 import com.gustate.mcga.main.navgation.Destination
@@ -37,30 +35,22 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainPage(
+    viewModel: ModuleViewModel,
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    val viewModel = viewModel<ModuleViewModel>()
     val moduleUiState by viewModel.uiState
     val scrollBehavior = TopAppBarDefaults
         .exitUntilCollapsedScrollBehavior(state = rememberTopAppBarState())
     val scope = rememberCoroutineScope()
 
-    val availableDestinations = remember(
-        key1 = moduleUiState.isModuleActive
-    ) {
+    val availableDestinations = remember(key1 = moduleUiState.isModuleActive) {
         Destination.entries.filter {
-            // 如果是设置页且模块未激活 过滤掉
             !(it == Destination.SETTING && !moduleUiState.isModuleActive)
         }
     }
-    val pagerState = rememberPagerState(
-        initialPage = availableDestinations
-            .indexOf(element = Destination.HOME)
-    ) {
-        availableDestinations.size
-    }
+    val pagerState = rememberPagerState(initialPage = 0) { availableDestinations.size }
     val currentDestination = remember(
         key1 = pagerState.currentPage,
         key2 = moduleUiState.isModuleActive
@@ -68,15 +58,6 @@ fun MainPage(
         availableDestinations
             .getOrNull(index = pagerState.currentPage)
             ?: Destination.HOME
-    }
-    LaunchedEffect(
-        key1 = moduleUiState.isModuleActive
-    ) {
-        if (moduleUiState.isModuleActive) {
-            pagerState.animateScrollToPage(
-                page = availableDestinations.indexOf(Destination.HOME)
-            )
-        }
     }
 
     Scaffold(
@@ -136,6 +117,12 @@ fun MainPage(
             val pagerModifier = Modifier
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
             when (availableDestinations[page]) {
+                Destination.HOME -> HomePage(
+                    modifier = pagerModifier
+                        .fillMaxSize(),
+                    viewModel = viewModel
+                )
+
                 Destination.SETTING -> {
                     SettingPage(
                         modifier = pagerModifier
@@ -145,12 +132,6 @@ fun MainPage(
                         animatedVisibilityScope = animatedVisibilityScope
                     )
                 }
-
-                Destination.HOME -> HomePage(
-                    modifier = pagerModifier
-                        .fillMaxSize(),
-                    viewModel = viewModel
-                )
 
                 Destination.ABOUT -> AboutPage(
                     modifier = pagerModifier

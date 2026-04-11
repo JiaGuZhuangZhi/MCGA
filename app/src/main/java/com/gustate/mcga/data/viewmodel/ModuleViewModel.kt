@@ -10,6 +10,8 @@ import com.gustate.mcga.data.XposedRepo
 import com.gustate.mcga.data.model.RootManager
 import com.gustate.mcga.data.state.ModuleUiState
 import com.gustate.mcga.utils.RootUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ModuleViewModel(context: Application) : AndroidViewModel(application = context) {
@@ -18,6 +20,7 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
 
     private val _uiState = mutableStateOf(
         value = ModuleUiState(
+            isReady = false,
             isModuleActive = false,
             isRootAvailable = false,
             rootManagerInfo = RootManager(
@@ -29,15 +32,25 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
     val uiState: MutableState<ModuleUiState> = _uiState
 
     init {
-        _repo.onActiveChanged = { active ->
-            _uiState.value = _uiState.value.copy(isModuleActive = active)
-        }
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isRootAvailable = RootUtils.isRootAvailable(),
                 rootManagerInfo = RootUtils.getRootManager()
             )
         }
+        viewModelScope.launch {
+            delay(timeMillis = 500)
+            if (!_uiState.value.isReady) {
+                _uiState.value = _uiState.value.copy(isReady = true)
+            }
+        }
+        _repo.onActiveChanged = { active ->
+            viewModelScope.launch(context = Dispatchers.Main) {
+                _uiState.value = _uiState.value.copy(
+                    isModuleActive = active,
+                    isReady = true
+                )
+            }
+        }
     }
-
 }

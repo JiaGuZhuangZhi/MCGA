@@ -16,18 +16,18 @@ enum class Destination(
     @param:StringRes @field:StringRes
     val contentDescription: Int
 ) {
-    SETTING(
-        label = R.string.setting,
-        icon = R.drawable.settings_outline,
-        focusIcon = R.drawable.settings_filled,
-        contentDescription = R.string.setting
-    ),
     HOME(
         label = R.string.app_name,
         navLabel = R.string.home,
         icon = R.drawable.home_outline,
         focusIcon = R.drawable.home_filled,
         contentDescription = R.string.home
+    ),
+    SETTING(
+        label = R.string.setting,
+        icon = R.drawable.settings_outline,
+        focusIcon = R.drawable.settings_filled,
+        contentDescription = R.string.setting
     ),
     ABOUT(
         label = R.string.about,
