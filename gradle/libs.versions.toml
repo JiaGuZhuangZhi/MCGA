@@ -1,6 +1,7 @@
 [versions]
 agp = "8.13.0"
 animation = "1.9.4"
+coreSplashscreen = "1.2.0"
 libxposed-api = "101.0.0"
 capsule = "2.1.1"
 haze = "1.7.1"
@@ -20,6 +21,7 @@ cardview = "1.0.0"
 [libraries]
 androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
