@@ -14,8 +14,8 @@ android {
         applicationId = "com.gustate.mcga"
         minSdk = 33
         targetSdk = 36
-        versionCode = 1011
-        versionName = "1.1.1"
+        versionCode = 2000
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
