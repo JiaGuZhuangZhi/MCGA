@@ -19,15 +19,14 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.gustate.mcga.R
 import com.gustate.mcga.data.viewmodel.ModuleViewModel
 import com.gustate.mcga.main.navgation.Destination
 import com.gustate.mcga.ui.widget.AppTopBar
@@ -36,50 +35,51 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainPage(
+    viewModel: ModuleViewModel,
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    val viewModel = viewModel<ModuleViewModel>()
     val moduleUiState by viewModel.uiState
     val scrollBehavior = TopAppBarDefaults
         .exitUntilCollapsedScrollBehavior(state = rememberTopAppBarState())
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(initialPage = 1) { Destination.entries.size }
+
+    val availableDestinations = remember(key1 = moduleUiState.isModuleActive) {
+        Destination.entries.filter {
+            !(it == Destination.SETTING && !moduleUiState.isModuleActive)
+        }
+    }
+    val pagerState = rememberPagerState(initialPage = 0) { availableDestinations.size }
+    val currentDestination = remember(
+        key1 = pagerState.currentPage,
+        key2 = moduleUiState.isModuleActive
+    ) {
+        availableDestinations
+            .getOrNull(index = pagerState.currentPage)
+            ?: Destination.HOME
+    }
 
     Scaffold(
         topBar = {
             AppTopBar(
-                title =
-                    {
-                        Text(
-                            text = when (pagerState.currentPage) {
-                                Destination.SETTING.ordinal ->
-                                    stringResource(R.string.setting)
-
-                                Destination.HOME.ordinal ->
-                                    stringResource(R.string.app_name)
-
-                                Destination.ABOUT.ordinal ->
-                                    stringResource(R.string.about)
-
-                                else -> stringResource(R.string.app_name)
-                            },
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
+                title = {
+                    Text(
+                        text = stringResource(id = currentDestination.label),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 scrollBehavior = scrollBehavior,
-                isHomePage = pagerState.currentPage == Destination.HOME.ordinal
+                isHomePage = currentDestination == Destination.HOME
             )
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         bottomBar = {
             BottomAppBar {
                 NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
-                    Destination.entries.forEachIndexed { index, destination ->
-                        if (destination == Destination.SETTING && !moduleUiState.isModuleActive)
-                            return@forEachIndexed
+                    availableDestinations.forEachIndexed { index, destination ->
                         val isTabSelected = pagerState.currentPage == index
                         NavigationBarItem(
                             selected = isTabSelected,
@@ -100,7 +100,9 @@ fun MainPage(
                                 )
                             },
                             label = {
-                                Text(text = stringResource(id = destination.label))
+                                Text(
+                                    text = stringResource(id = destination.navLabel)
+                                )
                             }
                         )
                     }
@@ -114,20 +116,22 @@ fun MainPage(
         ) { page ->
             val pagerModifier = Modifier
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
-            when (Destination.entries[page]) {
-                Destination.SETTING -> SettingPage(
-                    modifier = pagerModifier
-                        .fillMaxSize(),
-                    navController = navController,
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedVisibilityScope = animatedVisibilityScope
-                )
-
+            when (availableDestinations[page]) {
                 Destination.HOME -> HomePage(
                     modifier = pagerModifier
                         .fillMaxSize(),
                     viewModel = viewModel
                 )
+
+                Destination.SETTING -> {
+                    SettingPage(
+                        modifier = pagerModifier
+                            .fillMaxSize(),
+                        navController = navController,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+                }
 
                 Destination.ABOUT -> AboutPage(
                     modifier = pagerModifier

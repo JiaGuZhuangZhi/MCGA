@@ -8,7 +8,7 @@ import com.gustate.mcga.data.keys.WalletKeys
 import com.gustate.mcga.data.state.WalletUiState
 
 class WalletViewModel(context: Application) : AndroidViewModel(context) {
-    private val repo = XposedRepo(context)
+    private val repo = XposedRepo.getInstance(context = context)
 
     private val _uiState = mutableStateOf(
         value = WalletUiState(

@@ -15,14 +15,17 @@ import com.gustate.mcga.data.model.RootManager
 import com.gustate.mcga.data.state.ModuleUiState
 import com.gustate.mcga.utils.CommonUtils
 import com.gustate.mcga.utils.RootUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ModuleViewModel(context: Application) : AndroidViewModel(application = context) {
 
-    private val _repo = XposedRepo(context)
+    private val _repo = XposedRepo.getInstance(context = context)
 
     private val _uiState = mutableStateOf(
         value = ModuleUiState(
+            isReady = false,
             isModuleActive = false,
             isRootAvailable = false,
             isLogEnabled = true,
@@ -38,7 +41,6 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
     init {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
-                isModuleActive = _repo.isModuleActive(),
                 isRootAvailable = RootUtils.isRootAvailable(),
                 rootManagerInfo = RootUtils.getRootManager(),
                 isLogEnabled = _repo.getBoolean(ModuleKeys.ENABLE_LOG, true),
@@ -50,6 +52,38 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
                 ) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
             )
         }
+        viewModelScope.launch {
+            delay(timeMillis = 500)
+            if (!_uiState.value.isReady) {
+                _uiState.value = _uiState.value.copy(isReady = true)
+            }
+        }
+        _repo.onActiveChanged = { active ->
+            viewModelScope.launch(context = Dispatchers.Main) {
+                _uiState.value = _uiState.value.copy(
+                    isModuleActive = active,
+                    isReady = true
+                )
+            }
+        }
+    }
+
+    fun updateIsLogEnabled(enabled: Boolean) {
+        _repo.setBoolean("log_enabled", enabled)
+        _uiState.value = _uiState.value.copy(isLogEnabled = enabled)
+    }
+
+    fun updateIsLauncherIconShowing(enabled: Boolean) {
+        application.packageManager.setComponentEnabledSetting(
+            ComponentName(
+                application.packageName,
+                "${CommonUtils.PACKAGE_NAME}.Home"
+            ),
+            if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
+        _uiState.value = _uiState.value.copy(isLauncherIconShowing = enabled)
     }
 
     fun updateIsLogEnabled(enabled: Boolean) {

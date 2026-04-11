@@ -10,7 +10,7 @@ import com.gustate.mcga.data.state.SystemUIUiState
 
 class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
 
-    private val repo = XposedRepo(context)
+    private val repo = XposedRepo.getInstance(context = context)
 
     private val _uiState = mutableStateOf(
         value = SystemUIUiState(

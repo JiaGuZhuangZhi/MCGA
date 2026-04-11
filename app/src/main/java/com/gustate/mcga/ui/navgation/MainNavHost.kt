@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.gustate.mcga.data.viewmodel.ModuleViewModel
 import com.gustate.mcga.data.viewmodel.SystemUIViewModel
 import com.gustate.mcga.main.ui.MainPage
 import com.gustate.mcga.panel.AodPanel
@@ -26,6 +27,7 @@ import com.gustate.mcga.panel.systemui.TilePanel
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainNavHost(
+    moduleViewModel: ModuleViewModel,
     navController: NavHostController,
     startDestination: Destination,
     sharedTransitionScope: SharedTransitionScope
@@ -38,13 +40,14 @@ fun MainNavHost(
 
         composable(route = Destination.MAIN.route) {
             MainPage(
+                viewModel = moduleViewModel,
                 navController = navController,
                 sharedTransitionScope = sharedTransitionScope,
                 animatedVisibilityScope = this
             )
         }
 
-        // 2. 将 SystemUI 相关的所有页面打包进一个嵌套图
+        // 将 SystemUI 相关的所有页面打包进一个嵌套图
         // 这样只要在这个组内，ViewModel 就会一直存活
         navigation(
             startDestination = Destination.SYSTEMUI.route,
@@ -87,16 +90,6 @@ fun MainNavHost(
         composable(route = "detail/{itemId}") { backStackEntry ->
             val itemId = backStackEntry.arguments?.getString("itemId") ?: "unknown"
             when (itemId) {
-                /*"systemui" -> {
-                    SystemUIPanel(
-                        onBack = {
-                            navController.popBackStack()
-                        },
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = this
-                    )
-                }*/
-
                 "home" -> {
                     HomePanel(
                         onBack = {
@@ -138,17 +131,6 @@ fun MainNavHost(
                 }
             }
         }
-
-        composable(route = "systemui/{itemId}") { backStackEntry ->
-            val itemId = backStackEntry
-                .arguments
-                ?.getString("itemId")
-                ?: "unknown"
-            when (itemId) {
-
-            }
-        }
-
     }
 }
 

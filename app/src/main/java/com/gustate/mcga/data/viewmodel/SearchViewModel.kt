@@ -9,7 +9,7 @@ import com.gustate.mcga.data.keys.SearchKeys
 import com.gustate.mcga.data.state.SearchUiState
 
 class SearchViewModel(context: Application) : AndroidViewModel(context) {
-    private val repo = XposedRepo(context)
+    private val repo = XposedRepo.getInstance(context = context)
 
     private val _uiState = mutableStateOf(
         value = SearchUiState(

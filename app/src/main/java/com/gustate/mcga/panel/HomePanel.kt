@@ -19,9 +19,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gustate.mcga.R
 import com.gustate.mcga.data.viewmodel.HomeViewModel
 import com.gustate.mcga.ui.page.BasePanelPage
+import com.gustate.mcga.ui.widget.SliderWidget
 import com.gustate.mcga.ui.widget.SplicedColumnGroup
 import com.gustate.mcga.ui.widget.SwitchWidget
 import dev.chrisbanes.haze.hazeSource
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -57,18 +59,59 @@ fun HomePanel(
         ) {
             SplicedColumnGroup(
                 modifier = Modifier,
-                title = stringResource(id = R.string.hook_launcher),
+                title = stringResource(id = R.string.dock_bar),
                 content = listOf(
                     {
                         SwitchWidget(
                             painter = painterResource(id = R.drawable.dock_to_bottom_filled),
-                            title = stringResource(id = R.string.force_dock_blur),
-                            checked = uiState.enableDockBlur,
+                            title = stringResource(id = R.string.force_dock_bkg),
+                            checked = uiState.enableDockBkg,
                             onCheckedChange = { checked ->
-                                viewModel.updateDockBlur(checked)
+                                viewModel.updateDockBkg(enabled = checked)
                             }
                         )
                     },
+                    {
+                        SwitchWidget(
+                            painter = painterResource(id = R.drawable.blur_on),
+                            title = stringResource(id = R.string.force_dock_blur),
+                            enabled = uiState.enableDockBkg,
+                            checked = uiState.enableDockBlur,
+                            onCheckedChange = { checked ->
+                                viewModel.updateDockBlur(enabled = checked)
+                            }
+                        )
+                    },
+                    {
+                        SliderWidget(
+                            painter = painterResource(id = R.drawable.opacity),
+                            title = stringResource(id = R.string.bkg_blur_radius),
+                            enabled = uiState.enableDockBkg || uiState.enableDockBlur,
+                            value = uiState.dockBlurRadius.toFloat(),
+                            valueRange = 0f..1999f,
+                            onValueChange = { value ->
+                                viewModel.updateDockBlurRadius(value = value.roundToInt())
+                            }
+                        )
+                    },
+                    {
+                        SliderWidget(
+                            painter = painterResource(id = R.drawable.rounded_corner),
+                            title = stringResource(id = R.string.bkg_corner_radius),
+                            enabled = uiState.enableDockBkg || uiState.enableDockBlur,
+                            value = uiState.dockCornerRadius,
+                            valueRange = 0f..99f,
+                            onValueChange = { value ->
+                                viewModel.updateDockCornerRadius(value = value)
+                            }
+                        )
+                    }
+                )
+            )
+            SplicedColumnGroup(
+                modifier = Modifier,
+                title = stringResource(id = R.string.more),
+                content = listOf(
                     {
                         SwitchWidget(
                             painter = painterResource(id = R.drawable.receipt_long_off),

@@ -7,6 +7,8 @@ import com.gustate.mcga.R
 enum class Destination(
     @param:StringRes @field:StringRes
     val label: Int,
+    @param:StringRes @field:StringRes
+    val navLabel: Int = label,
     @param:DrawableRes @field:DrawableRes
     val icon: Int,
     @param:DrawableRes @field:DrawableRes
@@ -14,17 +16,18 @@ enum class Destination(
     @param:StringRes @field:StringRes
     val contentDescription: Int
 ) {
+    HOME(
+        label = R.string.app_name,
+        navLabel = R.string.home,
+        icon = R.drawable.home_outline,
+        focusIcon = R.drawable.home_filled,
+        contentDescription = R.string.home
+    ),
     SETTING(
         label = R.string.setting,
         icon = R.drawable.settings_outline,
         focusIcon = R.drawable.settings_filled,
         contentDescription = R.string.setting
-    ),
-    HOME(
-        label = R.string.home,
-        icon = R.drawable.home_outline,
-        focusIcon = R.drawable.home_filled,
-        contentDescription = R.string.home
     ),
     ABOUT(
         label = R.string.about,

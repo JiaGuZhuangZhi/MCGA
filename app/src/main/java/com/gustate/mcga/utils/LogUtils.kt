@@ -1,30 +1,29 @@
 package com.gustate.mcga.utils
 
+import android.util.Log
 import com.gustate.mcga.data.keys.ModuleKeys
-import de.robv.android.xposed.XSharedPreferences
-import de.robv.android.xposed.XposedBridge
+import io.github.libxposed.api.XposedModule
 
 object LogUtils {
-    private val logEnabled by lazy {
-        val prefs = XSharedPreferences(
-            "com.gustate.mcga",
-            "xposed_prefs"
-        )
-        prefs.makeWorldReadable()
-        prefs.getBoolean(ModuleKeys.ENABLE_LOG, true)
-    }
 
-    fun log(message: String, tag: String, throwable: Throwable) {
-        val fullMessage = "[MCGA-$tag] $message " +
-                "\n throwable: " +
-                "\n ${throwable.message}"
-        XposedBridge.log(fullMessage)
-        throw throwable
-    }
-
-    fun log(tag: String, message: String) {
+    /**
+     * 输出 Log
+     * @param module 模块入口类
+     * @param priority [Log] 等级
+     * @param tag log 标签
+     * @param message log 信息
+     */
+    fun log(
+        module: XposedModule,
+        priority: Int = Log.DEBUG,
+        tag: String = "未设置",
+        message: String
+    ) {
+        val logEnabled = module
+            .getRemotePreferences("mcga_prefs")
+            .getBoolean(ModuleKeys.ENABLE_LOG, true)
         if (!logEnabled) return
-        val fullMessage = "[MCGA-$tag] $message"
-        XposedBridge.log(fullMessage)
+        module.log(priority, "MCGA-$tag", message)
     }
+
 }

@@ -1,20 +1,46 @@
 package com.gustate.mcga.xposed.wallet
 
+import android.content.SharedPreferences
 import com.gustate.mcga.data.keys.WalletKeys
-import com.gustate.mcga.xposed.wallet.feature.Nearme
-import de.robv.android.xposed.XSharedPreferences
-import de.robv.android.xposed.callbacks.XC_LoadPackage
+import com.gustate.mcga.xposed.wallet.feature.NearmeHook
+import io.github.libxposed.api.XposedModule
+import io.github.libxposed.api.XposedModuleInterface
 
 object WalletHook {
-    fun applyWalletFeature(lpparam: XC_LoadPackage.LoadPackageParam) {
-        // 以下内容仅 Hook 钱包 (com.finshell.wallet)
-        if (lpparam.packageName != "com.finshell.wallet") return
-        val prefs = XSharedPreferences(
-            "com.gustate.mcga",
-            "xposed_prefs"
-        )
-        prefs.makeWorldReadable()
 
+    // 实例化相关 Feature 类
+    private val nearmeHook = NearmeHook()
+
+    /**
+     * 应用钱包 Hook 设置
+     * @param module 当前 XposedModule 实例
+     * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
+     */
+    fun applyWalletFeature(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
+        // 以下内容仅 Hook 钱包 (com.finshell.wallet)
+        if (param.packageName != "com.finshell.wallet") return
+
+        // 应用配置
+        applyNearmeFeature(module = module, param = param, prefs = prefs)
+
+    }
+
+    /**
+     * 应用 NFC 消费界面外观配置
+     * @param module 当前 XposedModule 实例
+     * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
+     */
+    fun applyNearmeFeature(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
         val enableCustomNfcCardPage = prefs.getBoolean(
             WalletKeys.ENABLE_CUSTOM_NFC_CARD_PAGE,
             false
@@ -45,8 +71,9 @@ object WalletHook {
         )
 
         if (enableCustomNfcCardPage) {
-            Nearme.changeNfcConsume(
-                lpparam = lpparam,
+            nearmeHook.changeNfcConsume(
+                module = module,
+                param = param,
                 blurRadius = nfcCardPageBkgBlurRadius,
                 blurScrimLight = nfcCardPageBkgScrimLight,
                 blurScrimDark = nfcCardPageBkgScrimDark,
