@@ -591,10 +591,6 @@ class TwoXOneTileHook {
                         "OplusQSHighlightTileViewLabelColorManager",
                 classLoader = param.classLoader
             )
-            val stateClazz = loadClass(
-                className = "com.android.systemui.plugins.qs.QSTile\$State",
-                classLoader = param.classLoader
-            )
             val pairClazz = loadClass(
                 className = "kotlin.Pair",
                 classLoader = param.classLoader
@@ -602,33 +598,47 @@ class TwoXOneTileHook {
             val method = labelColorManagerClazz.getDeclaredMethod(
                 "getColorByTileState",
                 Context::class.java,
-                stateClazz
+                loadClass(
+                    className = "com.android.systemui.plugins.qs.QSTile\$State",
+                    classLoader = param.classLoader
+                )
             )
             module.hook(method).intercept { chain ->
-                val stateObj = chain.args[1]
-                val state = stateObj.getAnyField<Int>("state")
-                // 依据 state 获取颜色
-                val (titleColor, desColor) = when (state) {
-                    2 -> activeTitleColor to activeDesColor // Active
-                    else -> inactiveTitleColor to inactiveDesColor // Inactive / Unavailable
-                }
-                // 反射构造 kotlin.Pair(ColorStateList, ColorStateList)
-                val resultPair = pairClazz
-                    .getConstructor(Any::class.java, Any::class.java)
-                    .newInstance(
-                        ColorStateList.valueOf(titleColor),
-                        ColorStateList.valueOf(desColor)
+                val result = chain.proceed()
+                try {
+                    val stateObj = chain.args[1]
+                    val state = stateObj.getAnyField<Int>("state")
+                    // 依据 state 获取颜色
+                    val (titleColor, desColor) = when (state) {
+                        2 -> activeTitleColor to activeDesColor // Active
+                        else -> inactiveTitleColor to inactiveDesColor // Inactive / Unavailable
+                    }
+                    // 反射构造 kotlin.Pair(ColorStateList, ColorStateList)
+                    val resultPair = pairClazz
+                        .getConstructor(Any::class.java, Any::class.java)
+                        .newInstance(
+                            ColorStateList.valueOf(titleColor),
+                            ColorStateList.valueOf(desColor)
+                        )
+                    log(
+                        module = module, tag = QS_TILE_2X1_LOG,
+                        message = "✅ 成功修改 2*1 磁贴文本颜色 (state: $state)"
                     )
-                log(
-                    module = module, tag = QS_TILE_2X1_LOG,
-                    message = "✅ 成功修改 2*1 磁贴文本颜色 (state: $state)"
-                )
-                resultPair
+                    return@intercept resultPair
+                } catch (e: Exception) {
+                    log(
+                        module = module, tag = QS_TILE_2X1_LOG,
+                        message = "❌ 修改控制中心 2*1 磁贴标签字体颜色失败",
+                        throwable = e
+                    )
+                    return@intercept result
+                }
             }
         } catch (e: Exception) {
             log(
                 module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 修改文本颜色失败: ${e.message}"
+                message = "❌ 修改控制中心 2*1 磁贴标签字体颜色失败",
+                throwable = e
             )
         }
     }
