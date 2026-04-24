@@ -493,11 +493,15 @@ class TwoXOneTileHook {
                     )
                     method.isAccessible = true
                     method.invoke(iconView, sizePx, sizePx)
+                    log(
+                        module = module, tag = QS_TILE_2X1_LOG,
+                        message = "✅ 成功修改 2*1 磁贴图标大小为 ${iconSizeDp}dp"
+                    )
                     return@intercept result
                 } catch (e: Exception) {
                     log(
                         module = module, tag = QS_TILE_2X1_LOG,
-                        message = "❌ 隐藏控制中心 2*1 磁贴图标背景 (状态) 失败",
+                        message = "❌ 修改图标大小失败",
                         throwable = e
                     )
                     return@intercept result
@@ -506,7 +510,7 @@ class TwoXOneTileHook {
         } catch (e: Exception) {
             log(
                 module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 隐藏控制中心 2*1 磁贴图标背景 (状态) 失败",
+                message = "❌ 修改图标大小失败",
                 throwable = e
             )
         }
@@ -552,7 +556,7 @@ class TwoXOneTileHook {
                 } catch (e: Exception) {
                     log(
                         module = module, tag = QS_TILE_2X1_LOG,
-                        message = "❌ 修改图标大小失败: ${e.message}",
+                        message = "❌ 修改图标大小失败",
                         throwable = e
                     )
                     return@intercept result
@@ -561,7 +565,7 @@ class TwoXOneTileHook {
         } catch (e: Exception) {
             log(
                 module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 修改图标大小失败: ${e.message}",
+                message = "❌ 修改图标大小失败",
                 throwable = e
             )
         }
