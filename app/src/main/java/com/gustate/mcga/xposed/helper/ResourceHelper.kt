@@ -85,6 +85,8 @@ object ResourceHelper {
             val context = ContextHelper.getContext(classLoader)
             val resId = context.resources
                 .getIdentifier(resName, resType, pkgName)
+            if (resId == 0)
+                throw NullPointerException("❌ 未在 $pkgName 中找到 R.${resType}.${resName}")
             onReadyResId(resId)
         }
     }
