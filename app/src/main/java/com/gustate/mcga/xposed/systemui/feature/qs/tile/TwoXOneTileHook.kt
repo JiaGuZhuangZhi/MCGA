@@ -5,10 +5,12 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.ColorInt
 import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.utils.RootUtils
 import com.gustate.mcga.utils.ViewUtils.dpToPx
+import com.gustate.mcga.xposed.helper.ClassHelper.callAnyMethod
 import com.gustate.mcga.xposed.helper.ClassHelper.getAnyField
 import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
 import com.gustate.mcga.xposed.helper.ResourceHelper
@@ -18,6 +20,7 @@ import io.github.libxposed.api.XposedModuleInterface
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.math.roundToInt
+
 
 /**
  * 控制中心 2*1 磁贴 Hook 类
@@ -334,42 +337,129 @@ class TwoXOneTileHook {
         param: XposedModuleInterface.PackageReadyParam,
         iconSizeDp: Float
     ) {
+        val osVer = RootUtils.getColorOSVersion()
+        if (osVer.startsWith(prefix = "V16.1"))
+            modifyTileIconSizeOS161(
+                module = module,
+                param = param,
+                iconSizeDp = iconSizeDp
+            )
+        else
+            modifyTileIconSizeOS160(
+                module = module,
+                param = param,
+                iconSizeDp = iconSizeDp
+            )
+    }
+
+    /**
+     * 修改控制中心 2*1 磁贴图标大小
+     * 适配 ColorOS V16.1.0
+     * @param module 当前 XposedModule 实例
+     * @param param 软件包加载参数
+     * @param iconSizeDp 图标大小 (dp)
+     */
+    fun modifyTileIconSizeOS161(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        iconSizeDp: Float
+    ) {
         try {
             val clazz = loadClass(
-                "com.oplus.systemui.plugins.qs.customize.view.tile.OplusQSIconView",
-                param.classLoader
-            ) ?: return log(
+                className = "com.oplus.systemui.plugins.qs.customize.view.tile." +
+                        "OplusQSIconView",
+                classLoader = param.classLoader
+            )
+            val method = clazz.getDeclaredMethod(
+                "onMeasure",
+                Int::class.javaPrimitiveType,
+                Int::class.javaPrimitiveType
+            )
+            module.hook(method).intercept { chain ->
+                val result = chain.proceed()
+                try {
+                    val rootView = chain.thisObject as View
+                    val context = rootView.context
+                    val sizePx = iconSizeDp.dpToPx(context).roundToInt()
+                    val iconView = rootView
+                        .callAnyMethod<ImageView>(methodName = "getIconView")
+                    val method = View::class.java.getDeclaredMethod(
+                        "setMeasuredDimension",
+                        Int::class.javaPrimitiveType,
+                        Int::class.javaPrimitiveType
+                    )
+                    method.isAccessible = true
+                    method.invoke(iconView, sizePx, sizePx)
+                    return@intercept result
+                } catch (e: Exception) {
+                    log(
+                        module = module, tag = QS_TILE_2X1_LOG,
+                        message = "❌ 隐藏控制中心 2*1 磁贴图标背景 (状态) 失败",
+                        throwable = e
+                    )
+                    return@intercept result
+                }
+            }
+        } catch (e: Exception) {
+            log(
                 module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 未获取到 OplusQSIconView 类"
+                message = "❌ 隐藏控制中心 2*1 磁贴图标背景 (状态) 失败",
+                throwable = e
+            )
+        }
+    }
+
+    /**
+     * 修改控制中心 2*1 磁贴图标大小
+     * 适配 ColorOS V16.0.0
+     * @param module 当前 XposedModule 实例
+     * @param param 软件包加载参数
+     * @param iconSizeDp 图标大小 (dp)
+     */
+    fun modifyTileIconSizeOS160(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        iconSizeDp: Float
+    ) {
+        try {
+            val clazz = loadClass(
+                className = "com.oplus.systemui.plugins.qs.customize.view.tile." +
+                        "OplusQSIconView",
+                classLoader = param.classLoader
             )
             val spanSizeClass = loadClass(
-                "com.oplusos.systemui.common.model.SpanSize",
-                param.classLoader
-            ) ?: return log(
-                module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 未获取到 SpanSize 类"
+                className = "com.oplusos.systemui.common.model.SpanSize",
+                classLoader = param.classLoader
             )
             val method = clazz.getDeclaredMethod(
                 "getIconSize",
                 spanSizeClass,
                 Boolean::class.javaPrimitiveType
-            ) ?: return log(
-                module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 未获取到 getIconSize 函数"
             )
             module.hook(method).intercept { chain ->
-                val view = chain.thisObject as View
-                val iconSizePx = iconSizeDp.dpToPx(view.context).roundToInt()
-                log(
-                    module = module, tag = QS_TILE_2X1_LOG,
-                    message = "✅ 成功修改 2*1 磁贴图标大小为 ${iconSizeDp}dp"
-                )
-                iconSizePx
+                val result = chain.proceed()
+                try {
+                    val view = chain.thisObject as View
+                    val iconSizePx = iconSizeDp.dpToPx(context = view.context).roundToInt()
+                    log(
+                        module = module, tag = QS_TILE_2X1_LOG,
+                        message = "✅ 成功修改 2*1 磁贴图标大小为 ${iconSizeDp}dp"
+                    )
+                    return@intercept iconSizePx
+                } catch (e: Exception) {
+                    log(
+                        module = module, tag = QS_TILE_2X1_LOG,
+                        message = "❌ 修改图标大小失败: ${e.message}",
+                        throwable = e
+                    )
+                    return@intercept result
+                }
             }
         } catch (e: Exception) {
             log(
                 module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 修改图标大小失败: ${e.message}"
+                message = "❌ 修改图标大小失败: ${e.message}",
+                throwable = e
             )
         }
     }
@@ -397,23 +487,14 @@ class TwoXOneTileHook {
                 className = "com.oplus.systemui.plugins.qs.customize.view.tile." +
                         "OplusQSHighlightTileViewLabelColorManager",
                 classLoader = param.classLoader
-            ) ?: return log(
-                module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 未获取到 OplusQSHighlightTileViewLabelColorManager 类"
             )
             val stateClazz = loadClass(
                 className = "com.android.systemui.plugins.qs.QSTile\$State",
                 classLoader = param.classLoader
-            ) ?: return log(
-                module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 未获取到 QSTile\$State 类"
             )
             val pairClazz = loadClass(
                 className = "kotlin.Pair",
                 classLoader = param.classLoader
-            ) ?: return log(
-                module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 未获取到 Pair 类"
             )
             val method = labelColorManagerClazz.getDeclaredMethod(
                 "getColorByTileState",
@@ -446,41 +527,6 @@ class TwoXOneTileHook {
                 module = module, tag = QS_TILE_2X1_LOG,
                 message = "❌ 修改文本颜色失败: ${e.message}"
             )
-        }
-    }
-}
-
-fun printViewHierarchy(module: XposedModule, view: View, depth: Int = 0) {
-    val indent = "  ".repeat(depth)
-
-    // 获取资源 ID 和对应的资源名（如果有）
-    val idInfo = if (view.id != View.NO_ID) {
-        try {
-            val entryName = view.resources.getResourceEntryName(view.id)
-            "id=${view.id} (${entryName})"
-        } catch (e: Exception) {
-            "id=${view.id} (unknown)"
-        }
-    } else {
-        "no_id"
-    }
-
-    // 类型（简单类名）
-    val type = view.javaClass.simpleName
-
-    // 名称：优先取 contentDescription，否则取类名（也可取 tag）
-    val name = view.contentDescription?.toString() ?: type
-
-    // 打印
-    log(
-        module = module, tag = QS_TILE_2X1_LOG,
-        message = "$indent├─ $type | $idInfo | name=$name"
-    )
-
-    // 如果是 ViewGroup，递归打印子 View
-    if (view is ViewGroup) {
-        for (i in 0 until view.childCount) {
-            printViewHierarchy(module, view.getChildAt(i), depth + 1)
         }
     }
 }
