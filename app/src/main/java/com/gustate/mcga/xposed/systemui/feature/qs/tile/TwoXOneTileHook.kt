@@ -86,7 +86,7 @@ class TwoXOneTileHook {
     }
 
     /**
-     * 使磁贴状态填满控制中心 2*1 磁贴 (禁用分离模式)
+     * 使磁贴状态填满控制中心 2*1 磁贴
      * 适配 ColorOS V16.1.0
      * @param module 当前 XposedModule 实例
      * @param param 软件包加载参数
@@ -118,42 +118,33 @@ class TwoXOneTileHook {
                                     method.parameterTypes[0] == clazz)
                         ) {
                             fullLogicMethod = method
-                            log(
-                                module = module, tag = QS_TILE_2X1_LOG,
-                                message = "✅ 找到完整逻辑方法: ${method.name}"
-                            )
                             break
                         }
                     }
                     if (fullLogicMethod == null)
-                        throw NullPointerException("找不到 TileTypeConfig 中的相关函数")
+                        throw NullPointerException("❌ 找不到 TileTypeConfig 中的相关函数")
                     // 查找完整逻辑的静态方法 case 1
                     val fullMethod = fullLogicMethod
                     fullMethod.isAccessible = true
                     val fullBuilder = fullMethod.invoke(null, instance)
-                    log(
-                        module = module, tag = QS_TILE_2X1_LOG,
-                        message = "✅ 已替换为完整逻辑 Builder"
-                    )
                     return@intercept fullBuilder
                 } catch (e: Exception) {
                     log(
                         module = module, tag = QS_TILE_2X1_LOG,
-                        message = "❌ 替换完整逻辑失败，使用原始 Builder",
+                        message = "❌ 使磁贴状态填满控制中心 2*1 磁贴失败",
                         throwable = e
                     )
                     return@intercept result
                 }
             }
-
             log(
                 module = module, tag = QS_TILE_2X1_LOG,
-                message = "✅ 2*1 磁贴填满 Hook 成功"
+                message = "✅ 使磁贴状态填满控制中心 2*1 磁贴成功"
             )
         } catch (e: Exception) {
             log(
                 module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 填满 2*1 磁贴失败",
+                message = "❌ 使磁贴状态填满控制中心 2*1 磁贴失败",
                 throwable = e
             )
         }
@@ -219,6 +210,29 @@ class TwoXOneTileHook {
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam
     ) {
+        val osVer = RootUtils.getColorOSVersion()
+        if (osVer.startsWith(prefix = "V16.1"))
+            hideTileIconBkgOS161(
+                module = module,
+                param = param
+            )
+        else
+            hideTileIconBkgOS160(
+                module = module,
+                param = param
+            )
+    }
+
+    /**
+     * 隐藏控制中心 2*1 磁贴图标背景 (状态)
+     * 适配 ColorOS V16.1.0
+     * @param module 当前 XposedModule 实例
+     * @param param 软件包加载参数
+     */
+    private fun hideTileIconBkgOS161(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam
+    ) {
         val classLoader = param.classLoader
         try {
             val tileClazz = loadClass(
@@ -272,21 +286,6 @@ class TwoXOneTileHook {
                 throwable = e
             )
         }
-        /*// 16.0
-        */
-    }
-
-    /**
-     * 隐藏控制中心 2*1 磁贴图标背景 (状态)
-     * 适配 ColorOS V16.1.0
-     * @param module 当前 XposedModule 实例
-     * @param param 软件包加载参数
-     */
-    private fun hideTileIconBkgOS161(
-        module: XposedModule,
-        param: XposedModuleInterface.PackageReadyParam
-    ) {
-
     }
 
     /**
