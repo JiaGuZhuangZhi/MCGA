@@ -57,9 +57,9 @@ object RootUtils {
      * @param command 除权限声明外的指令, 默认为检测 su 连通性 (正常返回 "Connected")
      * @return String 执行结果
      */
-    suspend fun executeRootCommand(
+    fun executeRootCommand(
         command: String = "echo Connected"
-    ): String? = withContext(context = Dispatchers.IO) {
+    ): String? {
         var process: Process? = null
         try {
             process = Runtime.getRuntime().exec(arrayOf("su", "-c", command))
@@ -72,17 +72,29 @@ object RootUtils {
                 }
             // 退出值
             val exitCode = process.waitFor()
-            if (exitCode == 0) {
-                return@withContext output
+            return if (exitCode == 0) {
+                output
             } else {
-                return@withContext null
+                null
             }
         } catch (_: Exception) {
-            return@withContext null
+            return null
         } finally {
             // 显式销毁
             process?.destroy()
         }
     }
+
+    /**
+     * 取 ColorOS 版本号
+     * @return String 如 V16.1.0
+     */
+    fun getColorOSVersion() =
+        Runtime.getRuntime()
+            .exec("getprop ro.build.version.oplusrom")
+            .inputStream.bufferedReader()
+            .use {
+                it.readText().trim()
+            }
 
 }
