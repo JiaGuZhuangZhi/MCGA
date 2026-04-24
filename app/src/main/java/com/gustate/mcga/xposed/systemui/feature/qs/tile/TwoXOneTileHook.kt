@@ -61,7 +61,7 @@ class TwoXOneTileHook {
      * @param param 软件包加载参数
      * @param cornerRadiusDp 2*1 磁贴圆角半径 (dp)
      */
-    fun modifyCornerRadiusOS161(
+    private fun modifyCornerRadiusOS161(
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         cornerRadiusDp: Float
@@ -128,7 +128,7 @@ class TwoXOneTileHook {
      * @param param 软件包加载参数
      * @param cornerRadiusDp 2*1 磁贴圆角半径 (dp)
      */
-    fun modifyCornerRadiusOS160(
+    private fun modifyCornerRadiusOS160(
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         cornerRadiusDp: Float
@@ -293,7 +293,8 @@ class TwoXOneTileHook {
                 } catch (e: Exception) {
                     log(
                         module = module, tag = QS_TILE_2X1_LOG,
-                        message = "❌ 填满 2*1 磁贴失败: ${e.message}"
+                        message = "❌ 使磁贴状态填满控制中心 2*1 磁贴失败",
+                        throwable = e
                     )
                     return@intercept result
                 }
@@ -301,7 +302,8 @@ class TwoXOneTileHook {
         } catch (e: Exception) {
             log(
                 module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 填满 2*1 磁贴失败: ${e.message}"
+                message = "❌ 使磁贴状态填满控制中心 2*1 磁贴失败",
+                throwable = e
             )
         }
     }
@@ -461,7 +463,7 @@ class TwoXOneTileHook {
      * @param param 软件包加载参数
      * @param iconSizeDp 图标大小 (dp)
      */
-    fun modifyTileIconSizeOS161(
+    private fun modifyTileIconSizeOS161(
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         iconSizeDp: Float
@@ -522,7 +524,7 @@ class TwoXOneTileHook {
      * @param param 软件包加载参数
      * @param iconSizeDp 图标大小 (dp)
      */
-    fun modifyTileIconSizeOS160(
+    private fun modifyTileIconSizeOS160(
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         iconSizeDp: Float
