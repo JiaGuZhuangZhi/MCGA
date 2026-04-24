@@ -10,9 +10,10 @@ object ClassHelper {
     fun loadClass(
         className: String,
         classLoader: ClassLoader,
-    ): Class<*>? = runCatching {
+    ): Class<*> = runCatching {
         classLoader.loadClass(className)
     }.getOrNull()
+        ?: throw NullPointerException("❌ 未找到 $className 类")
 
     /**
      * 取实例(具体对象)的字段
