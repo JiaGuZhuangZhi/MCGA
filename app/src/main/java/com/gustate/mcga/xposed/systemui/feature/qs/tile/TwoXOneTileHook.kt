@@ -13,6 +13,7 @@ import com.gustate.mcga.utils.ViewUtils.dpToPx
 import com.gustate.mcga.xposed.helper.ClassHelper.callAnyMethod
 import com.gustate.mcga.xposed.helper.ClassHelper.getAnyField
 import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
+import com.gustate.mcga.xposed.helper.ContextHelper
 import com.gustate.mcga.xposed.helper.ResourceHelper
 import com.gustate.mcga.xposed.systemui.feature.QSTileHook.Companion.QS_TILE_2X1_LOG
 import io.github.libxposed.api.XposedModule
@@ -39,29 +40,131 @@ class TwoXOneTileHook {
         param: XposedModuleInterface.PackageReadyParam,
         cornerRadiusDp: Float
     ) {
-        val clazz = loadClass(
-            "com.oplus.systemui.plugins.qs.customize.view.tile." +
-                    "OplusQSResizeableTileView",
-            param.classLoader
-        ) ?: return log(
-            module = module, tag = QS_TILE_2X1_LOG,
-            message = "❌ 未获取到 OplusQSResizeableTileView 类"
-        )
+        val osVer = RootUtils.getColorOSVersion()
+        if (osVer.startsWith(prefix = "V16.1"))
+            modifyCornerRadiusOS161(
+                module = module,
+                param = param,
+                cornerRadiusDp = cornerRadiusDp
+            )
+        else
+            modifyCornerRadiusOS160(
+                module = module,
+                param = param,
+                cornerRadiusDp = cornerRadiusDp
+            )
+    }
+
+    /**
+     * 修改控制中心 2*1 磁贴圆角半径
+     * 适配 ColorOS V16.1.0
+     * @param module 当前 XposedModule 实例
+     * @param param 软件包加载参数
+     * @param cornerRadiusDp 2*1 磁贴圆角半径 (dp)
+     */
+    fun modifyCornerRadiusOS161(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        cornerRadiusDp: Float
+    ) {
+        val classLoader = param.classLoader
         try {
-            val method = clazz.getDeclaredMethod("getRadius")
-            module.hook(method).intercept { chain ->
-                val view = chain.thisObject as View
-                val cornerRadiusPx = cornerRadiusDp.dpToPx(view.context)
-                log(
-                    module = module, tag = QS_TILE_2X1_LOG,
-                    message = "✅ 成功修改 2*1 磁贴圆角半径为 $cornerRadiusDp dp"
+            val qsTileResInteractorClasses = listOf(
+                "com.oplus.systemui.qs.res.domain.interactor." +
+                        "StdQSTileResInteractor\$startHighlightTileOutlineCollection$2",
+                "com.oplus.systemui.qs.res.domain.interactor." +
+                        "SepQSTileResInteractor\$startHighlightTileOutlineCollection$2"
+            )
+            val qsConstantClazz = loadClass(
+                className = "com.oplus.systemui.qs.base.res.util.QSConstant",
+                classLoader = classLoader
+            )
+            qsTileResInteractorClasses.forEach { className ->
+                val clazz = loadClass(className = className, classLoader = classLoader)
+                val method = clazz.getDeclaredMethod(
+                    "invokeSuspend",
+                    Object::class.java
                 )
-                cornerRadiusPx
+                val getOutline = qsConstantClazz.getDeclaredMethod(
+                    "getSmoothRoundRectOutlineProvider",
+                    Context::class.java,
+                    Float::class.javaPrimitiveType
+                )
+                module.hook(method).intercept { chain ->
+                    val result = chain.proceed()
+                    try {
+                        val context = ContextHelper.getContext(classLoader = classLoader)
+                        val outline = getOutline.invoke(
+                            null, context,
+                            cornerRadiusDp.dpToPx(context = context)
+                        )
+                        log(
+                            module = module, tag = QS_TILE_2X1_LOG,
+                            message = "✅ 成功修改 2*1 磁贴圆角半径为 $cornerRadiusDp dp"
+                        )
+                        return@intercept outline
+                    } catch (e: Exception) {
+                        log(
+                            module = module, tag = QS_TILE_2X1_LOG,
+                            message = "❌ 修改 2*1 磁贴圆角半径失败",
+                            throwable = e
+                        )
+                        return@intercept result
+                    }
+                }
             }
         } catch (e: Exception) {
             log(
                 module = module, tag = QS_TILE_2X1_LOG,
-                message = "❌ 修改 2*1 磁贴圆角半径失败: ${e.message}"
+                message = "❌ 修改 2*1 磁贴圆角半径失败",
+                throwable = e
+            )
+        }
+    }
+
+    /**
+     * 修改控制中心 2*1 磁贴圆角半径
+     * 适配 ColorOS V16.0.0
+     * @param module 当前 XposedModule 实例
+     * @param param 软件包加载参数
+     * @param cornerRadiusDp 2*1 磁贴圆角半径 (dp)
+     */
+    fun modifyCornerRadiusOS160(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        cornerRadiusDp: Float
+    ) {
+        try {
+            val clazz = loadClass(
+                className = "com.oplus.systemui.plugins.qs.customize.view.tile." +
+                        "OplusQSResizeableTileView",
+                classLoader = param.classLoader
+            )
+            val method = clazz.getDeclaredMethod("getCornerRadius")
+            module.hook(method).intercept { chain ->
+                val result = chain.proceed()
+                try {
+                    val view = chain.thisObject as View
+                    val cornerRadiusPx = cornerRadiusDp.dpToPx(view.context)
+                    log(
+                        module = module, tag = QS_TILE_2X1_LOG,
+                        message = "✅ 成功修改 2*1 磁贴圆角半径为 $cornerRadiusDp dp"
+                    )
+                    return@intercept cornerRadiusPx
+                } catch (e: Exception) {
+                    log(
+                        module = module, tag = QS_TILE_2X1_LOG,
+                        message = "❌ 修改 2*1 磁贴圆角半径失败",
+                        throwable = e
+                    )
+                    return@intercept result
+                }
+            }
+        } catch (e: Exception) {
+            log(
+                module = module, tag = QS_TILE_2X1_LOG,
+                message = "❌ 修改 2*1 磁贴圆角半径失败",
+                throwable = e
             )
         }
     }
