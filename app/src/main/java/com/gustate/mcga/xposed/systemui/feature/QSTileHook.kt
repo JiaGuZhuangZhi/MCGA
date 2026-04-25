@@ -9,6 +9,8 @@ import com.gustate.mcga.utils.ViewUtils.dpToPx
 import com.gustate.mcga.xposed.helper.ClassHelper.getAnyField
 import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
 import com.gustate.mcga.xposed.helper.ContextHelper
+import com.gustate.mcga.xposed.systemui.feature.qs.tile.MediaTileHook
+import com.gustate.mcga.xposed.systemui.feature.qs.tile.SliderTileHook
 import com.gustate.mcga.xposed.systemui.feature.qs.tile.TwoXOneTileHook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
@@ -21,9 +23,12 @@ class QSTileHook {
     companion object {
         const val QS_TILE_1X1_LOG = "控制中心 1*1 磁贴"
         const val QS_TILE_2X1_LOG = "控制中心 2*1 磁贴"
+        const val QS_TILE_MEDIA_LOG = "控制中心媒体磁贴"
     }
 
     private val twoXOneTileHook = TwoXOneTileHook()
+    private val sliderTileHook = SliderTileHook()
+    private val mediaTileHook = MediaTileHook()
 
     /**
      * 修改控制中心 1*1 磁贴圆角半径
@@ -58,7 +63,7 @@ class QSTileHook {
      * @param param 软件包加载参数
      * @param bkgCornerRadius 圆角半径 (dp)
      */
-    fun hookQsOneXOneTileOS161(
+    private fun hookQsOneXOneTileOS161(
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         bkgCornerRadius: Float
@@ -125,7 +130,7 @@ class QSTileHook {
      * @param param 软件包加载参数
      * @param bkgCornerRadius 圆角半径 (dp)
      */
-    fun hookQsOneXOneTileOS160(
+    private fun hookQsOneXOneTileOS160(
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         bkgCornerRadius: Float
@@ -236,7 +241,7 @@ class QSTileHook {
 
     /**
      * Hook 控制中心 2*1 磁贴的综合入口
-     * * @param module 当前 XposedModule 实例
+     * @param module 当前 XposedModule 实例
      * @param param 软件包加载参数
      * @param cornerRadiusDp 2*1 磁贴圆角半径
      * @param fillTileStateFullBkg 使磁贴状态填满控制中心 2*1 磁贴
@@ -282,4 +287,41 @@ class QSTileHook {
             activeTitleColor, activeDesColor
         )
     }
+
+    /**
+     * 修改控制中心拖动条磁贴圆角半径
+     * @param module 当前 XposedModule 实例
+     * @param param 软件包加载参数
+     * @param cornerRadiusDp 媒体磁贴圆角半径 (dp)
+     */
+    fun hookSliderTile(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        cornerRadiusDp: Float
+    ) {
+        sliderTileHook.modifyCornerRadius(
+            module = module,
+            param = param,
+            cornerRadiusDp = cornerRadiusDp
+        )
+    }
+
+    /**
+     * 修改控制中心媒体磁贴圆角半径
+     * @param module 当前 XposedModule 实例
+     * @param param 软件包加载参数
+     * @param cornerRadiusDp 媒体磁贴圆角半径 (dp)
+     */
+    fun hookMediaTile(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        cornerRadiusDp: Float
+    ) {
+        mediaTileHook.modifyCornerRadius(
+            module = module,
+            param = param,
+            cornerRadiusDp = cornerRadiusDp
+        )
+    }
+
 }

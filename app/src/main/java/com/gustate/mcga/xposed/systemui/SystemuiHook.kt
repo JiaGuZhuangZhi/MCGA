@@ -38,6 +38,8 @@ object SystemuiHook {
         applyControlPanelFeature(module = module, param = param, prefs = prefs)
         applyQsTileOneXOneFeature(module = module, param = param, prefs = prefs)
         applyQsTileTwoXOneFeature(module = module, param = param, prefs = prefs)
+        applyQsTileSliderFeature(module = module, param = param, prefs = prefs)
+        applyQsTileMediaFeature(module = module, param = param, prefs = prefs)
         applyQsDetailFeature(module = module, param = param, prefs = prefs)
         applyAodFeature(module = module, param = param, prefs = prefs)
 
@@ -168,6 +170,63 @@ object SystemuiHook {
                 inactiveDesColor = qsTwoXOneTileInactiveDesColor,
                 activeTitleColor = qsTwoXOneTileActiveTitleColor,
                 activeDesColor = qsTwoXOneTileActiveDesColor
+            )
+        }
+    }
+
+    /**
+     * 应用拖动条磁贴配置
+     * @param module 当前 XposedModule 实例
+     * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
+     */
+    private fun applyQsTileSliderFeature(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
+        val enableCustomQsSliderTile = prefs.getBoolean(
+            SystemUIKeys.ENABLE_CUSTOM_QS_SLIDER_TILE,
+            false
+        )
+        val qsSliderTileCornerRadius = prefs.getFloat(
+            SystemUIKeys.QS_SLIDER_TILE_CORNER_RADIUS,
+            24f
+        )
+        if (enableCustomQsSliderTile) {
+            qsTileHook.hookSliderTile(
+                module = module,
+                param = param,
+                cornerRadiusDp = qsSliderTileCornerRadius
+            )
+        }
+    }
+
+    /**
+     * 应用媒体磁贴配置
+     * @param module 当前 XposedModule 实例
+     * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
+     */
+    private fun applyQsTileMediaFeature(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
+        // 控制中心拖动条磁贴
+        val enableCustomQsMediaTile = prefs.getBoolean(
+            SystemUIKeys.ENABLE_CUSTOM_QS_MEDIA_TILE,
+            false
+        )
+        val qsMediaTileCornerRadius = prefs.getFloat(
+            SystemUIKeys.QS_MEDIA_TILE_CORNER_RADIUS,
+            24f
+        )
+        if (enableCustomQsMediaTile) {
+            qsTileHook.hookMediaTile(
+                module = module,
+                param = param,
+                cornerRadiusDp = qsMediaTileCornerRadius
             )
         }
     }
