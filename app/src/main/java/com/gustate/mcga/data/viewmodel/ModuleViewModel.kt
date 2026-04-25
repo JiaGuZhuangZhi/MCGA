@@ -69,7 +69,7 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
     }
 
     fun updateIsLogEnabled(enabled: Boolean) {
-        _repo.setBoolean("log_enabled", enabled)
+        _repo.setBoolean(ModuleKeys.ENABLE_LOG, enabled)
         _uiState.value = _uiState.value.copy(isLogEnabled = enabled)
     }
 
