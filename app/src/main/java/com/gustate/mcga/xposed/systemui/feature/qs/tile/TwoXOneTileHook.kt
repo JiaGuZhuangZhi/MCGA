@@ -139,7 +139,7 @@ class TwoXOneTileHook {
                         "OplusQSResizeableTileView",
                 classLoader = param.classLoader
             )
-            val method = clazz.getDeclaredMethod("getCornerRadius")
+            val method = clazz.getDeclaredMethod("getRadius")
             module.hook(method).intercept { chain ->
                 val result = chain.proceed()
                 try {
