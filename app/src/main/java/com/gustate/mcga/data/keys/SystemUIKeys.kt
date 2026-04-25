@@ -40,6 +40,18 @@ object SystemUIKeys {
     // 控制中心 2*1 磁贴激活状态标签颜色
     const val QS_TWO_X_ONE_TILE_ACTIVE_DES_COLOR = "qs_two_x_one_tile_active_des_color"
 
+    // 启用对控制中心媒体磁贴的修改
+    const val ENABLE_CUSTOM_QS_MEDIA_TILE = "enable_custom_qs_media_tile"
+
+    // 修改控制中心媒体磁贴圆角半径
+    const val QS_MEDIA_TILE_CORNER_RADIUS = "qs_media_tile_corner_radius"
+
+    // 启用对控制中心拖动条磁贴的修改
+    const val ENABLE_CUSTOM_QS_SLIDER_TILE = "enable_custom_qs_slider_tile"
+
+    // 修改控制中心拖动条磁贴圆角半径
+    const val QS_SLIDER_TILE_CORNER_RADIUS = "qs_enable_tile_corner_radius"
+
     const val ENABLE_AOD_PANORAMIC_ALL_DAY = "enable_aod_panoramic_all_day"
     const val ENABLE_ALL_DAY_AOD_SETTINGS = "enable_all_day_aod_settings"
 }

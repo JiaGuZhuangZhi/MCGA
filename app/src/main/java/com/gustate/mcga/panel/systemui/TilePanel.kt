@@ -61,6 +61,8 @@ fun TilePanel(
         ) {
             QsTileOneXOneSettings(viewModel = viewModel)
             QsTileTwoXOneSettings(viewModel = viewModel)
+            QsTileSliderSettings(viewModel = viewModel)
+            QsTileMediaSettings(viewModel = viewModel)
         }
     }
 }
@@ -167,6 +169,7 @@ private fun QsTileTwoXOneSettings(viewModel: SystemUIViewModel) {
                     painter = painterResource(id = R.drawable.panels_outline),
                     enabled = uiState.enableCustomQsResizeableTile,
                     title = stringResource(id = R.string.change_tile_icon_size),
+                    description = stringResource(id = R.string.affect_entire_control_center),
                     value = uiState.qsTwoXOneTileIconSize,
                     valueRange = 0f..42f,
                     onValueChange = {
@@ -293,6 +296,72 @@ private fun QsTileTwoXOneSettings(viewModel: SystemUIViewModel) {
                         }
                     )
                 }
+            }
+        )
+    )
+}
+
+@Composable
+private fun QsTileSliderSettings(viewModel: SystemUIViewModel) {
+    val uiState = viewModel.uiState.value
+    SplicedColumnGroup(
+        modifier = Modifier,
+        title = stringResource(id = R.string.qs_slider_tile),
+        content = listOf(
+            {
+                SwitchWidget(
+                    painter = painterResource(id = R.drawable.architecture),
+                    title = stringResource(id = R.string.enable_custom_settings),
+                    checked = uiState.enableCustomQsSliderTile,
+                    onCheckedChange = { checked ->
+                        viewModel.updateEnableCustomQsSliderTile(enabled = checked)
+                    }
+                )
+            },
+            {
+                SliderWidget(
+                    painter = painterResource(id = R.drawable.rounded_corner),
+                    enabled = uiState.enableCustomQsSliderTile,
+                    title = stringResource(id = R.string.bkg_corner_radius),
+                    value = uiState.qsSliderTileCornerRadius,
+                    valueRange = 0f..96f,
+                    onValueChange = {
+                        viewModel.updateQsSliderTileCornerRadius(value = it)
+                    }
+                )
+            }
+        )
+    )
+}
+
+@Composable
+private fun QsTileMediaSettings(viewModel: SystemUIViewModel) {
+    val uiState = viewModel.uiState.value
+    SplicedColumnGroup(
+        modifier = Modifier,
+        title = stringResource(id = R.string.qs_media_tile),
+        content = listOf(
+            {
+                SwitchWidget(
+                    painter = painterResource(id = R.drawable.architecture),
+                    title = stringResource(id = R.string.enable_custom_settings),
+                    checked = uiState.enableCustomQsMediaTile,
+                    onCheckedChange = { checked ->
+                        viewModel.updateEnableCustomQsMediaTile(enabled = checked)
+                    }
+                )
+            },
+            {
+                SliderWidget(
+                    painter = painterResource(id = R.drawable.rounded_corner),
+                    enabled = uiState.enableCustomQsMediaTile,
+                    title = stringResource(id = R.string.bkg_corner_radius),
+                    value = uiState.qsMediaTileCornerRadius,
+                    valueRange = 0f..96f,
+                    onValueChange = {
+                        viewModel.updateQsMediaTileCornerRadius(value = it)
+                    }
+                )
             }
         )
     )

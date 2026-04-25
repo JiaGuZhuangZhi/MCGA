@@ -94,6 +94,22 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
                 key = SystemUIKeys.QS_TWO_X_ONE_TILE_INACTIVE_DES_COLOR,
                 def = 0X89000000.toInt()
             ),
+            enableCustomQsMediaTile = repo.getBoolean(
+                key = SystemUIKeys.ENABLE_CUSTOM_QS_MEDIA_TILE,
+                def = false
+            ),
+            qsMediaTileCornerRadius = repo.getFloat(
+                key = SystemUIKeys.QS_MEDIA_TILE_CORNER_RADIUS,
+                def = 24f
+            ),
+            enableCustomQsSliderTile = repo.getBoolean(
+                key = SystemUIKeys.ENABLE_CUSTOM_QS_SLIDER_TILE,
+                def = false
+            ),
+            qsSliderTileCornerRadius = repo.getFloat(
+                key = SystemUIKeys.QS_SLIDER_TILE_CORNER_RADIUS,
+                def = 24f
+            ),
             enableAodPanoramicAllDay = repo.getBoolean(
                 key = SystemUIKeys.ENABLE_AOD_PANORAMIC_ALL_DAY,
                 def = false
@@ -265,6 +281,38 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
             value = value
         )
         _uiState.value = _uiState.value.copy(qsTwoXOneTileActiveDesColor = value)
+    }
+
+    fun updateEnableCustomQsMediaTile(enabled: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.ENABLE_CUSTOM_QS_MEDIA_TILE,
+            value = enabled
+        )
+        _uiState.value = _uiState.value.copy(enableCustomQsMediaTile = enabled)
+    }
+
+    fun updateQsMediaTileCornerRadius(value: Float) {
+        repo.setFloat(
+            key = SystemUIKeys.QS_MEDIA_TILE_CORNER_RADIUS,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsMediaTileCornerRadius = value)
+    }
+
+    fun updateEnableCustomQsSliderTile(enabled: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.ENABLE_CUSTOM_QS_SLIDER_TILE,
+            value = enabled
+        )
+        _uiState.value = _uiState.value.copy(enableCustomQsSliderTile = enabled)
+    }
+
+    fun updateQsSliderTileCornerRadius(value: Float) {
+        repo.setFloat(
+            key = SystemUIKeys.QS_SLIDER_TILE_CORNER_RADIUS,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(qsSliderTileCornerRadius = value)
     }
 
     fun updateEnableAodPanoramicAllDay(value: Boolean) {

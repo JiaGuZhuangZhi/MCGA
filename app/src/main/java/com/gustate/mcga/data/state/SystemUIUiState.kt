@@ -22,6 +22,12 @@ data class SystemUIUiState(
     val qsTwoXOneTileActiveTitleColor: Int,
     val qsTwoXOneTileInactiveDesColor: Int,
     val qsTwoXOneTileActiveDesColor: Int,
+    // 控制中心媒体磁贴
+    val enableCustomQsMediaTile: Boolean,
+    val qsMediaTileCornerRadius: Float,
+    // 控制中心拖动条磁贴
+    val enableCustomQsSliderTile: Boolean,
+    val qsSliderTileCornerRadius: Float,
     // AOD
     val enableAodPanoramicAllDay: Boolean,
     val enableAllDayAodSettings: Boolean
