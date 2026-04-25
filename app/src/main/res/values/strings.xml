@@ -76,4 +76,7 @@
     <string name="verbose_logs">Verbose logs</string>
     <string name="verbose_logs_desc">Report issues request to include verbose logs</string>
     <string name="show_launcher_icon">Show app launcher icon</string>
+    <string name="qs_slider_tile">Quick Settings (QS) Slider Tile</string>
+    <string name="qs_media_tile">Quick Settings (QS) Media Tile</string>
+    <string name="affect_entire_control_center">It will affect the entire control center</string>
 </resources>

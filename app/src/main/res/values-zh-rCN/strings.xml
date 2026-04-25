@@ -73,4 +73,7 @@
     <string name="verbose_logs">详细日志</string>
     <string name="verbose_logs_desc">报告问题要求包含详细日志</string>
     <string name="show_launcher_icon">显示应用桌面图标</string>
+    <string name="qs_slider_tile">快速设置（QS）拖动条磁贴</string>
+    <string name="qs_media_tile">快速设置（QS）媒体磁贴</string>
+    <string name="affect_entire_control_center">它会作用到整个控制中心</string>
 </resources>
