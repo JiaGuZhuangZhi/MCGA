@@ -9,7 +9,6 @@ import com.gustate.mcga.xposed.helper.ContextHelper
 import com.gustate.mcga.xposed.systemui.feature.QSTileHook.Companion.QS_TILE_MEDIA_LOG
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
-import kotlin.math.roundToInt
 
 /**
  * 控制中心媒体磁贴 Hook 类
@@ -136,7 +135,7 @@ class MediaTileHook {
             module.hook(apply).intercept { chain ->
                 try {
                     val context = ContextHelper.getContext(classLoader = classLoader)
-                    val radius = cornerRadiusDp.dpToPx(context = context).roundToInt()
+                    val radius = cornerRadiusDp.dpToPx(context = context)
                     log(
                         module = module, tag = QS_TILE_MEDIA_LOG,
                         message = "✅ 成功修改控制中心媒体磁贴圆角半径为 $cornerRadiusDp dp"
@@ -159,5 +158,4 @@ class MediaTileHook {
             )
         }
     }
-
 }
