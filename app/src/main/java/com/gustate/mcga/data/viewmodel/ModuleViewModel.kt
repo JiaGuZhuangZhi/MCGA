@@ -3,8 +3,6 @@ package com.gustate.mcga.data.viewmodel
 import android.app.Application
 import android.content.ComponentName
 import android.content.pm.PackageManager
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
@@ -17,13 +15,16 @@ import com.gustate.mcga.utils.CommonUtils
 import com.gustate.mcga.utils.RootUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ModuleViewModel(context: Application) : AndroidViewModel(application = context) {
 
     private val _repo = XposedRepo.getInstance(context = context)
 
-    private val _uiState = mutableStateOf(
+    private val _uiState = MutableStateFlow(
         value = ModuleUiState(
             isReady = false,
             isModuleActive = false,
@@ -36,34 +37,43 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
             )
         )
     )
-    val uiState: MutableState<ModuleUiState> = _uiState
+    val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isRootAvailable = RootUtils.isRootAvailable(),
-                rootManagerInfo = RootUtils.getRootManager(),
-                isLogEnabled = _repo.getBoolean(ModuleKeys.ENABLE_LOG, true),
-                isLauncherIconShowing = context.packageManager.getComponentEnabledSetting(
+            _uiState.update { uiState ->
+                val state = context.packageManager.getComponentEnabledSetting(
                     ComponentName(
                         context.packageName,
                         "${CommonUtils.PACKAGE_NAME}.Home"
                     )
-                ) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-            )
+                )
+                uiState.copy(
+                    isRootAvailable = RootUtils.isRootAvailable(),
+                    rootManagerInfo = RootUtils.getRootManager(),
+                    isLogEnabled = _repo.getBoolean(ModuleKeys.ENABLE_LOG, true),
+                    isLauncherIconShowing =
+                        state == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                                || state == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT
+                )
+            }
         }
         viewModelScope.launch {
             delay(timeMillis = 500)
             if (!_uiState.value.isReady) {
-                _uiState.value = _uiState.value.copy(isReady = true)
+                _uiState.update { state ->
+                    state.copy(isReady = true)
+                }
             }
         }
         _repo.onActiveChanged = { active ->
             viewModelScope.launch(context = Dispatchers.Main) {
-                _uiState.value = _uiState.value.copy(
-                    isModuleActive = active,
-                    isReady = true
-                )
+                _uiState.update { state ->
+                    state.copy(
+                        isModuleActive = active,
+                        isReady = true
+                    )
+                }
             }
         }
     }
