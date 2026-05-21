@@ -15,7 +15,7 @@ object LogUtils {
      */
     fun log(
         module: XposedModule,
-        priority: Int = Log.DEBUG,
+        priority: Int = Log.INFO,
         tag: String = "未设置",
         message: String
     ) {
@@ -36,7 +36,7 @@ object LogUtils {
      */
     fun log(
         module: XposedModule,
-        priority: Int = Log.DEBUG,
+        priority: Int = Log.ERROR,
         tag: String = "未设置",
         message: String,
         throwable: Throwable
