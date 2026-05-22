@@ -1,5 +1,7 @@
 package com.gustate.mcga.xposed.helper
 
+import java.lang.reflect.Method
+
 object ClassHelper {
 
     /**
@@ -20,26 +22,25 @@ object ClassHelper {
      * @param fieldName 字段名称
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> Any?.getAnyField(fieldName: String): T? {
-        val target = this ?: return null
-        return runCatching {
-            var clazz: Class<*>? = target.javaClass
-            // 往父类找一找
-            while (clazz != null) {
-                // 从对象的类里找字段的位置
-                val field = runCatching {
-                    clazz.getDeclaredField(fieldName)
-                }.getOrNull()
-                if (field != null) {
-                    // 忽略 private 等安全检查
-                    field.isAccessible = true
-                    // 从对象中拿走字段
-                    return@runCatching field.get(target) as T?
-                }
-                clazz = clazz.superclass  // 往父类走
+    fun <T> Any?.getAnyField(fieldName: String): T {
+        var clazz: Class<*> = this?.javaClass
+            ?: throw NullPointerException("❌ 获取 $fieldName 字段失败, 所在类不存在")
+        // 往父类找一找
+        while (true) {
+            // 从对象的类里找字段的位置
+            val field = runCatching {
+                clazz.getDeclaredField(fieldName)
+            }.getOrNull()
+            if (field != null) {
+                // 忽略 private 等安全检查
+                field.isAccessible = true
+                // 从对象中拿走字段
+                return field.get(this) as T
             }
-            null
-        }.getOrNull()
+            // 往父类找, 父类不存在直接抛异常
+            clazz = clazz.superclass
+                ?: throw NullPointerException("❌ 获取 $fieldName 字段失败, 字段不存在")
+        }
     }
 
     /**
@@ -60,19 +61,85 @@ object ClassHelper {
     }
 
     /**
+     * 取方法 (可取当前类及所有父类的私有/公开方法)
+     * @param methodName 方法名
+     * @param parameterTypes 参数类型
+     */
+    fun Any?.getAnyMethod(
+        methodName: String,
+        parameterTypes: Array<Class<*>?> = emptyArray()
+    ): Method {
+        var clazz: Class<*> = this as? Class<*>
+            ?: (this?.javaClass
+                ?: throw NullPointerException("❌ 获取 $methodName 方法失败, 所在类不存在"))
+        while (true) {
+            val method = runCatching {
+                clazz.getDeclaredMethod(
+                    methodName,
+                    *parameterTypes
+                )
+            }.getOrNull()
+            if (method != null) return method
+            clazz = clazz.superclass
+                ?: throw NullPointerException("❌ 获取 $methodName 方法失败, 方法不存在")
+        }
+    }
+
+    /**
      * 调用私有方法
      * @param methodName 方法名
      * @param args 参数
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> Any?.callAnyMethod(methodName: String, vararg args: Any?): T? {
-        val target = this ?: return null
-        return runCatching {
-            // 这里我们简单处理，假设参数类型匹配，或者拿所有方法过滤
-            val method = target.javaClass.declaredMethods.firstOrNull { it.name == methodName }
-            method?.isAccessible = true
-            method?.invoke(target, *args) as T?
-        }.getOrNull()
+    fun <T> Any?.callAnyMethod(methodName: String, vararg args: Any?): T {
+        var clazz: Class<*> = this?.javaClass
+            ?: throw NullPointerException("❌ 调用 $methodName 方法失败, 所在类不存在")
+        while (true) {
+            val method = runCatching {
+                clazz.getDeclaredMethod(
+                    methodName,
+                    *args.map {
+                        it?.javaClass
+                    }.toTypedArray()
+                )
+            }.getOrNull()
+            if (method != null) {
+                method.isAccessible = true
+                return method.invoke(this, *args) as T
+            }
+            clazz = clazz.superclass
+                ?: throw NullPointerException("❌ 调用 $methodName 方法失败, 方法不存在")
+        }
+    }
+
+    /**
+     * 调用私有方法 (显式指定参数类型)
+     * @param methodName 方法名
+     * @param paramTypes 显式指定的方法参数签名 Class 数组（必须与源码完全一致）
+     * @param args 实际传入的参数值
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <T> Any?.callAnyMethod(
+        methodName: String,
+        paramTypes: Array<Class<out Any>?>,
+        vararg args: Any?
+    ): T {
+        var clazz: Class<*> = this?.javaClass
+            ?: throw NullPointerException("❌ 调用 $methodName 方法失败, 所在类不存在")
+        while (true) {
+            val method = runCatching {
+                clazz.getDeclaredMethod(
+                    methodName,
+                    *paramTypes
+                )
+            }.getOrNull()
+            if (method != null) {
+                method.isAccessible = true
+                return method.invoke(this, *args) as T
+            }
+            clazz = clazz.superclass
+                ?: throw NullPointerException("❌ 调用 $methodName 方法失败, 方法不存在")
+        }
     }
 
     /**
@@ -80,14 +147,21 @@ object ClassHelper {
      * @param fieldName 字段名称
      * @param value 要设置的值
      */
-    fun Any?.setAnyField(fieldName: String, value: Any?): Boolean {
-        val target = this ?: return false
-        return runCatching {
-            val field = target.javaClass.getDeclaredField(fieldName)
-            field.isAccessible = true
-            field.set(target, value)
-            true
-        }.getOrDefault(false)
+    fun Any?.setAnyField(fieldName: String, value: Any?) {
+        var clazz: Class<*> = this?.javaClass
+            ?: throw NullPointerException("❌ 设置 $fieldName 字段失败, 所在类不存在")
+        while (true) {
+            val field = runCatching {
+                clazz.getDeclaredField(fieldName)
+            }.getOrNull()
+            if (field != null) {
+                field.isAccessible = true
+                field.set(this, value)
+                return
+            }
+            clazz = clazz.superclass
+                ?: throw NullPointerException("❌ 设置 $fieldName 字段失败, 字段不存在")
+        }
     }
 
     /**
