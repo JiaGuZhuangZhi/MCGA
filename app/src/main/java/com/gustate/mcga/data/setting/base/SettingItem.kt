@@ -10,6 +10,7 @@ import androidx.annotation.StringRes
  * @param T 值类型
  * @param key 键
  * @param default 默认值
+ * @param icon 图标
  * @param title 标题
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
@@ -32,6 +33,7 @@ sealed class SettingItem<T>(
  * Boolean 设置类
  * @param key 键
  * @param default 默认值
+ * @param icon 图标
  * @param title 标题
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
@@ -56,6 +58,7 @@ sealed class BooleanSetting(
  * 颜色设置类
  * @param key 键
  * @param default 默认值
+ * @param icon 图标
  * @param title 标题
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
@@ -83,6 +86,7 @@ sealed class ColorSetting(
  * @param max 最大值
  * @param key 键
  * @param default 默认值
+ * @param icon 图标
  * @param title 标题
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
@@ -111,6 +115,7 @@ sealed class FloatSetting(
  * @param max 最大值
  * @param key 键
  * @param default 默认值
+ * @param icon 图标
  * @param title 标题
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
