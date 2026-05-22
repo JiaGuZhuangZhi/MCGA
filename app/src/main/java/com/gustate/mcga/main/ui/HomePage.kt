@@ -1,5 +1,6 @@
 package com.gustate.mcga.main.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gustate.mcga.R
 import com.gustate.mcga.data.viewmodel.ModuleViewModel
 import com.gustate.mcga.ui.widget.OptionWidget
@@ -32,7 +34,7 @@ fun HomePage(
     modifier: Modifier,
     viewModel: ModuleViewModel
 ) {
-    val uiState by viewModel.uiState
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Column(
         modifier = modifier
             .verticalScroll(
@@ -96,6 +98,8 @@ private fun XpStateCard(
     isRootAvailable: Boolean
 ) {
     val cardShape = ContinuousRoundedRectangle(size = 24.dp)
+
+    Log.e("activeUI", isModuleActive.toString())
     val onCardColor = when {
         !isModuleActive -> MaterialTheme.colorScheme.onErrorContainer
         !isRootAvailable -> MaterialTheme.colorScheme.onTertiaryContainer
