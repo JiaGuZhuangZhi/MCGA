@@ -15,7 +15,7 @@ import androidx.annotation.StringRes
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
  */
-sealed class SettingItem<T>(
+abstract class SettingItem<T>(
     // 键值
     val key: String,
     val default: T,
@@ -26,6 +26,7 @@ sealed class SettingItem<T>(
     val title: Int,
     @field:StringRes
     val summary: Int? = null,
+    val summaryProvider: ((T) -> String)? = null,
     val dependency: BooleanSetting? = null
 ) : SettingNode
 
@@ -38,7 +39,7 @@ sealed class SettingItem<T>(
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
  */
-sealed class BooleanSetting(
+open class BooleanSetting(
     key: String,
     default: Boolean,
     @DrawableRes icon: Int,
@@ -51,6 +52,7 @@ sealed class BooleanSetting(
     icon = icon,
     title = title,
     summary = summary,
+    summaryProvider = null,
     dependency = dependency
 )
 
@@ -63,7 +65,7 @@ sealed class BooleanSetting(
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
  */
-sealed class ColorSetting(
+open class ColorSetting(
     key: String,
     default: Int,
     @DrawableRes icon: Int,
@@ -76,6 +78,7 @@ sealed class ColorSetting(
     icon = icon,
     title = title,
     summary = summary,
+    summaryProvider = { it.toString() },
     dependency = dependency
 )
 
@@ -91,7 +94,7 @@ sealed class ColorSetting(
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
  */
-sealed class FloatSetting(
+open class FloatSetting(
     val min: Float,
     val max: Float,
     key: String,
@@ -106,6 +109,7 @@ sealed class FloatSetting(
     icon = icon,
     title = title,
     summary = summary,
+    summaryProvider = null,
     dependency = dependency
 )
 
@@ -120,7 +124,7 @@ sealed class FloatSetting(
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
  */
-sealed class IntSetting(
+open class IntSetting(
     val min: Int,
     val max: Int,
     key: String,
@@ -135,5 +139,30 @@ sealed class IntSetting(
     icon = icon,
     title = title,
     summary = summary,
+    summaryProvider = null,
+    dependency = dependency
+)
+
+/**
+ * 设置选项类
+ * @param command 命令
+ * @param icon 图标
+ * @param title 标题
+ * @param summaryProvider 摘要处理器
+ * @param dependency 依赖 (启用条件)
+ */
+open class CommandSetting(
+    val command: String? = null,
+    @DrawableRes icon: Int,
+    @StringRes title: Int,
+    @StringRes summary: Int? = null,
+    dependency: BooleanSetting? = null
+) : SettingItem<Any>(
+    key = "",
+    default = "",
+    icon = icon,
+    title = title,
+    summary = summary,
+    summaryProvider = null,
     dependency = dependency
 )
