@@ -159,6 +159,14 @@ fun AboutPage(
                 {
                     OptionWidget(
                         painter = painterResource(id = R.drawable.mobile_share),
+                        title = "永恒的回忆",
+                        description = "参与测试 反馈与回复问题 活跃交流群",
+                        onClick = { }
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.mobile_share),
                         title = "白厄了么",
                         description = "参与测试 反馈与回复问题 活跃交流群",
                         onClick = { }
