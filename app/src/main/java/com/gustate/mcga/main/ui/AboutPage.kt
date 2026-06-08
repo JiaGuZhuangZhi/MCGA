@@ -63,6 +63,7 @@ fun AboutPage(
                 }
             )
         )
+
         SplicedColumnGroup(
             modifier = Modifier,
             title = stringResource(id = R.string.group),
@@ -107,6 +108,100 @@ fun AboutPage(
                                 url = telegramLink
                             )
                         }
+                    )
+                }
+            )
+        )
+
+        SplicedColumnGroup(
+            modifier = Modifier,
+            title = stringResource(id = R.string.acknowledgments),
+            content = listOf(
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.mobile_share),
+                        title = "tikaliu",
+                        description = "提供系统界面相关功能思路、帮助修复严重问题",
+                        onClick = {
+                            openUrlInBrowser(
+                                context = context,
+                                url = "https://www.coolapk.com/u/36684465"
+                            )
+                        }
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.mobile_share),
+                        title = "柏恒寻",
+                        description = "不知道，顺手写上了",
+                        onClick = {
+                            openUrlInBrowser(
+                                context = context,
+                                url = "https://www.coolapk.com/u/2713396"
+                            )
+                        }
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.mobile_share),
+                        title = "暮间雾",
+                        description = "暮暮哥哥！！UOTAN 的负责人，好猫娘！好猫娘！",
+                        onClick = {
+                            openUrlInBrowser(
+                                context = context,
+                                url = "https://www.coolapk.com/u/3242606"
+                            )
+                        }
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.mobile_share),
+                        title = "白厄了么",
+                        description = "参与测试 反馈与回复问题 活跃交流群",
+                        onClick = { }
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.mobile_share),
+                        title = "莫可鑫大王",
+                        description = "参与测试 反馈问题 活跃交流群",
+                        onClick = { }
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.mobile_share),
+                        title = "聆川",
+                        description = "参与测试 反馈问题 活跃交流群",
+                        onClick = { }
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.mobile_share),
+                        title = "Doro",
+                        description = "参与测试 反馈问题 活跃交流群",
+                        onClick = { }
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.mobile_share),
+                        title = "Asriel",
+                        description = "参与测试 反馈问题 活跃交流群",
+                        onClick = { }
+                    )
+                },
+                {
+                    OptionWidget(
+                        painter = painterResource(id = R.drawable.clock),
+                        title = "我们的故事，未完待续",
+                        description = "以上排名除前三位外不分先后",
+                        onClick = { }
                     )
                 }
             )
