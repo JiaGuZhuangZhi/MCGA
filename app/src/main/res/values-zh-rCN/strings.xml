@@ -76,4 +76,11 @@
     <string name="qs_slider_tile">快速设置（QS）拖动条磁贴</string>
     <string name="qs_media_tile">快速设置（QS）媒体磁贴</string>
     <string name="affect_entire_control_center">它会作用到整个控制中心</string>
+    <string name="notification">通知</string>
+    <string name="notification_center">通知中心</string>
+    <string name="enable_textured_glossy_material">启用质感高光材质</string>
+    <string name="thickness">粗细</string>
+    <string name="clock">时钟</string>
+    <string name="notification_center_clock">通知中心大时钟</string>
+    <string name="acknowledgments">致谢</string>
 </resources>

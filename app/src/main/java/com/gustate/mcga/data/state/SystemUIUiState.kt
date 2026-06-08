@@ -30,5 +30,11 @@ data class SystemUIUiState(
     val qsSliderTileCornerRadius: Float,
     // AOD
     val enableAodPanoramicAllDay: Boolean,
-    val enableAllDayAodSettings: Boolean
+    val enableAllDayAodSettings: Boolean,
+    // 通知中心
+    val enableCustomNotification: Boolean,
+    val notificationBkgCornerRadius: Float,
+    val notificationBkgAddHighlight: Boolean,
+    val notificationBkgHighlightThickness: Int,
+    val enableCustomNotificationClock: Boolean
 )

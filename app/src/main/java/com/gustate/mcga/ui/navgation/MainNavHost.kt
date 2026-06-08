@@ -22,6 +22,8 @@ import com.gustate.mcga.panel.HomePanel
 import com.gustate.mcga.panel.SearchPanel
 import com.gustate.mcga.panel.SystemUIPanel
 import com.gustate.mcga.panel.WalletPanel
+import com.gustate.mcga.panel.systemui.ClockPanel
+import com.gustate.mcga.panel.systemui.NotificationPanel
 import com.gustate.mcga.panel.systemui.TilePanel
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -74,6 +76,24 @@ fun MainNavHost(
                 when (itemId) {
                     "tile" -> {
                         TilePanel(
+                            onBack = { navController.popBackStack() },
+                            viewModel = sharedVm,
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedVisibilityScope = this
+                        )
+                    }
+
+                    "notification" -> {
+                        NotificationPanel(
+                            onBack = { navController.popBackStack() },
+                            viewModel = sharedVm,
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedVisibilityScope = this
+                        )
+                    }
+
+                    "notification_clock" -> {
+                        ClockPanel(
                             onBack = { navController.popBackStack() },
                             viewModel = sharedVm,
                             sharedTransitionScope = sharedTransitionScope,

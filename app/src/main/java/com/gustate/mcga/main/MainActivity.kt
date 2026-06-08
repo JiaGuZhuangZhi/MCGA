@@ -22,8 +22,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        val viewModel: ModuleViewModel by viewModels()
-        splashScreen.setKeepOnScreenCondition { /*!viewModel.uiState.value.isReady*/false }
+        val viewModel by viewModels<ModuleViewModel>()
         enableEdgeToEdge()
         setContent {
             MakeColorGreatAgainTheme {

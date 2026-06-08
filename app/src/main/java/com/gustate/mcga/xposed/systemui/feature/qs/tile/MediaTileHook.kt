@@ -100,6 +100,167 @@ class MediaTileHook {
                     return@intercept chain.proceed()
                 }
             }
+
+
+            val seedlingMediaDataClazz = loadClass(
+                className = "com.oplus.systemui.seedlingservice.mediaControl.SeedlingMediaData",
+                classLoader = classLoader
+            )
+            val getArtworkBgColorMethod = seedlingMediaDataClazz
+                .getDeclaredMethod("getArtworkBgColor")
+            module.hook(getArtworkBgColorMethod).intercept { chain ->
+                return@intercept "#00FFFFFF"
+            }
+
+            /*val aaaClazz = loadClass(
+                className = "com.oplusos.systemui.common.util.NotifiAndQsPlatformBlurExKt",
+                classLoader = classLoader
+            )
+            val bbb = aaaClazz.getDeclaredMethod(
+                "panelBlurRadius",
+                Context::class.java
+            )
+            module.hook(bbb).intercept { chain ->
+                return@intercept 160
+            }*/
+
+            /*val viewBlurManagerClazz = loadClass(
+                className = "com.oplus.systemui.notification.blur.ViewBlurManager",
+                classLoader = classLoader
+            )
+            val requireBlurProxyForViewMethod = viewBlurManagerClazz
+                .getDeclaredMethod(
+                    "requireBlurProxyForView",
+                    View::class.java,
+                    loadClass(
+                        className = "com.oplus.systemui.notification.blur" +
+                                ".ViewBlurManager\$CardType",
+                        classLoader = classLoader
+                    ),
+                    Float::class.javaPrimitiveType
+                )
+            module.hook(requireBlurProxyForViewMethod).intercept { chain ->
+                val blurProxy = chain.proceed()
+                val blurConfig = blurProxy
+                    .getAnyField<Any>(fieldName = "blurConfig")
+                blurConfig.setAnyField(
+                    fieldName = "blurRadius",
+                    value = 800
+                )
+                log(
+                    module = module, tag = QS_TILE_MEDIA_LOG,
+                    message = blurConfig.javaClass.name,
+                )
+                return@intercept blurProxy
+            }*/
+
+            /*val notificationBkgView = loadClass(
+                className = "com.android.systemui.statusbar.notification.row." +
+                        "NotificationBackgroundView",
+                classLoader = classLoader
+            )
+            val setCustomBkg = notificationBkgView.getDeclaredMethod(
+                "setCustomBackground",
+                Drawable::class.java
+            )*/
+            /*module.hook(setCustomBkg).intercept { chain ->
+                /*val params = chain.args.toMutableList()
+                val context = ContextHelper.getContext(classLoader = classLoader)
+                val outline = getCustomOutline.invoke(
+                    null, context,
+                    cornerRadiusDp.dpToPx(context = context)
+                )
+                params[0] = outline
+                val paramsResult = params.toTypedArray()
+                return@intercept chain.proceed(paramsResult)*/
+            }*/
+
+            val notificationRowBinderExtImpClazz = loadClass(
+                className = "com.oplus.systemui.statusbar.notification.collection." +
+                        "NotificationRowBinderExtImp",
+                classLoader = classLoader
+            )
+            val bindRowForBlurControllerMethod = notificationRowBinderExtImpClazz
+                .getDeclaredMethod(
+                    "bindRowForBlurController",
+                    loadClass(
+                        className = "com.android.systemui.statusbar.notification.row." +
+                                "ExpandableNotificationRow",
+                        classLoader = classLoader
+                    ),
+                    loadClass(
+                        className = "com.android.systemui.statusbar.notification.collection." +
+                                "NotificationEntry",
+                        classLoader = classLoader
+                    )
+                )
+            val cardTypeClazz = loadClass(
+                className = "com.oplus.systemui.notification.blur.ViewBlurManager\$CardType",
+                classLoader = classLoader
+            )
+            /*module.hook(bindRowForBlurControllerMethod).intercept { chain ->
+                // 执行 super(), 生成 BlurProxy
+                chain.proceed()
+                // 当前类实例
+                val thisObject = chain.thisObject
+                val expandableNotificationRow = chain.args[0] as View
+                val backgroundNormal =
+                    expandableNotificationRow.getAnyField<View>(fieldName = "mBackgroundNormal")
+                val context = ContextHelper.getContext(classLoader = classLoader)
+                val viewBlurManager = thisObject.getAnyField<Any>(fieldName = "viewBlurManager")
+                val notificationType = cardTypeClazz.getStaticField<Any>(fieldName = "NOTIFICATION")
+                // 反射调用 requireBlurProxyForView 获取 Proxy
+                val viewBlurProxy = viewBlurManager.callAnyMethod<Any>(
+                    methodName = "requireBlurProxyForView",
+                    paramTypes = arrayOf(
+                        View::class.java,
+                        cardTypeClazz,
+                        Float::class.javaPrimitiveType
+                    ),
+                    backgroundNormal,
+                    notificationType,
+                    1.1f
+                )
+                val blurConfig = viewBlurProxy.callAnyMethod<Any>(methodName = "getBlurConfig")
+                blurConfig.callAnyMethod<Any>(
+                    methodName = "setCornerRadius",
+                    paramTypes = arrayOf(Float::class.javaPrimitiveType),
+                    99f
+                )
+                val calculateGradientStrokeToolsInstance = calculateGradientStrokeToolsClazz
+                    .getStaticField<Any>(fieldName = "INSTANCE")
+                val strokeParams = calculateGradientStrokeToolsInstance.callAnyMethod<Any>(
+                    methodName = "getGradientStrokeParams",
+                    paramTypes = arrayOf(
+                        Int::class.javaPrimitiveType,
+                        Int::class.javaPrimitiveType,
+                        Float::class.javaPrimitiveType,
+                        Boolean::class.javaPrimitiveType
+                    ),
+                    backgroundNormal.width,
+                    backgroundNormal.height,
+                    36f,
+                    false
+                )
+                blurConfig.callAnyMethod<Any>(
+                    methodName = "setGradientStrokeLineParam",
+                    paramTypes = arrayOf(
+                        loadClass(
+                            className = "com.oplus.posteffect.GradientStrokeLineParams",
+                            classLoader = classLoader
+                        )
+                    ),
+                    strokeParams
+                )
+                viewBlurProxy.callAnyMethod<Any>(methodName = "applyBlurConfig")
+                backgroundNormal.postInvalidate()
+            }*/
+
+
+// 🔥 1. 强力接管 updateRadius 方法，拦截系统每一次因为滑动、状态变更引发的圆角刷新
+
+            val notificationCornerRadius = 99f
+
         } catch (e: Exception) {
             log(
                 module = module, tag = QS_TILE_MEDIA_LOG,

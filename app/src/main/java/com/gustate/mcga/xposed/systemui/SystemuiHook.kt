@@ -9,6 +9,8 @@ import com.gustate.mcga.xposed.systemui.feature.ControlPanelHook
 import com.gustate.mcga.xposed.systemui.feature.PanoramicHook
 import com.gustate.mcga.xposed.systemui.feature.QSTileHook
 import com.gustate.mcga.xposed.systemui.feature.QsDetailHook
+import com.gustate.mcga.xposed.systemui.feature.qs.notification.NotificationHook
+import com.gustate.mcga.xposed.systemui.feature.qs.notification.QsClockHook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
@@ -19,6 +21,8 @@ object SystemuiHook {
     private val panoramicHook = PanoramicHook()
     private val qsDetailHook = QsDetailHook()
     private val qsTileHook = QSTileHook()
+    private val notificationHook = NotificationHook()
+    private val qsClockHook = QsClockHook()
 
     /**
      * 应用系统界面 Hook 设置
@@ -40,9 +44,9 @@ object SystemuiHook {
         applyQsTileTwoXOneFeature(module = module, param = param, prefs = prefs)
         applyQsTileSliderFeature(module = module, param = param, prefs = prefs)
         applyQsTileMediaFeature(module = module, param = param, prefs = prefs)
+        applyNotificationCenterFeature(module = module, param = param, prefs = prefs)
         applyQsDetailFeature(module = module, param = param, prefs = prefs)
         applyAodFeature(module = module, param = param, prefs = prefs)
-
     }
 
     /**
@@ -227,6 +231,59 @@ object SystemuiHook {
                 module = module,
                 param = param,
                 cornerRadiusDp = qsMediaTileCornerRadius
+            )
+        }
+    }
+
+    /**
+     * 应用通知中心配置
+     * @param module 当前 XposedModule 实例
+     * @param param 正在装载的软件包信息
+     * @param prefs 本地配置缓存
+     */
+    private fun applyNotificationCenterFeature(
+        module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
+        prefs: SharedPreferences
+    ) {
+        val enableCustomNotification = prefs.getBoolean(
+            SystemUIKeys.ENABLE_CUSTOM_NOTIFICATION,
+            false
+        )
+        val notificationBkgCornerRadius = prefs.getFloat(
+            SystemUIKeys.NOTIFICATION_BKG_CORNER_RADIUS,
+            36f
+        )
+        val notificationBkgAddHighlight = prefs.getBoolean(
+            SystemUIKeys.NOTIFICATION_BKG_ADD_HIGHLIGHT,
+            false
+        )
+        val notificationBkgHighlightThickness = prefs.getInt(
+            SystemUIKeys.NOTIFICATION_BKG_HIGHLIGHT_THICKNESS,
+            6
+        )
+        val enableCustomNotificationClock = prefs.getBoolean(
+            SystemUIKeys.ENABLE_CUSTOM_NOTIFICATION_CLOCK,
+            false
+        )
+        if (enableCustomNotification) {
+            notificationHook.modifyNotificationCornerRadius(
+                module = module,
+                param = param,
+                cornerRadius = notificationBkgCornerRadius
+            )
+            if (notificationBkgAddHighlight) {
+                notificationHook.addNotificationHighlight(
+                    module = module,
+                    param = param,
+                    strokeWidth = notificationBkgHighlightThickness
+                )
+            }
+        }
+        if (enableCustomNotificationClock) {
+            qsClockHook.modifyQSClockLayout(
+                module = module,
+                param = param
             )
         }
     }

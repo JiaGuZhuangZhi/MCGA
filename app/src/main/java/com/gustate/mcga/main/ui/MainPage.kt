@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -40,7 +41,7 @@ fun MainPage(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    val moduleUiState by viewModel.uiState
+    val moduleUiState by viewModel.uiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults
         .exitUntilCollapsedScrollBehavior(state = rememberTopAppBarState())
     val scope = rememberCoroutineScope()

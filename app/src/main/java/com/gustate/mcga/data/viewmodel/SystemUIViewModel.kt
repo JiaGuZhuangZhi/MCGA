@@ -117,6 +117,26 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
             enableAllDayAodSettings = repo.getBoolean(
                 key = SystemUIKeys.ENABLE_ALL_DAY_AOD_SETTINGS,
                 def = false
+            ),
+            enableCustomNotification = repo.getBoolean(
+                key = SystemUIKeys.ENABLE_CUSTOM_NOTIFICATION,
+                def = false
+            ),
+            notificationBkgCornerRadius = repo.getFloat(
+                key = SystemUIKeys.NOTIFICATION_BKG_CORNER_RADIUS,
+                def = 36f
+            ),
+            notificationBkgAddHighlight = repo.getBoolean(
+                key = SystemUIKeys.NOTIFICATION_BKG_ADD_HIGHLIGHT,
+                def = false
+            ),
+            notificationBkgHighlightThickness = repo.getInt(
+                key = SystemUIKeys.NOTIFICATION_BKG_HIGHLIGHT_THICKNESS,
+                def = 6
+            ),
+            enableCustomNotificationClock = repo.getBoolean(
+                key = SystemUIKeys.ENABLE_CUSTOM_NOTIFICATION_CLOCK,
+                def = false
             )
         )
     )
@@ -329,5 +349,45 @@ class SystemUIViewModel(context: Application) : AndroidViewModel(context) {
             value = value
         )
         _uiState.value = _uiState.value.copy(enableAllDayAodSettings = value)
+    }
+
+    fun updateEnableCustomNotification(value: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.ENABLE_CUSTOM_NOTIFICATION,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(enableCustomNotification = value)
+    }
+
+    fun updateNotificationBkgCornerRadius(value: Float) {
+        repo.setFloat(
+            key = SystemUIKeys.NOTIFICATION_BKG_CORNER_RADIUS,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(notificationBkgCornerRadius = value)
+    }
+
+    fun updateNotificationBkgAddHighlight(value: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.NOTIFICATION_BKG_ADD_HIGHLIGHT,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(notificationBkgAddHighlight = value)
+    }
+
+    fun updateNotificationBkgHighlightThickness(value: Int) {
+        repo.setInt(
+            key = SystemUIKeys.NOTIFICATION_BKG_HIGHLIGHT_THICKNESS,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(notificationBkgHighlightThickness = value)
+    }
+
+    fun updateEnableCustomNotificationClock(value: Boolean) {
+        repo.setBoolean(
+            key = SystemUIKeys.ENABLE_CUSTOM_NOTIFICATION_CLOCK,
+            value = value
+        )
+        _uiState.value = _uiState.value.copy(enableCustomNotificationClock = value)
     }
 }

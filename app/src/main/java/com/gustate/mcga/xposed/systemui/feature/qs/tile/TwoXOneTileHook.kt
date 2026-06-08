@@ -612,7 +612,7 @@ class TwoXOneTileHook {
                 val result = chain.proceed()
                 try {
                     val stateObj = chain.args[1]
-                    val state = stateObj.getAnyField<Int>("state")
+                    val state = stateObj.getAnyField<Int>(fieldName = "state")
                     // 依据 state 获取颜色
                     val (titleColor, desColor) = when (state) {
                         2 -> activeTitleColor to activeDesColor // Active

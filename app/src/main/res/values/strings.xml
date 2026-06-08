@@ -79,4 +79,11 @@
     <string name="qs_slider_tile">Quick Settings (QS) Slider Tile</string>
     <string name="qs_media_tile">Quick Settings (QS) Media Tile</string>
     <string name="affect_entire_control_center">It will affect the entire control center</string>
+    <string name="notification">Notification</string>
+    <string name="notification_center">Notification Center</string>
+    <string name="enable_textured_glossy_material">Enable Textured Glossy Material</string>
+    <string name="thickness">Thickness</string>
+    <string name="clock">Clock</string>
+    <string name="notification_center_clock">Notification Center Clock</string>
+    <string name="acknowledgments">Acknowledgments</string>
 </resources>

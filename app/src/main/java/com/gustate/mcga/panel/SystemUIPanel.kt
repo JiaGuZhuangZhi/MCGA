@@ -98,6 +98,56 @@ fun SystemUIPanel(
                     }
                 )
             )
+            SplicedColumnGroup(
+                modifier = Modifier,
+                title = stringResource(id = R.string.notification_center),
+                content = listOf(
+                    { shape ->
+                        with(receiver = sharedTransitionScope) {
+                            OptionWidget(
+                                modifier = Modifier
+                                    .clip(shape)
+                                    .sharedBounds(
+                                        sharedContentState =
+                                            rememberSharedContentState(key = "notification"),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        enter = fadeIn(),
+                                        exit = fadeOut(),
+                                        resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
+                                        clipInOverlayDuringTransition = OverlayClip(clipShape = shape)
+                                    ),
+                                painter = painterResource(id = R.drawable.clock),
+                                title = stringResource(id = R.string.notification),
+                                onClick = {
+                                    navController.navigate(route = Destination.SYSTEMUI_NOTIFICATION.route)
+                                }
+                            )
+                        }
+                    },
+                    { shape ->
+                        with(receiver = sharedTransitionScope) {
+                            OptionWidget(
+                                modifier = Modifier
+                                    .clip(shape)
+                                    .sharedBounds(
+                                        sharedContentState =
+                                            rememberSharedContentState(key = "notification_clock"),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        enter = fadeIn(),
+                                        exit = fadeOut(),
+                                        resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
+                                        clipInOverlayDuringTransition = OverlayClip(clipShape = shape)
+                                    ),
+                                painter = painterResource(id = R.drawable.table_rows_narrow),
+                                title = stringResource(id = R.string.clock),
+                                onClick = {
+                                    navController.navigate(route = Destination.SYSTEMUI_NOTIFICATION_CLOCK.route)
+                                }
+                            )
+                        }
+                    }
+                )
+            )
             QsPanelLayoutSettings(uiState, viewModel)
             QsDetailContainerSettings(uiState, viewModel)
             SplicedColumnGroup(

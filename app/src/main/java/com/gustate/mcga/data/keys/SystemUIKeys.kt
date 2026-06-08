@@ -4,9 +4,11 @@ object SystemUIKeys {
     const val ENABLE_CUSTOM_QS_PANEL_LAYOUT = "enable_custom_qs_panel_layout"
     const val QS_PANEL_STATUS_BAR_MARGIN_TOP = "qs_panel_status_bar_margin_top"
     const val QS_PANEL_CELL_HEIGHT = "qs_panel_cell_height"
+
     const val ENABLE_CUSTOM_QS_TILE_ONE_X_ONE = "enable_custom_qs_tile_1x1"
     const val QS_TILE_ONE_X_ONE_CORNER_RADIUS = "qs_tile_1x1_corner_radius"
     const val QS_TILE_ONE_X_ONE_ROW_COLUMNS = "qs_tile_1x1_row_columns"
+
     const val ENABLE_CUSTOM_QS_DETAIL = "enable_custom_qs_detail"
     const val QS_DETAIL_BKG_COVER_COLOR = "qs_detail_cover_color"
     const val QS_DETAIL_FRG_COVER_COLOR = "qs_detail_cover_frg_color"
@@ -51,6 +53,23 @@ object SystemUIKeys {
 
     // 修改控制中心拖动条磁贴圆角半径
     const val QS_SLIDER_TILE_CORNER_RADIUS = "qs_enable_tile_corner_radius"
+
+    /** 通知中心 Keys **/
+    /* 通知 Keys */
+    // 启用对通知中心通知的修改
+    const val ENABLE_CUSTOM_NOTIFICATION = "enable_custom_notification"
+
+    // 修改通知背景圆角半径
+    const val NOTIFICATION_BKG_CORNER_RADIUS = "notification_bkg_corner_radius"
+
+    // 为通知背景添加质感轮廓光
+    const val NOTIFICATION_BKG_ADD_HIGHLIGHT = "notification_bkg_add_highlight"
+
+    // 通知背景质感轮廓光粗细
+    const val NOTIFICATION_BKG_HIGHLIGHT_THICKNESS = "notification_bkg_highlight_thickness"
+
+    // 启用通知中心大师中自定义
+    const val ENABLE_CUSTOM_NOTIFICATION_CLOCK = "enable_custom_notification_clock"
 
     const val ENABLE_AOD_PANORAMIC_ALL_DAY = "enable_aod_panoramic_all_day"
     const val ENABLE_ALL_DAY_AOD_SETTINGS = "enable_all_day_aod_settings"
