@@ -1,10 +1,13 @@
 package com.gustate.mcga.xposed.systemui.feature.qs.tile
 
 import android.content.Context
+import android.view.View
 import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.utils.RootUtils
 import com.gustate.mcga.utils.ViewUtils.dpToPx
+import com.gustate.mcga.xposed.helper.ClassHelper.getAnyField
 import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
+import com.gustate.mcga.xposed.helper.ClassHelper.setAnyField
 import com.gustate.mcga.xposed.helper.ContextHelper
 import com.gustate.mcga.xposed.systemui.feature.QSTileHook.Companion.QS_TILE_MEDIA_LOG
 import io.github.libxposed.api.XposedModule
@@ -112,7 +115,7 @@ class MediaTileHook {
                 return@intercept "#00FFFFFF"
             }
 
-            /*val aaaClazz = loadClass(
+            val aaaClazz = loadClass(
                 className = "com.oplusos.systemui.common.util.NotifiAndQsPlatformBlurExKt",
                 classLoader = classLoader
             )
@@ -122,9 +125,9 @@ class MediaTileHook {
             )
             module.hook(bbb).intercept { chain ->
                 return@intercept 160
-            }*/
+            }
 
-            /*val viewBlurManagerClazz = loadClass(
+            val viewBlurManagerClazz = loadClass(
                 className = "com.oplus.systemui.notification.blur.ViewBlurManager",
                 classLoader = classLoader
             )
@@ -152,28 +155,7 @@ class MediaTileHook {
                     message = blurConfig.javaClass.name,
                 )
                 return@intercept blurProxy
-            }*/
-
-            /*val notificationBkgView = loadClass(
-                className = "com.android.systemui.statusbar.notification.row." +
-                        "NotificationBackgroundView",
-                classLoader = classLoader
-            )
-            val setCustomBkg = notificationBkgView.getDeclaredMethod(
-                "setCustomBackground",
-                Drawable::class.java
-            )*/
-            /*module.hook(setCustomBkg).intercept { chain ->
-                /*val params = chain.args.toMutableList()
-                val context = ContextHelper.getContext(classLoader = classLoader)
-                val outline = getCustomOutline.invoke(
-                    null, context,
-                    cornerRadiusDp.dpToPx(context = context)
-                )
-                params[0] = outline
-                val paramsResult = params.toTypedArray()
-                return@intercept chain.proceed(paramsResult)*/
-            }*/
+            }
 
             val notificationRowBinderExtImpClazz = loadClass(
                 className = "com.oplus.systemui.statusbar.notification.collection." +
