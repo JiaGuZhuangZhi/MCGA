@@ -2,6 +2,7 @@ package com.gustate.mcga.xposed.aod.feature
 
 import android.content.Context
 import com.gustate.mcga.utils.LogUtils.log
+import com.gustate.mcga.xposed.helper.ClassHelper.getAnyMethod
 import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
@@ -17,7 +18,7 @@ class PanoramicHook {
 
     /**
      * 在设置中启用全天候息屏选项
-     * * @param module 当前 XposedModule 实例
+     * @param module 当前 XposedModule 实例
      * @param param 软件包加载参数
      */
     fun enableAllDayAodSettings(
@@ -29,23 +30,22 @@ class PanoramicHook {
             val settingsUtilsClass = loadClass(
                 className = "com.oplus.aod.util.SettingsUtils",
                 classLoader = param.classLoader
-            ) ?: return log(
-                module = module, tag = AOD_LOG,
-                message = "❌ 未获取到 OplusQSResizeableTileView 类"
             )
-            val method = settingsUtilsClass.getDeclaredMethod(
-                "getKeyAodAllDaySupportSettings",
-                Context::class.java,
-                Int::class.javaPrimitiveType
+            val method = settingsUtilsClass.getAnyMethod(
+                methodName = "getKeyAodAllDaySupportSettings",
+                parameterTypes = arrayOf(
+                    Context::class.java,
+                    Int::class.javaPrimitiveType
+                )
             )
             // 拦截并强制返回 1
             module.hook(method).intercept {
                 log(
                     module = module, tag = AOD_LOG,
-                    message = "✅ 成功启用全天候息屏设置 (SettingsUtils)"
+                    message = "✅ 成功启用全天候息屏设置"
                 )
                 // 直接返回 1，不执行原逻辑
-                1
+                return@intercept 1
             }
         } catch (e: Exception) {
             log(
