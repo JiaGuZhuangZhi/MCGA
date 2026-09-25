@@ -1,31 +1,22 @@
 package com.gustate.mcga.main.ui
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
-import com.gustate.mcga.R
-import com.gustate.mcga.ui.navgation.Destination
-import com.gustate.mcga.ui.widget.OptionWidget
-import com.gustate.mcga.ui.widget.SplicedColumnGroup
+import androidx.navigation.NavHostController
+import com.gustate.mcga.data.setting.MainPage
+import com.gustate.mcga.panel.PanelRenderer
+import dev.chrisbanes.haze.rememberHazeState
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SettingPage(
     modifier: Modifier,
-    navController: NavController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    navController: NavHostController,
+    paddingValues: PaddingValues
 ) {
     Column(
         modifier = modifier
@@ -33,127 +24,12 @@ fun SettingPage(
                 state = rememberScrollState(),
                 enabled = true
             )
+            .padding(paddingValues)
     ) {
-        SplicedColumnGroup(
-            modifier = Modifier,
-            title = stringResource(R.string.main),
-            content = listOf(
-                { shape ->
-                    with(receiver = sharedTransitionScope) {
-                        OptionWidget(
-                            modifier = modifier
-                                .clip(shape)
-                                .sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(key = "systemui"),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    enter = fadeIn(),
-                                    exit = fadeOut(),
-                                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
-                                    clipInOverlayDuringTransition = OverlayClip(clipShape = shape)
-                                ),
-                            painter = painterResource(id = R.drawable.ic_system_ui),
-                            title = stringResource(id = R.string.systemui),
-                            onClick = {
-                                navController.navigate(route = Destination.SYSTEMUI_HOST.route)
-                            }
-                        )
-                    }
-                },
-                { shape ->
-                    with(receiver = sharedTransitionScope) {
-                        OptionWidget(
-                            modifier = modifier
-                                .clip(shape)
-                                .sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(key = "home"),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    enter = fadeIn(),
-                                    exit = fadeOut(),
-                                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
-                                    clipInOverlayDuringTransition = OverlayClip(clipShape = shape)
-                                ),
-                            painter = painterResource(id = R.drawable.ic_home),
-                            title = stringResource(id = R.string.hook_launcher),
-                            onClick = {
-                                navController.navigate(route = "detail/home")
-                            }
-                        )
-                    }
-                }, { shape ->
-                    with(receiver = sharedTransitionScope) {
-                        OptionWidget(
-                            modifier = modifier
-                                .clip(shape)
-                                .sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(key = "aod"),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    enter = fadeIn(),
-                                    exit = fadeOut(),
-                                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
-                                    clipInOverlayDuringTransition = OverlayClip(clipShape = shape)
-                                ),
-                            painter = painterResource(id = R.drawable.aod),
-                            title = stringResource(id = R.string.aod),
-                            onClick = {
-                                navController.navigate(route = "detail/aod")
-                            }
-                        )
-                    }
-                }
-            )
-        )
-        SplicedColumnGroup(
-            modifier = Modifier,
-            title = stringResource(R.string.more),
-            content = listOf(
-                { shape ->
-                    with(receiver = sharedTransitionScope) {
-                        OptionWidget(
-                            modifier = modifier
-                                .clip(shape)
-                                .sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(key = "wallet"),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    enter = fadeIn(),
-                                    exit = fadeOut(),
-                                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
-                                    clipInOverlayDuringTransition = OverlayClip(clipShape = shape)
-                                ),
-                            painter = painterResource(id = R.drawable.ic_wallet),
-                            title = stringResource(id = R.string.wallet),
-                            onClick = {
-                                navController.navigate("detail/wallet")
-                            }
-                        )
-                    }
-                },
-                { shape ->
-                    with(receiver = sharedTransitionScope) {
-                        OptionWidget(
-                            modifier = modifier
-                                .clip(shape)
-                                .sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(key = "search"),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    enter = fadeIn(),
-                                    exit = fadeOut(),
-                                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
-                                    clipInOverlayDuringTransition = OverlayClip(clipShape = shape)
-                                ),
-                            painter = painterResource(id = R.drawable.ic_search),
-                            title = stringResource(id = R.string.hook_search),
-                            onClick = {
-                                navController.navigate("detail/search")
-                            }
-                        )
-                    }
-                }
-            )
+        MainPage.PanelRenderer(
+            hazeState = rememberHazeState(),
+            navController = navController,
+            isReturnGroup = true
         )
     }
 }

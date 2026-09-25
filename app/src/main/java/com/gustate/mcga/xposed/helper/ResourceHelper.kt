@@ -74,8 +74,8 @@ object ResourceHelper {
         onReadyResId: (resId: Int) -> Unit
     ) {
         val application = loadClass(
-            className = "android.app.Application",
-            classLoader = classLoader
+            name = "android.app.Application",
+            loader = classLoader
         )
         val onCreateMethod = application
             ?.getDeclaredMethod("onCreate")
@@ -110,8 +110,8 @@ object ResourceHelper {
         onReadyResIds: (resIds: Map<String, Int>) -> Unit
     ) {
         val application = loadClass(
-            className = "android.app.Application",
-            classLoader = classLoader
+            name = "android.app.Application",
+            loader = classLoader
         )
         val onCreateMethod = application
             ?.getDeclaredMethod("onCreate")

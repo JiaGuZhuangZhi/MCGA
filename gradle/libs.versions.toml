@@ -1,21 +1,22 @@
 [versions]
-agp = "8.13.0"
-animation = "1.9.4"
+agp = "9.2.1"
+animation = "1.11.4"
+backdrop = "2.0.0"
 coreSplashscreen = "1.2.0"
-libxposed-api = "101.0.0"
-capsule = "2.1.1"
-haze = "1.7.1"
-kotlin = "2.2.0"
-coreKtx = "1.16.0"
+libxposed-api = "102.0.0"
+capsule = "2.1.3"
+haze = "2.0.0-alpha03"
+kotlin = "2.4.0"
+coreKtx = "1.19.0"
 junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.9.0"
-activityCompose = "1.10.1"
-composeBom = "2025.11.00"
-navigationCompose = "2.9.6"
+junitVersion = "1.3.0"
+espressoCore = "3.7.0"
+lifecycleRuntimeKtx = "2.11.0"
+activityCompose = "1.13.0"
+composeBom = "2026.06.01"
+navigationCompose = "2.9.8"
 recyclerview = "1.4.0"
-colorpicker = "1.1.2"
+colorpicker = "1.2.0"
 cardview = "1.0.0"
 
 [libraries]
@@ -24,7 +25,9 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+backdrop = { module = "io.github.kyant0:backdrop", version.ref = "backdrop" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
+haze-blur = { module = "dev.chrisbanes.haze:haze-blur", version.ref = "haze" }
 kyant0-capsule = { module = "io.github.kyant0:capsule", version.ref = "capsule" }
 xposed-service = { module = "io.github.libxposed:service", version.ref = "libxposed-api" }
 xposed-api = { module = "io.github.libxposed:api", version.ref = "libxposed-api" }
@@ -46,6 +49,5 @@ androidx-cardview = { group = "androidx.cardview", name = "cardview", version.re
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

@@ -28,8 +28,8 @@ class PanoramicHook {
         try {
             // 获取目标类与方法
             val settingsUtilsClass = loadClass(
-                className = "com.oplus.aod.util.SettingsUtils",
-                classLoader = param.classLoader
+                name = "com.oplus.aod.util.SettingsUtils",
+                loader = param.classLoader
             )
             val method = settingsUtilsClass.getAnyMethod(
                 methodName = "getKeyAodAllDaySupportSettings",

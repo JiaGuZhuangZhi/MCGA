@@ -15,7 +15,7 @@ import androidx.annotation.StringRes
  * @param summary 摘要
  * @param dependency 依赖 (启用条件)
  */
-abstract class SettingItem<T>(
+sealed class SettingItem<T>(
     // 键值
     val key: String,
     val default: T,
@@ -148,11 +148,35 @@ open class IntSetting(
  * @param command 命令
  * @param icon 图标
  * @param title 标题
- * @param summaryProvider 摘要处理器
+ * @param summary 摘要
  * @param dependency 依赖 (启用条件)
  */
 open class CommandSetting(
-    val command: String? = null,
+    val command: String,
+    @DrawableRes icon: Int,
+    @StringRes title: Int,
+    @StringRes summary: Int? = null,
+    dependency: BooleanSetting? = null
+) : SettingItem<Any>(
+    key = "",
+    default = "",
+    icon = icon,
+    title = title,
+    summary = summary,
+    summaryProvider = null,
+    dependency = dependency
+)
+
+/**
+ * 设置选项类
+ * @param url 目标链接
+ * @param icon 图标
+ * @param title 标题
+ * @param summary 摘要
+ * @param dependency 依赖 (启用条件)
+ */
+open class LinkSetting(
+    val url: String? = null,
     @DrawableRes icon: Int,
     @StringRes title: Int,
     @StringRes summary: Int? = null,

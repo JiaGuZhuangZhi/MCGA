@@ -1,4 +1,4 @@
-package com.gustate.mcga.data.setting.systemui.group.tile
+package com.gustate.mcga.data.setting.systemui.tile
 
 import com.gustate.mcga.R
 import com.gustate.mcga.data.setting.base.BooleanSetting
@@ -6,7 +6,7 @@ import com.gustate.mcga.data.setting.base.FloatSetting
 import com.gustate.mcga.data.setting.base.SettingGroup
 
 /**
- *
+ * QS 媒体磁贴设置组
  */
 object QsMediaTileGroup : SettingGroup(
     title = R.string.qs_media_tile,
@@ -17,7 +17,10 @@ object QsMediaTileGroup : SettingGroup(
     )
 )
 
-object EnableCustomQsMediaTile : BooleanSetting(
+/**
+ * 启用 QS 媒体磁贴自定义设置
+ */
+private object EnableCustomQsMediaTile : BooleanSetting(
     key = "enable_custom_qs_media_tile",
     default = false,
     icon = R.drawable.architecture,
@@ -26,7 +29,10 @@ object EnableCustomQsMediaTile : BooleanSetting(
     dependency = null
 )
 
-object QsMediaTileCornerRadius : FloatSetting(
+/**
+ * QS 媒体磁贴圆角大小
+ */
+private object QsMediaTileCornerRadius : FloatSetting(
     key = "qs_media_tile_corner_radius",
     min = 0f,
     max = 96f,

@@ -5,6 +5,7 @@ import com.gustate.mcga.data.keys.SystemUIKeys
 import com.gustate.mcga.data.keys.SystemUIKeys.ENABLE_CUSTOM_QS_PANEL_LAYOUT
 import com.gustate.mcga.data.keys.SystemUIKeys.QS_PANEL_CELL_HEIGHT
 import com.gustate.mcga.data.keys.SystemUIKeys.QS_PANEL_STATUS_BAR_MARGIN_TOP
+import com.gustate.mcga.data.setting.systemui.tile.readTwoXOneConfig
 import com.gustate.mcga.xposed.systemui.feature.ControlPanelHook
 import com.gustate.mcga.xposed.systemui.feature.PanoramicHook
 import com.gustate.mcga.xposed.systemui.feature.QSTileHook
@@ -125,55 +126,19 @@ object SystemuiHook {
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
-        // Resizeable Tile
-        val enableCustomQsResizeableTile = prefs.getBoolean(
-            SystemUIKeys.ENABLE_CUSTOM_QS_RESIZEABLE_TILE,
-            false
-        )
-        val qsResizeableTileCornerRadius = prefs.getFloat(
-            SystemUIKeys.QS_RESIZEABLE_TILE_CORNER_RADIUS,
-            24.0f
-        )
-        val qsTwoXOneTileFillStateFullBkg = prefs.getBoolean(
-            SystemUIKeys.QS_TWO_X_ONE_TILE_FILL_STATE_FULL_BKG,
-            true
-        )
-        val qsTwoXOneTileHideIconBkg = prefs.getBoolean(
-            SystemUIKeys.QS_TWO_X_ONE_TILE_HIDE_ICON_BKG,
-            true
-        )
-        val qsTwoXOneTileIconSize = prefs.getFloat(
-            SystemUIKeys.QS_TWO_X_ONE_TILE_ICON_SIZE,
-            28f
-        )
-        val qsTwoXOneTileInactiveTitleColor = prefs.getInt(
-            SystemUIKeys.QS_TWO_X_ONE_TILE_INACTIVE_TITLE_COLOR,
-            0XE6ffffff.toInt()
-        )
-        val qsTwoXOneTileActiveTitleColor = prefs.getInt(
-            SystemUIKeys.QS_TWO_X_ONE_TILE_ACTIVE_TITLE_COLOR,
-            0XE6000000.toInt()
-        )
-        val qsTwoXOneTileInactiveDesColor = prefs.getInt(
-            SystemUIKeys.QS_TWO_X_ONE_TILE_INACTIVE_DES_COLOR,
-            0X89ffffff.toInt()
-        )
-        val qsTwoXOneTileActiveDesColor = prefs.getInt(
-            SystemUIKeys.QS_TWO_X_ONE_TILE_ACTIVE_DES_COLOR,
-            0X89000000.toInt()
-        )
-        if (enableCustomQsResizeableTile) {
+        val config = prefs.readTwoXOneConfig()
+        if (config.enableCustomQsResizeableTile) {
             qsTileHook.hookTwoXOneTile(
                 module = module,
                 param = param,
-                cornerRadiusDp = qsResizeableTileCornerRadius,
-                fillTileStateFullBkg = qsTwoXOneTileFillStateFullBkg,
-                hideTileIconBkg = qsTwoXOneTileHideIconBkg,
-                tileIconSizeDp = qsTwoXOneTileIconSize,
-                inactiveTitleColor = qsTwoXOneTileInactiveTitleColor,
-                inactiveDesColor = qsTwoXOneTileInactiveDesColor,
-                activeTitleColor = qsTwoXOneTileActiveTitleColor,
-                activeDesColor = qsTwoXOneTileActiveDesColor
+                cornerRadiusDp = config.qsResizeableTileCornerRadius,
+                fillTileStateFullBkg = config.qsTwoXOneTileFillStateFullBkg,
+                hideTileIconBkg = config.qsTwoXOneTileHideIconBkg,
+                tileIconSizeDp = config.qsTwoXOneTileIconSize,
+                inactiveTitleColor = config.qsTwoXOneTileInactiveTitleColor,
+                inactiveDesColor = config.qsTwoXOneTileInactiveDesColor,
+                activeTitleColor = config.qsTwoXOneTileActiveTitleColor,
+                activeDesColor = config.qsTwoXOneTileActiveDesColor
             )
         }
     }

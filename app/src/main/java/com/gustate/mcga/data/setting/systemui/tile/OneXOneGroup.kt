@@ -1,4 +1,4 @@
-package com.gustate.mcga.data.setting.systemui.group.tile
+package com.gustate.mcga.data.setting.systemui.tile
 
 import com.gustate.mcga.R
 import com.gustate.mcga.data.setting.base.BooleanSetting
@@ -8,9 +8,6 @@ import com.gustate.mcga.data.setting.base.SettingGroup
 
 /**
  * 1*1 磁贴设置组
- * @param title 标题
- * @param dependency 依赖 (启用条件)
- * @param children 子项
  */
 object OneXOneGroup : SettingGroup(
     title = R.string.qs_1x1_tile,
@@ -25,8 +22,8 @@ object OneXOneGroup : SettingGroup(
 /**
  * 启用自定义 1*1 磁贴设置
  */
-object EnableCustomQsTileOneXOne : BooleanSetting(
-    key = "enableCustomQsTileOneXOne",
+private object EnableCustomQsTileOneXOne : BooleanSetting(
+    key = "enable_custom_qs_tile_1x1",
     default = false,
     icon = R.drawable.architecture,
     title = R.string.enable_custom_settings,
@@ -37,7 +34,7 @@ object EnableCustomQsTileOneXOne : BooleanSetting(
 /**
  * 1*1 磁贴背景圆角
  */
-object QsTileOneXOneCornerRadius : FloatSetting(
+private object QsTileOneXOneCornerRadius : FloatSetting(
     key = "qs_tile_1x1_corner_radius",
     default = 24f,
     min = 0f,
@@ -51,7 +48,7 @@ object QsTileOneXOneCornerRadius : FloatSetting(
 /**
  * 1*1 磁贴行数
  */
-object QsTileOneXOneRowColumns : IntSetting(
+private object QsTileOneXOneRowColumns : IntSetting(
     key = "qs_tile_1x1_row_columns",
     default = 4,
     min = 0,

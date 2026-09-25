@@ -1,3 +1,7 @@
+/**
+ *
+ */
+
 package com.gustate.mcga.xposed.systemui.feature.qs.notification
 
 import android.content.Context
@@ -42,12 +46,12 @@ class QsClockHook {
         val classLoader = param.classLoader
         try {
             val fakeControllerClazz = loadClass(
-                className = "com.oplus.systemui.separate.OplusSimpleQSFakeController",
-                classLoader = classLoader
+                name = "com.oplus.systemui.separate.OplusSimpleQSFakeController",
+                loader = classLoader
             )
             val simpleHeaderClazz = loadClass(
-                className = "com.oplus.systemui.separate.OplusQSSimpleHeader",
-                classLoader = classLoader
+                name = "com.oplus.systemui.separate.OplusQSSimpleHeader",
+                loader = classLoader
             )
 
             modifyClockScale(
@@ -62,13 +66,13 @@ class QsClockHook {
                 containerHeightDp = containerHeightDp
             )
             hideSettingsButton(
-                module = module,
-                simpleHeaderClazz = simpleHeaderClazz
+                module = module, simpleHeaderClazz = simpleHeaderClazz
             )
 
         } catch (e: Exception) {
             log(
-                module = module, tag = QS_CLOCK_LOG,
+                module = module,
+                tag = QS_CLOCK_LOG,
                 message = "❌ 初始化 QS 时钟布局 Hook 失败",
                 throwable = e
             )
@@ -90,8 +94,9 @@ class QsClockHook {
         clockScaleMultiplier: Float
     ) {
         try {
-            val updateQSClockScale = fakeControllerClazz
-                .getDeclaredMethod("updateQSClockScale", Float::class.javaPrimitiveType)
+            val updateQSClockScale = fakeControllerClazz.getDeclaredMethod(
+                "updateQSClockScale", Float::class.javaPrimitiveType
+            )
 
             module.hook(updateQSClockScale).intercept { chain ->
                 try {
@@ -118,7 +123,7 @@ class QsClockHook {
                         if (clockView is TextView) {
                             clockView.gravity = Gravity.CENTER
                             clockView.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                            clockView.alpha = 0.8f
+                            clockView.setTextColor(0X80FFFFFF.toInt())
                         }
                         protectClockViewFromSystem(clockView)
                     }
@@ -130,7 +135,8 @@ class QsClockHook {
                     return@intercept result
                 } catch (e: Exception) {
                     log(
-                        module = module, tag = QS_CLOCK_LOG,
+                        module = module,
+                        tag = QS_CLOCK_LOG,
                         message = "❌ 修改时钟缩放失败",
                         throwable = e
                     )
@@ -139,7 +145,8 @@ class QsClockHook {
             }
         } catch (e: Exception) {
             log(
-                module = module, tag = QS_CLOCK_LOG,
+                module = module,
+                tag = QS_CLOCK_LOG,
                 message = "❌ Hook updateQSClockScale 失败",
                 throwable = e
             )
@@ -155,9 +162,7 @@ class QsClockHook {
                 val targetPivotY = clockView.height / 2f
 
                 // 如果支点不正确，立即修正并请求重绘
-                if (abs(clockView.pivotX - targetPivotX) > 0.1f ||
-                    abs(clockView.pivotY - targetPivotY) > 0.1f
-                ) {
+                if (abs(clockView.pivotX - targetPivotX) > 0.1f || abs(clockView.pivotY - targetPivotY) > 0.1f) {
                     clockView.pivotX = targetPivotX
                     clockView.pivotY = targetPivotY
                     clockView.invalidate()
@@ -178,15 +183,12 @@ class QsClockHook {
      * 避免全局 Hook LayoutInflater / View.setLayoutParams。
      */
     private fun modifyClockConstraints(
-        module: XposedModule,
-        simpleHeaderClazz: Class<*>,
-        containerHeightDp: Float
+        module: XposedModule, simpleHeaderClazz: Class<*>, containerHeightDp: Float
     ) {
         try {
             val onInit = simpleHeaderClazz.getDeclaredMethod("onInit")
             val onConfigChanged = simpleHeaderClazz.getDeclaredMethod(
-                "onConfigurationChanged",
-                Configuration::class.java
+                "onConfigurationChanged", Configuration::class.java
             )
 
             // Hook onInit 去修改高度与约束
@@ -201,19 +203,17 @@ class QsClockHook {
                             .setHeightDp(context, containerHeightDp)
                     }
                     // 时钟约束
-                    header.getAnyField<View>("clockView")
-                        .applyClockConstraint(context)
+                    header.getAnyField<View>("clockView").applyClockConstraint(context)
                     // 日期约束
-                    header.getAnyField<View>("dateView")
-                        .applyDateConstraint(context)
+                    header.getAnyField<View>("dateView").applyDateConstraint(context)
                     log(
-                        module = module, tag = QS_CLOCK_LOG,
-                        message = "✅ 时钟布局约束修正完成"
+                        module = module, tag = QS_CLOCK_LOG, message = "✅ 时钟布局约束修正完成"
                     )
                     return@intercept result
                 } catch (e: Exception) {
                     log(
-                        module = module, tag = QS_CLOCK_LOG,
+                        module = module,
+                        tag = QS_CLOCK_LOG,
                         message = "❌ 修正时钟布局约束失败",
                         throwable = e
                     )
@@ -233,19 +233,17 @@ class QsClockHook {
                             .setHeightDp(context, containerHeightDp)
                     }
                     // 时钟约束
-                    header.getAnyField<View>("clockView")
-                        .applyClockConstraint(context)
+                    header.getAnyField<View>("clockView").applyClockConstraint(context)
                     // 日期约束
-                    header.getAnyField<View>("dateView")
-                        .applyDateConstraint(context)
+                    header.getAnyField<View>("dateView").applyDateConstraint(context)
                     log(
-                        module = module, tag = QS_CLOCK_LOG,
-                        message = "✅ 时钟布局约束修正完成"
+                        module = module, tag = QS_CLOCK_LOG, message = "✅ 时钟布局约束修正完成"
                     )
                     return@intercept result
                 } catch (e: Exception) {
                     log(
-                        module = module, tag = QS_CLOCK_LOG,
+                        module = module,
+                        tag = QS_CLOCK_LOG,
                         message = "❌ 修正时钟布局约束失败",
                         throwable = e
                     )
@@ -254,7 +252,8 @@ class QsClockHook {
             }
         } catch (e: Exception) {
             log(
-                module = module, tag = QS_CLOCK_LOG,
+                module = module,
+                tag = QS_CLOCK_LOG,
                 message = "❌ Hook 时钟布局约束失败",
                 throwable = e
             )
@@ -272,30 +271,27 @@ class QsClockHook {
      * updateClickAbilities 使用 before 防止方法内部将按钮重新显示。
      */
     private fun hideSettingsButton(
-        module: XposedModule,
-        simpleHeaderClazz: Class<*>
+        module: XposedModule, simpleHeaderClazz: Class<*>
     ) {
         try {
-            val onInit = simpleHeaderClazz
-                .getDeclaredMethod("onInit")
+            val onInit = simpleHeaderClazz.getDeclaredMethod("onInit")
             val onConfigChanged = simpleHeaderClazz.getDeclaredMethod(
-                "onConfigurationChanged",
-                Configuration::class.java
+                "onConfigurationChanged", Configuration::class.java
             )
-            val updateClickAbilities = simpleHeaderClazz
-                .getDeclaredMethod("updateClickAbilities")
+            val updateClickAbilities = simpleHeaderClazz.getDeclaredMethod("updateClickAbilities")
 
             val hideButton: (Any) -> Unit = { header ->
                 try {
                     header.getAnyField<ImageView>(
-                        fieldName = "settingsButton"
+                        name = "settingsButton"
                     ).apply {
                         visibility = View.GONE
                         alpha = 0f
                     }
                 } catch (e: Exception) {
                     log(
-                        module = module, tag = QS_CLOCK_LOG,
+                        module = module,
+                        tag = QS_CLOCK_LOG,
                         message = "❌ 隐藏 settingsButton 失败",
                         throwable = e
                     )
@@ -324,12 +320,12 @@ class QsClockHook {
             }
 
             log(
-                module = module, tag = QS_CLOCK_LOG,
-                message = "✅ settingsButton 隐藏 Hook 注册完成"
+                module = module, tag = QS_CLOCK_LOG, message = "✅ settingsButton 隐藏 Hook 注册完成"
             )
         } catch (e: Exception) {
             log(
-                module = module, tag = QS_CLOCK_LOG,
+                module = module,
+                tag = QS_CLOCK_LOG,
                 message = "❌ Hook settingsButton 隐藏失败",
                 throwable = e
             )

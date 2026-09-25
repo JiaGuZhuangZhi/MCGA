@@ -44,6 +44,10 @@
     <string name="only_keep_rgb_channel">Only keep RGB channel</string>
     <string name="qs_1x1_tile">Quick Settings (QS) 1*1 Tile</string>
     <string name="please_enter_text">Please enter text</string>
+    <string name="invalid_number">Enter a valid number</string>
+    <string name="restart_component">Restart component</string>
+    <string name="command_succeeded">Command completed</string>
+    <string name="command_failed">Command failed; check root access</string>
     <string name="icon_bkg_color">Icon background color</string>
     <string name="icon_bkg_corner_radius">Icon background corner radius</string>
     <string name="qq_group">QQ Group</string>
@@ -86,4 +90,30 @@
     <string name="clock">Clock</string>
     <string name="notification_center_clock">Notification Center Clock</string>
     <string name="acknowledgments">Acknowledgments</string>
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="qq_8272_des">Participated in the test on December 14, 2025, and submitted three functional issues to the MCGA repository on Github</string>
+    <string name="qq_7829">Tsukasa</string>
+    <string name="qq_7829_des">Participated in the test on March 11, 2026, and answered the developer\'s survey questionnaire</string>
+    <string name="qq_8272">Perpetual-Memories</string>
+    <string name="qq_2808">MoKeXinDaWang</string>
+    <string name="qq_2808_des">Participated in the test on March 10, 2026, and managed the communication group</string>
+    <string name="qq_2775"></string>
+    <string name="qq_2775_des">Participated in the test on February 3, 2026, and managed the communication group</string>
+    <string name="mjw">MJW</string>
+    <string name="mjw_des">Oniichan is the person in charge of the UOTAN community</string>
+    <string name="tikaliu" translatable="false">tikaliu</string>
+    <string name="tikaliu_des">Provide ideas for SystemUI-related functions and help fix serious issues</string>
+    <string name="jx">Algorhythm</string>
+    <string name="jx_des">It\'s not like there\'s some deep reason or anything... He\'s just important to the developer  That\'s all</string>
+    <string name="lamprose" translatable="false">Michelle Rodriguez</string>
+    <string name="lamprose_des">A pull request (PR) to hide detailed logs and desktop icons has been submitted in the MCGA repository on Github</string>
+    <string name="app_des">Where the default ends in wasteland, an Ark rises to restore order.</string>
+    <string name="gustate">JiaGuZhuangZhi @Gustate</string>
+    <string name="gustate_des">Developer of MCGA and UOTAN, and a member of Gustate</string>
+    <string name="drawer">Drawer</string>
+    <string name="recently">Recently</string>
+    <string name="recom_apps">Recommended Apps</string>
+    <string name="panoramic_aod">Panoramic AOD</string>
 </resources>

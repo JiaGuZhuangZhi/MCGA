@@ -71,8 +71,8 @@ class NearmeHook {
         }
 
         val nfcActivityClass = loadClass(
-            className = "com.nearme.wallet.nfc.ui.NfcConsumeActivity",
-            classLoader = param.classLoader
+            name = "com.nearme.wallet.nfc.ui.NfcConsumeActivity",
+            loader = param.classLoader
         ) ?: return
         // 处理窗口模糊与背景
         try {
@@ -159,8 +159,8 @@ class NearmeHook {
         }
         // 隐藏刷卡页面功能列表中的按压背景
         val viewHolderClass = loadClass(
-            className = "com.nearme.operate.widget.OperateViewHolder",
-            classLoader = param.classLoader
+            name = "com.nearme.operate.widget.OperateViewHolder",
+            loader = param.classLoader
         ) ?: return log(
             module = module, tag = NFC_LOG,
             message = "❌ 获取 OperateViewHolder 类失败"

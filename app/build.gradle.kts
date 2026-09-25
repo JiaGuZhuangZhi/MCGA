@@ -2,13 +2,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "com.gustate.mcga"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.gustate.mcga"
@@ -61,6 +60,8 @@ dependencies {
     implementation(libs.kyant0.capsule)
     implementation(libs.compose.colorpicker)
     implementation(libs.haze)
+    implementation(libs.haze.blur)
+    implementation(libs.backdrop)
     implementation(libs.androidx.cardview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

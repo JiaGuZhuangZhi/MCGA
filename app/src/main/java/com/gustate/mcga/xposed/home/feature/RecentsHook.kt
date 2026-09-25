@@ -28,8 +28,8 @@ class RecentsHook {
             // 加载类
             // 加载清除按钮类
             val panelClass = loadClass(
-                className = "com.oplus.quickstep.views.OplusClearAllPanelView",
-                classLoader = classLoader
+                name = "com.oplus.quickstep.views.OplusClearAllPanelView",
+                loader = classLoader
             ) ?: return log(
                 module = module, tag = TAG,
                 message = "❌ 未获取到 OplusClearAllPanelView 类"

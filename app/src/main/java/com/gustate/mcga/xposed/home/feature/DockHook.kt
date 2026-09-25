@@ -37,24 +37,24 @@ class DockHook {
         // 加载所需类
         // 加载 Dock 类
         val dockClass = loadClass(
-            className = "com.android.launcher3.OplusHotseat",
-            classLoader = classLoader
+            name = "com.android.launcher3.OplusHotseat",
+            loader = classLoader
         ) ?: return log(
             module = module, tag = DOCK_BKG,
             message = "❌ 未获取到 OplusHotseat 类"
         )
         // 加载模糊工具类
         val blurUtils = loadClass(
-            className = "com.android.launcher3.uioverrides.states.blurdrawable.OplusBlurProperties",
-            classLoader = classLoader
+            name = "com.android.launcher3.uioverrides.states.blurdrawable.OplusBlurProperties",
+            loader = classLoader
         ) ?: return log(
             module = module, tag = DOCK_BKG,
             message = "❌ 未获取到 OplusBlurProperties 类"
         )
         // 加载屏幕工具类
         val screenUtils = loadClass(
-            className = "com.android.common.util.ScreenUtils",
-            classLoader = classLoader
+            name = "com.android.common.util.ScreenUtils",
+            loader = classLoader
         ) ?: return log(
             module = module, tag = DOCK_BKG,
             message = "❌ 未获取到 ScreenUtils 类"
@@ -93,7 +93,7 @@ class DockHook {
             val instance = chain.thisObject
             // 从 Hotseat 实例里拿走它的 mBlurProp
             val mBlurProp = instance
-                ?.getAnyField<Any>(fieldName = "mBlurProp")
+                ?.getAnyField<Any>(name = "mBlurProp")
                 ?: run {
                     log(
                         module = module, tag = DOCK_BKG,
@@ -287,8 +287,8 @@ class DockHook {
             Float::class.javaPrimitiveType,
             Boolean::class.javaPrimitiveType,
             loadClass(
-                className = "com.android.launcher3.model.data.ItemInfo",
-                classLoader = classLoader
+                name = "com.android.launcher3.model.data.ItemInfo",
+                loader = classLoader
             ),
         ) ?: return log(
             module = module, tag = DOCK_BKG,

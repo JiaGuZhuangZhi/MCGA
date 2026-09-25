@@ -20,6 +20,7 @@ abstract class SettingGroup(
 /**
  * 设置页
  * 实际上是独立成页的设置组
+ * @param route 导航路径
  * @param command 右上角图标的命令
  * @param icon 图标
  * @param summary 摘要
@@ -29,6 +30,7 @@ abstract class SettingGroup(
  * @param children 子项
  */
 abstract class SettingPage(
+    val route: String,
     val command: String?,
     @field:DrawableRes
     val icon: Int,
@@ -36,7 +38,7 @@ abstract class SettingPage(
     val summary: Int? = null,
     @field:StringRes title: Int,
     dependency: BooleanSetting? = null,
-    children: List<SettingNode>
+    children: List<SettingGroup>
 ) : SettingGroup(
     title = title,
     dependency = dependency,

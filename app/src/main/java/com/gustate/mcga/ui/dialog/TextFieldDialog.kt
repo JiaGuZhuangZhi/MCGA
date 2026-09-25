@@ -22,11 +22,12 @@ fun TextFieldDialog(
     painterDescription: String? = null,
     title: String,
     description: String? = null,
+    initialValue: String = "",
     onDismissRequest: () -> Unit,
     onConfirmation: (Float) -> Unit
 ) {
     val context = LocalContext.current
-    var inputText by remember { mutableStateOf("") }
+    var inputText by remember(initialValue) { mutableStateOf(initialValue) }
     BaseDialog(
         painter = painter,
         painterDescription = painterDescription,
@@ -34,12 +35,13 @@ fun TextFieldDialog(
         description = description,
         onDismissRequest = onDismissRequest,
         onConfirmation = {
-            if (inputText.isNotEmpty()) {
-                onConfirmation(inputText.toFloat())
+            val value = inputText.toFloatOrNull()?.takeIf { it.isFinite() }
+            if (value != null) {
+                onConfirmation(value)
             } else {
                 Toast.makeText(
                     context,
-                    R.string.please_enter_text,
+                    R.string.invalid_number,
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -54,7 +56,7 @@ fun TextFieldDialog(
             },
             keyboardOptions = KeyboardOptions
                 .Default
-                .copy(keyboardType = KeyboardType.Number)
+                .copy(keyboardType = KeyboardType.Decimal)
         )
     }
 }

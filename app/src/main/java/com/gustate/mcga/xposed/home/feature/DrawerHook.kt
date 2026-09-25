@@ -24,24 +24,24 @@ class DrawerHook {
         // 加载类
         // 加载 Adapter 类
         val baseAdapterClass = loadClass(
-            className = "com.android.launcher3.allapps.BaseAllAppsAdapter",
-            classLoader = classLoader
+            name = "com.android.launcher3.allapps.BaseAllAppsAdapter",
+            loader = classLoader
         ) ?: return log(
             module = module, tag = DRAWER_TAG,
             message = "❌ 未获取到 BaseAllAppsAdapter 类"
         )
         // 加载 BubbleTextView
         val bubbleTextViewClass = loadClass(
-            className = "com.android.launcher3.BubbleTextView",
-            classLoader = classLoader
+            name = "com.android.launcher3.BubbleTextView",
+            loader = classLoader
         ) ?: return log(
             module = module, tag = DRAWER_TAG,
             message = "❌ 未获取到 BubbleTextView 类"
         )
         // 找到内部类 ViewHolder
         val viewHolder = loadClass(
-            className = "com.android.launcher3.allapps.BaseAllAppsAdapter\$ViewHolder",
-            classLoader = classLoader
+            name = "com.android.launcher3.allapps.BaseAllAppsAdapter\$ViewHolder",
+            loader = classLoader
         ) ?: return log(
             module = module, tag = DRAWER_TAG,
             message = "❌ 未获取到 BaseAllAppsAdapter\$ViewHolder 类"

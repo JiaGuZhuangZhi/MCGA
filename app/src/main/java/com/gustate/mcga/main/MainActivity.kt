@@ -14,7 +14,8 @@ import androidx.navigation.compose.rememberNavController
 import com.gustate.mcga.data.viewmodel.ModuleViewModel
 import com.gustate.mcga.ui.navgation.Destination
 import com.gustate.mcga.ui.navgation.MainNavHost
-import com.gustate.mcga.ui.theme.MakeColorGreatAgainTheme
+import com.gustate.mcga.ui.theme.GustateTheme
+import com.gustate.mcga.ui.theme.ThemeType
 
 class MainActivity : ComponentActivity() {
 
@@ -25,7 +26,10 @@ class MainActivity : ComponentActivity() {
         val viewModel by viewModels<ModuleViewModel>()
         enableEdgeToEdge()
         setContent {
-            MakeColorGreatAgainTheme {
+            GustateTheme(
+                themeType = ThemeType.Ios,
+                dynamicColorForce = false
+            ) {
                 val navController = rememberNavController()
                 SharedTransitionLayout {
                     MainNavHost(

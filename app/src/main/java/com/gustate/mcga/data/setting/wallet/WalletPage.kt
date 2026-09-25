@@ -5,17 +5,26 @@ import com.gustate.mcga.data.setting.base.BooleanSetting
 import com.gustate.mcga.data.setting.base.ColorSetting
 import com.gustate.mcga.data.setting.base.FloatSetting
 import com.gustate.mcga.data.setting.base.IntSetting
+import com.gustate.mcga.data.setting.base.SettingGroup
 import com.gustate.mcga.data.setting.base.SettingPage
 
 /**
  * 钱包页面声明
  */
 object WalletPage : SettingPage(
+    route = "wallet",
     command = "su -c pkill -f com.finshell.wallet",
     icon = R.drawable.ic_wallet,
     title = R.string.wallet,
     summary = null,
     dependency = null,
+    children = listOf(
+        WalletGroup
+    )
+)
+
+object WalletGroup : SettingGroup(
+    title = R.string.wallet,
     children = listOf(
         EnableCustomNfcCardPage,
         NfcCardPageBkgBlurRadius,

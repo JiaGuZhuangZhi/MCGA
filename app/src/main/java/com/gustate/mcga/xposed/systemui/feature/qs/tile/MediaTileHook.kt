@@ -6,6 +6,7 @@ import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.utils.RootUtils
 import com.gustate.mcga.utils.ViewUtils.dpToPx
 import com.gustate.mcga.xposed.helper.ClassHelper.getAnyField
+import com.gustate.mcga.xposed.helper.ClassHelper.getAnyMethod
 import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
 import com.gustate.mcga.xposed.helper.ClassHelper.setAnyField
 import com.gustate.mcga.xposed.helper.ContextHelper
@@ -60,12 +61,12 @@ class MediaTileHook {
         val classLoader = param.classLoader
         try {
             val sepQSResPoolClazz = loadClass(
-                className = "com.oplus.systemui.qs.base.res.SepQSResPool",
-                classLoader = classLoader
+                name = "com.oplus.systemui.qs.base.res.SepQSResPool",
+                loader = classLoader
             )
             val qsConstantClazz = loadClass(
-                className = "com.oplus.systemui.qs.base.res.util.QSConstant",
-                classLoader = classLoader
+                name = "com.oplus.systemui.qs.base.res.util.QSConstant",
+                loader = classLoader
             )
             val getMediaPanelOutline = sepQSResPoolClazz
                 .getDeclaredMethod("getMediaPanelOutline")
@@ -106,8 +107,8 @@ class MediaTileHook {
 
 
             val seedlingMediaDataClazz = loadClass(
-                className = "com.oplus.systemui.seedlingservice.mediaControl.SeedlingMediaData",
-                classLoader = classLoader
+                name = "com.oplus.systemui.seedlingservice.mediaControl.SeedlingMediaData",
+                loader = classLoader
             )
             val getArtworkBgColorMethod = seedlingMediaDataClazz
                 .getDeclaredMethod("getArtworkBgColor")
@@ -116,8 +117,8 @@ class MediaTileHook {
             }
 
             val aaaClazz = loadClass(
-                className = "com.oplusos.systemui.common.util.NotifiAndQsPlatformBlurExKt",
-                classLoader = classLoader
+                name = "com.oplusos.systemui.common.util.NotifiAndQsPlatformBlurExKt",
+                loader = classLoader
             )
             val bbb = aaaClazz.getDeclaredMethod(
                 "panelBlurRadius",
@@ -128,24 +129,23 @@ class MediaTileHook {
             }
 
             val viewBlurManagerClazz = loadClass(
-                className = "com.oplus.systemui.notification.blur.ViewBlurManager",
-                classLoader = classLoader
+                name = "com.oplus.systemui.notification.blur.ViewBlurManager",
+                loader = classLoader
             )
             val requireBlurProxyForViewMethod = viewBlurManagerClazz
-                .getDeclaredMethod(
-                    "requireBlurProxyForView",
-                    View::class.java,
-                    loadClass(
-                        className = "com.oplus.systemui.notification.blur" +
-                                ".ViewBlurManager\$CardType",
-                        classLoader = classLoader
-                    ),
-                    Float::class.javaPrimitiveType
+                .getAnyMethod(
+                    name = "requireBlurProxyForView",
+                    classLoader = classLoader,
+                    paramTypes = arrayOf(
+                        View::class.java,
+                        $$"com.oplus.systemui.notification.blur.ViewBlurManager$CardType",
+                        Float::class.javaPrimitiveType
+                    )
                 )
             module.hook(requireBlurProxyForViewMethod).intercept { chain ->
                 val blurProxy = chain.proceed()
                 val blurConfig = blurProxy
-                    .getAnyField<Any>(fieldName = "blurConfig")
+                    .getAnyField<Any>(name = "blurConfig")
                 blurConfig.setAnyField(
                     fieldName = "blurRadius",
                     value = 800
@@ -158,27 +158,27 @@ class MediaTileHook {
             }
 
             val notificationRowBinderExtImpClazz = loadClass(
-                className = "com.oplus.systemui.statusbar.notification.collection." +
+                name = "com.oplus.systemui.statusbar.notification.collection." +
                         "NotificationRowBinderExtImp",
-                classLoader = classLoader
+                loader = classLoader
             )
             val bindRowForBlurControllerMethod = notificationRowBinderExtImpClazz
                 .getDeclaredMethod(
                     "bindRowForBlurController",
                     loadClass(
-                        className = "com.android.systemui.statusbar.notification.row." +
+                        name = "com.android.systemui.statusbar.notification.row." +
                                 "ExpandableNotificationRow",
-                        classLoader = classLoader
+                        loader = classLoader
                     ),
                     loadClass(
-                        className = "com.android.systemui.statusbar.notification.collection." +
+                        name = "com.android.systemui.statusbar.notification.collection." +
                                 "NotificationEntry",
-                        classLoader = classLoader
+                        loader = classLoader
                     )
                 )
             val cardTypeClazz = loadClass(
-                className = "com.oplus.systemui.notification.blur.ViewBlurManager\$CardType",
-                classLoader = classLoader
+                name = "com.oplus.systemui.notification.blur.ViewBlurManager\$CardType",
+                loader = classLoader
             )
             /*module.hook(bindRowForBlurControllerMethod).intercept { chain ->
                 // 执行 super(), 生成 BlurProxy
@@ -267,9 +267,9 @@ class MediaTileHook {
         val classLoader = param.classLoader
         try {
             val getBgOutlineProviderByView = loadClass(
-                className = "com.oplus.systemui.qs.media" +
+                name = "com.oplus.systemui.qs.media" +
                         ".OplusQsBaseMediaPanelView\$getBgOutlineProviderByView$1",
-                classLoader = classLoader
+                loader = classLoader
             )
             val apply = getBgOutlineProviderByView.getDeclaredMethod(
                 "apply",

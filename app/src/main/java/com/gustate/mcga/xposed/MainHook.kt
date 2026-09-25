@@ -2,6 +2,8 @@ package com.gustate.mcga.xposed
 
 import android.content.SharedPreferences
 import com.gustate.mcga.xposed.aod.AodHook
+import com.gustate.mcga.xposed.helper.ClassHelper.getAnyMethod
+import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
 import com.gustate.mcga.xposed.home.HomeHook
 import com.gustate.mcga.xposed.search.SearchHook
 import com.gustate.mcga.xposed.systemui.SystemuiHook
@@ -26,6 +28,26 @@ class MainHook : XposedModule() {
             param = param,
             prefs = prefs
         )
+
+        if (param.packageName != "com.milink.service") return
+        val clazz = loadClass(
+            loader = param.classLoader,
+            name = "com.xiaomi.continuity.networking.TrustedDeviceInfo"
+        )
+        val method1 = clazz.getAnyMethod(
+            name = "hasP2p",
+            classLoader = param.classLoader
+        )
+        this.hook(method1).intercept { chain ->
+            return@intercept true
+        }
+        val method2 = clazz.getAnyMethod(
+            name = "hasWlan",
+            classLoader = param.classLoader
+        )
+        this.hook(method2).intercept { chain ->
+            return@intercept true
+        }
     }
 
     /**

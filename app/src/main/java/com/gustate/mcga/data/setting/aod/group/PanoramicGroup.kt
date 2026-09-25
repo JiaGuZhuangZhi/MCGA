@@ -1,26 +1,15 @@
-package com.gustate.mcga.data.setting.systemui.group
+package com.gustate.mcga.data.setting.aod.group
 
 import com.gustate.mcga.R
 import com.gustate.mcga.data.setting.base.BooleanSetting
 import com.gustate.mcga.data.setting.base.CommandSetting
-import com.gustate.mcga.data.setting.base.SettingPage
+import com.gustate.mcga.data.setting.base.SettingGroup
 
 /**
- * AOD 页面声明
- * @param command 右上角图标的命令
- * @param icon 图标
- * @param title 标题
- * @param summary 摘要
- * @param dependency 依赖 (启用条件)
- * @param children 子项
+ * Aod 设置组声明
  */
-object AodPage : SettingPage(
-    command = "su -c pkill -f com.android.systemui " +
-            "&& su -c pkill -f com.oplus.aod",
-    icon = R.drawable.aod,
-    title = R.string.aod,
-    summary = null,
-    dependency = null,
+object PanoramicGroup : SettingGroup(
+    title = R.string.panoramic_aod,
     children = listOf(
         EnableAodPanoramicAllDay,
         EnableAllDayAodSettings,
@@ -31,7 +20,7 @@ object AodPage : SettingPage(
 /**
  * 启用全天全景 AOD
  */
-object EnableAodPanoramicAllDay : BooleanSetting(
+private object EnableAodPanoramicAllDay : BooleanSetting(
     key = "enable_aod_panoramic_all_day",
     default = false,
     icon = R.drawable.aod_tablet,
@@ -43,11 +32,11 @@ object EnableAodPanoramicAllDay : BooleanSetting(
 /**
  * 启用全天全景 AOD 设置页
  */
-object EnableAllDayAodSettings : BooleanSetting(
+private object EnableAllDayAodSettings : BooleanSetting(
     key = "enable_all_day_aod_settings",
     default = false,
-    icon = R.drawable.aod_tablet,
-    title = R.string.enable_all_day_panoramic_aod,
+    icon = R.drawable.settings_panorama,
+    title = R.string.enable_aod_display_settings,
     summary = R.string.tip_all_day_panoramic_aod,
     dependency = EnableAodPanoramicAllDay
 )
@@ -55,7 +44,7 @@ object EnableAllDayAodSettings : BooleanSetting(
 /**
  * 启动全天全景 AOD 设置页
  */
-object ActivateAodDisplaySetting : CommandSetting(
+private object ActivateAodDisplaySetting : CommandSetting(
     command = "am start -n com.oplus.aod/" +
             "com.oplus.aod.activity." +
             "AodSettingsDisplayActivity" +

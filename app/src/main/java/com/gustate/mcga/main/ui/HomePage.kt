@@ -1,8 +1,8 @@
 package com.gustate.mcga.main.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,19 +24,22 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gustate.mcga.R
 import com.gustate.mcga.data.viewmodel.ModuleViewModel
-import com.gustate.mcga.ui.widget.OptionWidget
-import com.gustate.mcga.ui.widget.SplicedColumnGroup
-import com.gustate.mcga.ui.widget.SwitchWidget
+import com.gustate.mcga.ui.theme.gustateColors
+import com.gustate.mcga.ui.widget.option.OptionGroup
+import com.gustate.mcga.ui.widget.option.RichOption
+import com.gustate.mcga.ui.widget.option.SwitchOption
 import com.kyant.capsule.ContinuousRoundedRectangle
 
 @Composable
 fun HomePage(
     modifier: Modifier,
-    viewModel: ModuleViewModel
+    viewModel: ModuleViewModel,
+    paddingValues: PaddingValues
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Column(
         modifier = modifier
+            .padding(paddingValues)
             .verticalScroll(
                 state = rememberScrollState(),
                 enabled = true
@@ -46,12 +49,12 @@ fun HomePage(
             isModuleActive = uiState.isModuleActive,
             isRootAvailable = uiState.isRootAvailable
         )
-        SplicedColumnGroup(
+        OptionGroup(
             modifier = Modifier,
             title = stringResource(id = R.string.app_config),
             content = listOf(
                 {
-                    OptionWidget(
+                    RichOption(
                         painter = painterResource(id = R.drawable.family_history),
                         title = stringResource(id = R.string.root_manager),
                         description = stringResource(id = uiState.rootManagerInfo.rootManagerName),
@@ -59,7 +62,7 @@ fun HomePage(
                     )
                 },
                 {
-                    OptionWidget(
+                    RichOption(
                         painter = painterResource(id = R.drawable.difference),
                         title = stringResource(id = R.string.root_manager_version),
                         description = uiState.rootManagerInfo.rootManagerVer,
@@ -67,7 +70,7 @@ fun HomePage(
                     )
                 },
                 {
-                    SwitchWidget(
+                    SwitchOption(
                         painter = painterResource(id = R.drawable.log),
                         title = stringResource(id = R.string.verbose_logs),
                         description = stringResource(id = R.string.verbose_logs_desc),
@@ -78,7 +81,7 @@ fun HomePage(
                     )
                 },
                 {
-                    SwitchWidget(
+                    SwitchOption(
                         painter = painterResource(id = R.drawable.shortcut),
                         title = stringResource(id = R.string.show_launcher_icon),
                         checked = uiState.isLauncherIconShowing,
@@ -99,11 +102,10 @@ private fun XpStateCard(
 ) {
     val cardShape = ContinuousRoundedRectangle(size = 24.dp)
 
-    Log.e("activeUI", isModuleActive.toString())
     val onCardColor = when {
-        !isModuleActive -> MaterialTheme.colorScheme.onErrorContainer
-        !isRootAvailable -> MaterialTheme.colorScheme.onTertiaryContainer
-        else -> MaterialTheme.colorScheme.surfaceBright
+        !isModuleActive -> gustateColors.onErrorContainer
+        !isRootAvailable -> gustateColors.onWarningContainer
+        else -> gustateColors.onPrimaryContainer
     }
     val moduleActiveInfo = when {
         !isModuleActive -> stringResource(id = R.string.module_not_activated)
@@ -121,9 +123,9 @@ private fun XpStateCard(
             .background(
                 color =
                     when {
-                        !isModuleActive -> MaterialTheme.colorScheme.errorContainer
-                        !isRootAvailable -> MaterialTheme.colorScheme.tertiaryContainer
-                        else -> MaterialTheme.colorScheme.primary
+                        !isModuleActive -> gustateColors.errorContainer
+                        !isRootAvailable -> gustateColors.warningContainer
+                        else -> gustateColors.primaryContainer
                     },
                 shape = cardShape
             )

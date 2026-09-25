@@ -21,9 +21,9 @@ class PanoramicHook {
 
         // 加载 SmoothTransitionController 类
         val clazz = loadClass(
-            className = "com.oplus.systemui.aod.display." +
+            name = "com.oplus.systemui.aod.display." +
                     $$"SmoothTransitionController$Companion",
-            classLoader = param.classLoader
+            loader = param.classLoader
         )
         // Hook getInstance 方法
         val getInstanceMethod = clazz.getAnyMethod(

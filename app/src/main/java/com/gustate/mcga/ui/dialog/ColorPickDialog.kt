@@ -43,8 +43,10 @@ fun ColorPickDialog(
 ) {
 
     val controller = rememberColorPickerController()
-    var hexCode by remember { mutableStateOf("") }
-    var textColor by remember { mutableStateOf(Color.Transparent) }
+    var hexCode by remember(initialColor) {
+        mutableStateOf(initialColor.toUInt().toString(16).uppercase().padStart(8, '0'))
+    }
+    var textColor by remember(initialColor) { mutableStateOf(Color(initialColor)) }
 
     BaseDialog(
         painter = painter,

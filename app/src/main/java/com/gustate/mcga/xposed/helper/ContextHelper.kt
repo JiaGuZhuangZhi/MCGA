@@ -12,12 +12,10 @@ object ContextHelper {
      */
     fun getContext(classLoader: ClassLoader): Context {
         val activityThread = loadClass(
-            className = "android.app.ActivityThread",
-            classLoader = classLoader
+            name = "android.app.ActivityThread",
+            loader = classLoader
         )
-        return activityThread
-            .callStaticMethod<Context>(methodName = "currentApplication")
-            ?: throw NullPointerException()
+        return activityThread.callStaticMethod(name = "currentApplication")
     }
 
 }

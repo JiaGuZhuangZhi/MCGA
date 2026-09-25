@@ -1,6 +1,6 @@
 package com.gustate.mcga.panel.systemui
 
-import androidx.compose.animation.AnimatedVisibilityScope
+/*import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
@@ -108,5 +108,5 @@ fun NotificationPanel(
             )
         }
     }
-}
+}*/
 

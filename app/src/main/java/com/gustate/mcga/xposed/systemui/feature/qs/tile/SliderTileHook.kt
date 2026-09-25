@@ -28,8 +28,8 @@ class SliderTileHook {
         val classLoader = param.classLoader
         try {
             val oplusQsBaseToggleSliderLayoutClass = loadClass(
-                className = "com.oplus.systemui.qs.base.seek.OplusQsBaseToggleSliderLayout",
-                classLoader = classLoader
+                name = "com.oplus.systemui.qs.base.seek.OplusQsBaseToggleSliderLayout",
+                loader = classLoader
             )
             val getRadius = oplusQsBaseToggleSliderLayoutClass
                 .getDeclaredMethod("getRadius")

@@ -91,8 +91,8 @@ class ControlPanelHook {
         try {
             // 修改布局行高插件逻辑
             val cellSizeClass = loadClass(
-                className = "com.oplus.systemui.plugins.qs.CellCalculatorManager\$CellSize",
-                classLoader = param.classLoader
+                name = "com.oplus.systemui.plugins.qs.CellCalculatorManager\$CellSize",
+                loader = param.classLoader
             ) ?: return log(
                 module = module, tag = CONTROL_PANEL_LOG,
                 message = "❌ 未获取到 CellCalculatorManager\$CellSize 类"
@@ -115,8 +115,8 @@ class ControlPanelHook {
 
             // 修改媒体卡片行高 (OplusQsBaseMediaPanelView)
             val mediaPanelViewClass = loadClass(
-                className = "com.oplus.systemui.qs.media.OplusQsBaseMediaPanelView",
-                classLoader = param.classLoader
+                name = "com.oplus.systemui.qs.media.OplusQsBaseMediaPanelView",
+                loader = param.classLoader
             ) ?: return log(
                 module = module, tag = CONTROL_PANEL_LOG,
                 message = "❌ 未获取到 OplusQsBaseMediaPanelView 类"
@@ -145,8 +145,8 @@ class ControlPanelHook {
 
             // 修改 SeekBar 容器高度
             val sliderLayoutClass = loadClass(
-                className = "com.oplus.systemui.qs.base.seek.OplusQsBaseToggleSliderLayout",
-                classLoader = param.classLoader
+                name = "com.oplus.systemui.qs.base.seek.OplusQsBaseToggleSliderLayout",
+                loader = param.classLoader
             ) ?: return log(
                 module = module, tag = CONTROL_PANEL_LOG,
                 message = "❌ 未获取到 OplusQsBaseToggleSliderLayout 类"

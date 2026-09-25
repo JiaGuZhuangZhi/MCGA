@@ -3,9 +3,11 @@ package com.gustate.mcga.xposed.systemui.feature.qs.notification
 import android.view.View
 import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.xposed.helper.ClassHelper.callAnyMethod
+import com.gustate.mcga.xposed.helper.ClassHelper.callStaticMethod
 import com.gustate.mcga.xposed.helper.ClassHelper.getAnyMethod
 import com.gustate.mcga.xposed.helper.ClassHelper.getStaticField
 import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
+import com.gustate.mcga.xposed.helper.ClassHelper.setAnyField
 import com.gustate.mcga.xposed.helper.MethodHelper.proceedWithParam
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
@@ -33,8 +35,8 @@ class NotificationHook {
 
             // 取 RoundableState 类, 他是通知圆角的控制中枢
             val roundableStateClazz = loadClass(
-                className = "com.android.systemui.statusbar.notification.RoundableState",
-                classLoader = classLoader
+                name = "com.android.systemui.statusbar.notification.RoundableState",
+                loader = classLoader
             )
 
             /**
@@ -53,8 +55,8 @@ class NotificationHook {
                 .getDeclaredConstructor(
                     View::class.java,
                     loadClass(
-                        className = "com.android.systemui.statusbar.notification.Roundable",
-                        classLoader = classLoader
+                        name = "com.android.systemui.statusbar.notification.Roundable",
+                        loader = classLoader
                     ),
                     Float::class.javaPrimitiveType
                 )
@@ -126,16 +128,11 @@ class NotificationHook {
     ) {
         val classLoader = param.classLoader
         try {
-
             // 获取相关类
             val notificationBackgroundViewExtImpClazz = loadClass(
-                className = "com.oplus.systemui.statusbar.notification.row." +
+                name = "com.oplus.systemui.statusbar.notification.row." +
                         "NotificationBackgroundViewExtImp",
-                classLoader = classLoader
-            )
-            val calculateGradientStrokeToolsClazz = loadClass(
-                className = "com.oplusos.systemui.common.util.CalculateGradientStrokeTools",
-                classLoader = classLoader
+                loader = classLoader
             )
             // void updateRadius(float f1, float f2)
             val updateRadiusMethod = notificationBackgroundViewExtImpClazz
@@ -150,56 +147,138 @@ class NotificationHook {
                 val instance = chain.thisObject
                 val result = chain.proceed()
                 try {
-                    val bgView = instance.callAnyMethod<View>(methodName = "getBgView")
+                    // OS 16.1 前期版本
+                    val calculateGradientStrokeToolsClazz = loadClass(
+                        name = "com.oplusos.systemui.common.util.CalculateGradientStrokeTools",
+                        loader = classLoader
+                    )
+                    val bgView = instance.callAnyMethod<View>(name = "getBgView")
                     // 必须先执行函数, 将带有圆角的 BlurConfig 放入 BlurProxy, 后面有用
                     val viewBlurProxy = runCatching {
-                        instance.callAnyMethod<Any>(methodName = "getViewBlurProxy")
+                        instance.callAnyMethod<Any>(name = "getViewBlurProxy")
                     }.getOrNull() ?: return@intercept result
                     val blurConfig = runCatching {
                         viewBlurProxy
-                            .callAnyMethod<Any>(methodName = "getBlurConfig")
+                            .callAnyMethod<Any>(name = "getBlurConfig")
                     }.getOrNull() ?: return@intercept result
                     val calculateGradientStrokeToolsInstance = calculateGradientStrokeToolsClazz
                         .getStaticField<Any>(fieldName = "INSTANCE")
                     val strokeParams = runCatching {
                         calculateGradientStrokeToolsInstance.callAnyMethod<Any>(
-                            methodName = "getGradientStrokeParams",
-                            paramTypes = arrayOf(
+                            name = "getGradientStrokeParams",
+                            params = arrayOf(
+                                bgView.callAnyMethod<Int>(name = "getActualWidth"),
+                                instance.callAnyMethod<Int>(name = "getClipBottom"),
+                                chain.args[0],
+                                false
+                            ),
+                            paramsType = arrayOf(
                                 Int::class.javaPrimitiveType,
                                 Int::class.javaPrimitiveType,
                                 Float::class.javaPrimitiveType,
                                 Boolean::class.javaPrimitiveType
                             ),
-                            bgView
-                                .callAnyMethod<Int>(methodName = "getActualWidth"),
-                            instance  // clipBottom
-                                .callAnyMethod<Int>(methodName = "getClipBottom"),
-                            chain.args[0],
-                            false
                         )
                     }.getOrNull() ?: return@intercept result
                     strokeParams.callAnyMethod<Unit>(
-                        methodName = "setWidth",
-                        paramTypes = arrayOf(Int::class.javaPrimitiveType),
-                        strokeWidth
+                        name = "setWidth",
+                        params = arrayOf(strokeWidth),
+                        paramsType = arrayOf(Int::class.javaPrimitiveType),
                     )
                     // 修改高光粗细
                     blurConfig.callAnyMethod<Any>(
-                        methodName = "setGradientStrokeLineParam",
-                        paramTypes = arrayOf(
+                        name = "setGradientStrokeLineParam",
+                        params = arrayOf(strokeParams),
+                        paramsType = arrayOf(
                             loadClass(
-                                className = "com.oplus.posteffect.GradientStrokeLineParams",
-                                classLoader = classLoader
+                                name = "com.oplus.posteffect.GradientStrokeLineParams",
+                                loader = classLoader
                             )
-                        ),
-                        strokeParams
+                        )
                     )
                     blurConfig.callAnyMethod<Any>(
-                        methodName = "setEnableStaticBlurCorner",
-                        paramTypes = arrayOf(Boolean::class.javaPrimitiveType),
-                        true
+                        name = "setEnableStaticBlurCorner",
+                        params = arrayOf(true),
+                        paramsType = arrayOf(Boolean::class.javaPrimitiveType)
                     )
-                    viewBlurProxy.callAnyMethod<Any>(methodName = "applyBlurConfig")
+                    viewBlurProxy.callAnyMethod<Any>(name = "applyBlurConfig")
+                    return@intercept result
+                } catch (e: NullPointerException) {
+                    // OS 16.1 后期版本
+                    val gradientStrokeLineAdapterClazz = loadClass(
+                        name = "com.oplusos.systemui.common.util.GradientStrokeLineAdapter",
+                        loader = classLoader
+                    )
+                    val bgView = instance.callAnyMethod<View>(name = "getBgView")
+                    // 必须先执行函数, 将带有圆角的 BlurConfig 放入 BlurProxy, 后面有用
+                    val viewBlurProxy = runCatching {
+                        instance.callAnyMethod<Any>(name = "getViewBlurProxy")
+                    }.getOrNull() ?: return@intercept result
+                    val blurConfig = runCatching {
+                        viewBlurProxy
+                            .callAnyMethod<Any>(name = "getBlurConfig")
+                    }.getOrNull() ?: return@intercept result
+                    val gradientStrokeLineAdapterInstance = gradientStrokeLineAdapterClazz
+                        .getStaticField<Any>(fieldName = "INSTANCE")
+                    val strokeParamsTemplate = gradientStrokeLineAdapterClazz
+                        .callStaticMethod<Any>(
+                            name = "getNotificationStrokeParamsTemplate",
+                            params = arrayOf(true),
+                            paramsType = arrayOf(Boolean::class.javaPrimitiveType),
+                        )
+                    strokeParamsTemplate.setAnyField(
+                        fieldName = "lineWidth",
+                        value = strokeWidth
+                    )
+                    gradientStrokeLineAdapterInstance.callAnyMethod<Any>(
+                        name = "adaptGradientStrokeParams",
+                        params = arrayOf(
+                            blurConfig,
+                            blurConfig.callAnyMethod<Any>(name = "getCornerRadius"),
+                            blurConfig.callAnyMethod<Any>(name = "getRadiusWeight"),
+                            bgView.callAnyMethod<Int>(name = "getActualWidth"),
+                            instance.callAnyMethod<Int>(name = "getClipBottom"),
+                            true,
+                            strokeParamsTemplate
+                        ),
+                        paramsType = arrayOf(
+                            loadClass(
+                                name = "com.oplusos.systemui.common.blurability.BlurConfig",
+                                loader = classLoader
+                            ),
+                            Float::class.javaPrimitiveType,
+                            java.lang.Float::class.java,
+                            Int::class.javaPrimitiveType,
+                            Int::class.javaPrimitiveType,
+                            Boolean::class.javaPrimitiveType,
+                            loadClass(
+                                name = "com.oplusos.systemui.common.util." +
+                                        $$"GradientStrokeLineAdapter$StrokeParamsTemplate",
+                                loader = classLoader
+                            )
+                        )
+                    )
+                    val strokeParams = runCatching {
+                        blurConfig
+                            .callAnyMethod<Any>(name = "getGradientStrokeLineParam")
+                    }.getOrNull() ?: return@intercept result
+                    strokeParams.callAnyMethod<Unit>(
+                        name = "setWidth",
+                        params = arrayOf(strokeWidth),
+                        paramsType = arrayOf(Int::class.javaPrimitiveType),
+                    )
+                    // 修改高光粗细
+                    blurConfig.callAnyMethod<Any>(
+                        name = "setGradientStrokeLineParam",
+                        params = arrayOf(strokeParams),
+                        paramsType = arrayOf(
+                            loadClass(
+                                name = "com.oplus.posteffect.GradientStrokeLineParams",
+                                loader = classLoader
+                            )
+                        )
+                    )
+                    viewBlurProxy.callAnyMethod<Any>(name = "applyBlurConfig")
                     return@intercept result
                 } catch (e: Exception) {
                     log(
@@ -210,7 +289,6 @@ class NotificationHook {
                     return@intercept result
                 }
             }
-
             log(
                 module = module, tag = NOTIFICATION_LOG,
                 message = "✅ 成功添加为 $strokeWidth dp 的通知中心轮廓高光"

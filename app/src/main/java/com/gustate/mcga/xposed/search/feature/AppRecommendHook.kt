@@ -34,15 +34,15 @@ class AppRecommendHook {
         param: XposedModuleInterface.PackageReadyParam
     ) {
         val adapterClass = loadClass(
-            className = "com.heytap.quicksearchbox.adapter.NewRecommendAppAdapter",
-            classLoader = param.classLoader
+            name = "com.heytap.quicksearchbox.adapter.NewRecommendAppAdapter",
+            loader = param.classLoader
         ) ?: return log(
             module = module, tag = SEARCH_LOG,
             message = "❌ 未获取到 NewRecommendAppAdapter 类"
         )
         val viewHolderClass = loadClass(
-            className = "androidx.recyclerview.widget.RecyclerView\$ViewHolder",
-            classLoader = param.classLoader
+            name = "androidx.recyclerview.widget.RecyclerView\$ViewHolder",
+            loader = param.classLoader
         ) ?: return log(
             module = module, tag = SEARCH_LOG,
             message = "❌ 未获取到 RecyclerView\$ViewHolder 类"
@@ -60,7 +60,7 @@ class AppRecommendHook {
                 val result = chain.proceed()
                 val viewHolder = chain.args[0]
                 val itemView = viewHolder
-                    .getAnyField<View>(fieldName = "itemView")
+                    .getAnyField<View>(name = "itemView")
                     ?: run {
                         log(
                             module = module, tag = SEARCH_LOG,
@@ -115,8 +115,8 @@ class AppRecommendHook {
         param: XposedModuleInterface.PackageReadyParam
     ) {
         val cardViewClass = loadClass(
-            className = "com.heytap.quicksearchbox.ui.card.AppSuggestCardView",
-            classLoader = param.classLoader
+            name = "com.heytap.quicksearchbox.ui.card.AppSuggestCardView",
+            loader = param.classLoader
         ) ?: return log(
             module = module, tag = SEARCH_LOG,
             message = "❌ 未获取到 AppSuggestCardView 类"

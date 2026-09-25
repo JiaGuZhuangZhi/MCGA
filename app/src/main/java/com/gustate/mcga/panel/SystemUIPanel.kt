@@ -1,43 +1,6 @@
 package com.gustate.mcga.panel
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import com.gustate.mcga.R
-import com.gustate.mcga.data.state.SystemUIUiState
-import com.gustate.mcga.data.viewmodel.SystemUIViewModel
-import com.gustate.mcga.ui.dialog.ColorPickDialog
-import com.gustate.mcga.ui.navgation.Destination
-import com.gustate.mcga.ui.page.BasePanelPage
-import com.gustate.mcga.ui.widget.OptionWidget
-import com.gustate.mcga.ui.widget.SliderWidget
-import com.gustate.mcga.ui.widget.SplicedColumnGroup
-import com.gustate.mcga.ui.widget.SwitchWidget
-import com.gustate.mcga.utils.RootUtils
-import dev.chrisbanes.haze.hazeSource
-import kotlinx.coroutines.launch
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+/*@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SystemUIPanel(
     onBack: () -> Unit,
@@ -352,4 +315,4 @@ private fun QsDetailContainerSettings(
             }
         )
     )
-}
+}*/

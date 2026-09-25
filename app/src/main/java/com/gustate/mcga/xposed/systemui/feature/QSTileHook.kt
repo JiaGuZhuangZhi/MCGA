@@ -1,14 +1,20 @@
 package com.gustate.mcga.xposed.systemui.feature
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import androidx.annotation.ColorInt
 import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.utils.RootUtils
 import com.gustate.mcga.utils.ViewUtils.dpToPx
+import com.gustate.mcga.xposed.helper.ClassHelper.callAnyMethod
+import com.gustate.mcga.xposed.helper.ClassHelper.callStaticMethod
 import com.gustate.mcga.xposed.helper.ClassHelper.getAnyField
+import com.gustate.mcga.xposed.helper.ClassHelper.getAnyMethod
+import com.gustate.mcga.xposed.helper.ClassHelper.getStaticField
 import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
 import com.gustate.mcga.xposed.helper.ContextHelper
+import com.gustate.mcga.xposed.systemui.feature.qs.SmoothRoundHook
 import com.gustate.mcga.xposed.systemui.feature.qs.tile.MediaTileHook
 import com.gustate.mcga.xposed.systemui.feature.qs.tile.SliderTileHook
 import com.gustate.mcga.xposed.systemui.feature.qs.tile.TwoXOneTileHook
@@ -41,29 +47,39 @@ class QSTileHook {
         param: XposedModuleInterface.PackageReadyParam,
         bkgCornerRadius: Float
     ) {
+        SmoothRoundHook().hookSmoothRoundSize(
+            module = module,
+            param = param
+        )
         val osVer = RootUtils.getColorOSVersion()
-        if (osVer.startsWith(prefix = "V16.1"))
-            hookQsOneXOneTileOS161(
-                module = module,
-                param = param,
-                bkgCornerRadius = bkgCornerRadius
+        val action = when {
+            listOf("V17.0", "V16.1").any {
+                osVer.startsWith(prefix = it)
+            } -> ::hookQsOneXOneTileOS161And170
+
+            osVer.startsWith(prefix = "V16.0") ->
+                ::hookQsOneXOneTileOS160
+
+            else -> return log(
+                module = module, tag = QS_TILE_2X1_LOG, priority = Log.ERROR,
+                message = "❌ 修改 1*1 磁贴圆角半径失败, 该版本尚未适配此功能"
             )
-        else
-            hookQsOneXOneTileOS160(
-                module = module,
-                param = param,
-                bkgCornerRadius = bkgCornerRadius
-            )
+        }
+        action(
+            module,
+            param,
+            bkgCornerRadius
+        )
     }
 
     /**
      * 修改控制中心 1*1 磁贴圆角半径
-     * 适配 ColorOS V16.1.0
+     * 适配 ColorOS V16.1.0 与 ColorOS 17.0.0
      * @param module XposedModule 实例
      * @param param 软件包加载参数
      * @param bkgCornerRadius 圆角半径 (dp)
      */
-    private fun hookQsOneXOneTileOS161(
+    private fun hookQsOneXOneTileOS161And170(
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
         bkgCornerRadius: Float
@@ -71,35 +87,36 @@ class QSTileHook {
         val classLoader = param.classLoader
         try {
             val sepQSResPoolClazz = loadClass(
-                className = "com.oplus.systemui.qs.base.res.SepQSResPool",
-                classLoader = classLoader
+                name = "com.oplus.systemui.qs.base.res.SepQSResPool",
+                loader = classLoader
             )
             val qsConstantClazz = loadClass(
-                className = "com.oplus.systemui.qs.base.res.util.QSConstant",
-                classLoader = classLoader
+                name = "com.oplus.systemui.qs.base.res.util.QSConstant",
+                loader = classLoader
             )
             val getTileOutline = sepQSResPoolClazz
-                .getDeclaredMethod("getTileOutline")
-            val getCustomOutline = qsConstantClazz.getDeclaredMethod(
-                "getSmoothRoundRectOutlineProvider",
-                Context::class.java,
-                Float::class.javaPrimitiveType
-            )
+                .getAnyMethod(methodName = "getTileOutline")
             module.hook(getTileOutline).intercept { chain ->
                 try {
-                    val tileOutlineField = sepQSResPoolClazz
-                        .getDeclaredField("_tileOutline")
-                        .apply { isAccessible = true }
                     val context = ContextHelper.getContext(classLoader = classLoader)
-                    val outline = getCustomOutline.invoke(
-                        null, context,
-                        bkgCornerRadius.dpToPx(context = context)
+                    val cornerRadiusPx = bkgCornerRadius.dpToPx(context = context)
+                    val outline = qsConstantClazz.callStaticMethod<Any>(
+                        name = "getSmoothRoundRectOutlineProvider",
+                        params = arrayOf(context, cornerRadiusPx),
+                        paramsType = arrayOf(
+                            Context::class.java,
+                            Float::class.javaPrimitiveType
+                        )
                     )
-                    // 直接 setValue 替换
-                    val mutableStateFlow = tileOutlineField.get(null) // static 字段传 null
-                    val setValueMethod = mutableStateFlow::class.java
-                        .getMethod("setValue", Any::class.java)
-                    setValueMethod.invoke(mutableStateFlow, outline)
+                    val tileOutlineStateFlow = sepQSResPoolClazz
+                        .getStaticField<Any>(fieldName = "_tileOutline")
+                    tileOutlineStateFlow.callAnyMethod<Any>(
+                        name = "setValue",
+                        params = arrayOf(outline),
+                        paramsType = arrayOf(
+                            Any::class.java
+                        )
+                    )
                     log(
                         module = module, tag = QS_TILE_1X1_LOG,
                         message = "✅ 成功修改 1*1 磁贴圆角半径为 $bkgCornerRadius dp"
@@ -137,9 +154,9 @@ class QSTileHook {
     ) {
         try {
             val tileViewClass = loadClass(
-                className = "com.oplus.systemui.plugins.qs.customize.view.tile." +
+                name = "com.oplus.systemui.plugins.qs.customize.view.tile." +
                         "OplusQSResizeableTileViewOneXOne",
-                classLoader = param.classLoader
+                loader = param.classLoader
             )
             // Hook getViewRadius 返回圆角（px）
             val getViewRadius = tileViewClass.getDeclaredMethod("getViewRadius")
@@ -205,8 +222,8 @@ class QSTileHook {
     ) {
         try {
             val calculatorClass = loadClass(
-                className = "com.oplus.systemui.plugins.qs.CellCalculatorManager",
-                classLoader = param.classLoader
+                name = "com.oplus.systemui.plugins.qs.CellCalculatorManager",
+                loader = param.classLoader
             )
             val method = calculatorClass.getDeclaredMethod(
                 "setNoPersonalRowCountPort",

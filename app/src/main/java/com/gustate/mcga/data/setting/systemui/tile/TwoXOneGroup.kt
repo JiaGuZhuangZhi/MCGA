@@ -1,5 +1,6 @@
-package com.gustate.mcga.data.setting.systemui.group.tile
+package com.gustate.mcga.data.setting.systemui.tile
 
+import android.content.SharedPreferences
 import com.gustate.mcga.R
 import com.gustate.mcga.data.setting.base.BooleanSetting
 import com.gustate.mcga.data.setting.base.ColorSetting
@@ -8,9 +9,6 @@ import com.gustate.mcga.data.setting.base.SettingGroup
 
 /**
  * 2*1 磁贴设置组
- * @param title 标题
- * @param dependency 依赖 (启用条件)
- * @param children 子项
  */
 object TwoXOneGroup : SettingGroup(
     title = R.string.qs_resizeable_tile,
@@ -31,7 +29,7 @@ object TwoXOneGroup : SettingGroup(
 /**
  * 是否启用自定义控制中心 2*1 磁贴设置
  */
-object EnableCustomQsResizeableTile : BooleanSetting(
+private object EnableCustomQsResizeableTile : BooleanSetting(
     key = "enable_custom_qs_resizeable_tile",
     default = false,
     icon = R.drawable.architecture,
@@ -43,7 +41,7 @@ object EnableCustomQsResizeableTile : BooleanSetting(
 /**
  * 修改控制中心 2*1 磁贴圆角半径
  */
-object QsResizeableTileCornerRadius : FloatSetting(
+private object QsResizeableTileCornerRadius : FloatSetting(
     key = "qs_resizeable_tile_corner_radius",
     default = 24f,
     min = 0f,
@@ -57,7 +55,7 @@ object QsResizeableTileCornerRadius : FloatSetting(
 /**
  * 使磁贴状态填满控制中心 2*1 磁贴
  */
-object QsTwoXOneTileFillStateFullBkg : BooleanSetting(
+private object QsTwoXOneTileFillStateFullBkg : BooleanSetting(
     key = "qs_two_x_one_tile_fill_state_full_bkg",
     default = false,
     icon = R.drawable.format_color_fill,
@@ -69,7 +67,7 @@ object QsTwoXOneTileFillStateFullBkg : BooleanSetting(
 /**
  * 隐藏控制中心 2*1 磁贴图标背景 (状态)
  */
-object QsTwoXOneTileHideIconBkg : BooleanSetting(
+private object QsTwoXOneTileHideIconBkg : BooleanSetting(
     key = "qs_two_x_one_tile_hide_icon_bkg",
     default = false,
     icon = R.drawable.grid_off_filled,
@@ -82,7 +80,7 @@ object QsTwoXOneTileHideIconBkg : BooleanSetting(
 /**
  * 修改控制中心 2*1 磁贴图标大小
  */
-object QsTwoXOneTileIconSize : FloatSetting(
+private object QsTwoXOneTileIconSize : FloatSetting(
     key = "qs_two_x_one_tile_icon_size",
     default = 28f,
     min = 0f,
@@ -96,7 +94,7 @@ object QsTwoXOneTileIconSize : FloatSetting(
 /**
  * 控制中心 2*1 磁贴非激活/不可用状态下标题颜色
  */
-object QsTwoXOneTileInactiveTitleColor : ColorSetting(
+private object QsTwoXOneTileInactiveTitleColor : ColorSetting(
     key = "qs_two_x_one_tile_inactive_title_color",
     default = 0XE6FFFFFF.toInt(),
     icon = R.drawable.opacity,
@@ -107,7 +105,7 @@ object QsTwoXOneTileInactiveTitleColor : ColorSetting(
 /**
  * 控制中心 2*1 磁贴非激活/不可用状态标签颜色
  */
-object QsTwoXOneTileActiveTitleColor : ColorSetting(
+private object QsTwoXOneTileActiveTitleColor : ColorSetting(
     key = "qs_two_x_one_tile_active_title_color",
     default = 0XE6000000.toInt(),
     icon = R.drawable.opacity,
@@ -118,7 +116,7 @@ object QsTwoXOneTileActiveTitleColor : ColorSetting(
 /**
  * 控制中心 2*1 磁贴非激活/不可用状态标签颜色
  */
-object QsTwoXOneTileInactiveDesColor : ColorSetting(
+private object QsTwoXOneTileInactiveDesColor : ColorSetting(
     key = "qs_two_x_one_tile_inactive_des_color",
     default = 0X89FFFFFF.toInt(),
     icon = R.drawable.opacity,
@@ -129,10 +127,68 @@ object QsTwoXOneTileInactiveDesColor : ColorSetting(
 /**
  * 控制中心 2*1 磁贴非激活/不可用状态标签颜色
  */
-object QsTwoXOneTileActiveDesColor : ColorSetting(
+private object QsTwoXOneTileActiveDesColor : ColorSetting(
     key = "qs_two_x_one_tile_active_des_color",
     default = 0X89000000.toInt(),
     icon = R.drawable.opacity,
     title = R.string.des_color_in_active_state_of_tile,
     dependency = EnableCustomQsResizeableTile
+)
+
+/**
+ * 2*1 磁贴设置的解析结果
+ * key/default 只在本文件维护一份，对外不再暴露任何 key 字符串
+ */
+data class TwoXOneConfig(
+    val enableCustomQsResizeableTile: Boolean,
+    val qsResizeableTileCornerRadius: Float,
+    val qsTwoXOneTileFillStateFullBkg: Boolean,
+    val qsTwoXOneTileHideIconBkg: Boolean,
+    val qsTwoXOneTileIconSize: Float,
+    val qsTwoXOneTileInactiveTitleColor: Int,
+    val qsTwoXOneTileActiveTitleColor: Int,
+    val qsTwoXOneTileInactiveDesColor: Int,
+    val qsTwoXOneTileActiveDesColor: Int
+)
+
+/**
+ * 从 SharedPreferences 读取 2*1 磁贴的完整配置
+ */
+fun SharedPreferences.readTwoXOneConfig(): TwoXOneConfig = TwoXOneConfig(
+    enableCustomQsResizeableTile = getBoolean(
+        EnableCustomQsResizeableTile.key,
+        EnableCustomQsResizeableTile.default
+    ),
+    qsResizeableTileCornerRadius = getFloat(
+        QsResizeableTileCornerRadius.key,
+        QsResizeableTileCornerRadius.default
+    ),
+    qsTwoXOneTileFillStateFullBkg = getBoolean(
+        QsTwoXOneTileFillStateFullBkg.key,
+        QsTwoXOneTileFillStateFullBkg.default
+    ),
+    qsTwoXOneTileHideIconBkg = getBoolean(
+        QsTwoXOneTileHideIconBkg.key,
+        QsTwoXOneTileHideIconBkg.default
+    ),
+    qsTwoXOneTileIconSize = getFloat(
+        QsTwoXOneTileIconSize.key,
+        QsTwoXOneTileIconSize.default
+    ),
+    qsTwoXOneTileInactiveTitleColor = getInt(
+        QsTwoXOneTileInactiveTitleColor.key,
+        QsTwoXOneTileInactiveTitleColor.default
+    ),
+    qsTwoXOneTileActiveTitleColor = getInt(
+        QsTwoXOneTileActiveTitleColor.key,
+        QsTwoXOneTileActiveTitleColor.default
+    ),
+    qsTwoXOneTileInactiveDesColor = getInt(
+        QsTwoXOneTileInactiveDesColor.key,
+        QsTwoXOneTileInactiveDesColor.default
+    ),
+    qsTwoXOneTileActiveDesColor = getInt(
+        QsTwoXOneTileActiveDesColor.key,
+        QsTwoXOneTileActiveDesColor.default
+    )
 )
