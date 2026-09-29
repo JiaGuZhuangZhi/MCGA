@@ -9,6 +9,7 @@ object ClassHelper {
      * 安全加载类
      * @param name 具体类名
      * @param loader [ClassLoader] 实例
+     * @return 加载的 Class 类
      */
     fun loadClass(
         name: String,
