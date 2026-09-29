@@ -28,21 +28,31 @@ object RootUtils {
         return@withContext try {
             val ksuVer = executeRootCommand(command = "/data/adb/ksud -V")
             val magiskVer = executeRootCommand(command = "magisk -v")
-            if (ksuVer?.isNotEmpty() == true) {
-                RootManager(
-                    rootManagerName = R.string.kernelsu,
-                    rootManagerVer = ksuVer
-                )
-            } else if (magiskVer?.isNotEmpty() == true) {
-                RootManager(
-                    rootManagerName = R.string.magisk,
-                    rootManagerVer = magiskVer
-                )
-            } else {
-                RootManager(
-                    rootManagerName = R.string.unknown_root_manager,
-                    rootManagerVer = "0"
-                )
+            val apVer = executeRootCommand(command = "/data/adb/apd -V")
+            when {
+                ksuVer?.isNotEmpty() == true ->
+                    RootManager(
+                        rootManagerName = R.string.kernelsu,
+                        rootManagerVer = ksuVer
+                    )
+
+                magiskVer?.isNotEmpty() == true ->
+                    RootManager(
+                        rootManagerName = R.string.magisk,
+                        rootManagerVer = magiskVer
+                    )
+
+                apVer?.isNotEmpty() == true ->
+                    RootManager(
+                        rootManagerName = R.string.apatch,
+                        rootManagerVer = apVer
+                    )
+
+                else ->
+                    RootManager(
+                        rootManagerName = R.string.unknown_root_manager,
+                        rootManagerVer = "0"
+                    )
             }
         } catch (_: Exception) {
             RootManager(
