@@ -181,7 +181,7 @@ object ClassHelper {
     }
 
     /**
-     * 调用私有方法 (显式指定参数类型)
+     * 调用静态方法 (可显式指定参数与返回类型)
      * @param name 方法名
      * @param params 实际传入的参数值
      * @param paramsType 显式指定的方法参数签名 Class 数组（必须与源码完全一致）
