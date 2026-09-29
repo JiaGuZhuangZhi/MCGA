@@ -2,6 +2,7 @@ package com.gustate.mcga.xposed.helper
 
 import java.lang.reflect.Method
 
+@Suppress("unused")
 object ClassHelper {
 
     /**
