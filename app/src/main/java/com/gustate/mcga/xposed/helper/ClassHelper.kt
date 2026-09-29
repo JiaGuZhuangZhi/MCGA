@@ -101,9 +101,13 @@ object ClassHelper {
         paramTypes: Array<Any?> = emptyArray()
     ): Method {
         var clazz: Class<*> = this as? Class<*>
-            ?: (this?.javaClass
-                ?: throw NullPointerException("❌ 获取 $name 方法失败, 所在类不存在"))
-        val realParamTypes = paramTypes.toParamTypes(classLoader = classLoader)
+            ?: (this?.javaClass ?: throw NullPointerException(
+                "❌ 获取 $name 方法失败, 所在类不存在"
+            ))
+        val realParamTypes = paramTypes
+            .toParamTypes(
+                classLoader = classLoader
+            )
         while (true) {
             val method = runCatching {
                 clazz.getDeclaredMethod(
