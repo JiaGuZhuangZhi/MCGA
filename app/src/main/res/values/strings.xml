@@ -116,4 +116,15 @@
     <string name="recently">Recently</string>
     <string name="recom_apps">Recommended Apps</string>
     <string name="panoramic_aod">Panoramic AOD</string>
+    <string name="apatch" translatable="false">APath</string>
+    <string name="enable_global_blur_param">Enable global blur effect parameters</string>
+    <string name="global_blur_radius_light">Global blur radius (Light Mode)</string>
+    <string name="effect_applied_globally">This effect will be applied globally</string>
+    <string name="global_blend_color_light">Global first mixed color (Light Mode)</string>
+    <string name="global_blend_color_dark">Global first mixed color (Dark Mode)</string>
+    <string name="global_mixed_color_light">Global second mixed color (Light Mode)</string>
+    <string name="global_mixed_color_dark">Global second mixed color (Dark Mode)</string>
+    <string name="blur_param">Blur Parameter</string>
+    <string name="global_home_blur">Global home blur</string>
+    <string name="global_blur_radius_dark">Global blur radius (Dark Mode)</string>
 </resources>

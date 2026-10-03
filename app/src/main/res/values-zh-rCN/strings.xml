@@ -111,4 +111,14 @@
     <string name="recently">最近任务</string>
     <string name="recom_apps">推荐应用</string>
     <string name="panoramic_aod">全景息屏</string>
+    <string name="enable_global_blur_param">启用全局模糊效果参数</string>
+    <string name="global_blur_radius_light">全局模糊半径 (浅色模式)</string>
+    <string name="effect_applied_globally">该效果将应用至全局</string>
+    <string name="global_blend_color_light">全局第一混合色 (浅色模式)</string>
+    <string name="global_blend_color_dark">全局第一混合色 (深色模式)</string>
+    <string name="global_mixed_color_light">全局第二混合色 (浅色模式)</string>
+    <string name="global_mixed_color_dark">全局第二混合色 (深色模式)</string>
+    <string name="blur_param">模糊参数</string>
+    <string name="global_home_blur">统一桌面模糊</string>
+    <string name="global_blur_radius_dark">全局模糊半径 (深色模式)</string>
 </resources>
