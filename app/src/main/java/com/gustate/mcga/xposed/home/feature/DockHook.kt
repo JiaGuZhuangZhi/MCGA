@@ -1,3 +1,21 @@
+/**
+ * MCGA (Make Color Great Again) - A Free and Open-Source Xposed Module for ColorOS Users
+ *
+ * Copyright (C) 2026 Zhuangzhi Meng (Gustate XiaoMeng)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.gustate.mcga.xposed.home.feature
 
 import android.content.Context
@@ -39,25 +57,16 @@ class DockHook {
         val dockClass = loadClass(
             name = "com.android.launcher3.OplusHotseat",
             loader = classLoader
-        ) ?: return log(
-            module = module, tag = DOCK_BKG,
-            message = "❌ 未获取到 OplusHotseat 类"
         )
         // 加载模糊工具类
         val blurUtils = loadClass(
             name = "com.android.launcher3.uioverrides.states.blurdrawable.OplusBlurProperties",
             loader = classLoader
-        ) ?: return log(
-            module = module, tag = DOCK_BKG,
-            message = "❌ 未获取到 OplusBlurProperties 类"
         )
         // 加载屏幕工具类
         val screenUtils = loadClass(
             name = "com.android.common.util.ScreenUtils",
             loader = classLoader
-        ) ?: return log(
-            module = module, tag = DOCK_BKG,
-            message = "❌ 未获取到 ScreenUtils 类"
         )
 
         // hook 设置 Dock 背景方法, 执行时标记
@@ -110,6 +119,7 @@ class DockHook {
         // 强制启用 Dock 栏背景
         enableDockBkgForce(
             module = module,
+            param = param,
             enableDockBlur = enableDockBlur,
             screenUtils = screenUtils,
             blurUtils = blurUtils,
@@ -128,6 +138,7 @@ class DockHook {
     /**
      * 强制启用 Dock 栏背景
      * @param module 模块入口类
+     * @param param 正在装载的软件包信息
      * @param enableDockBlur 是否启用背景模糊
      * @param screenUtils 屏幕工具类
      * @param blurUtils 模糊工具类
@@ -135,6 +146,7 @@ class DockHook {
      */
     private fun enableDockBkgForce(
         module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
         enableDockBlur: Boolean,
         screenUtils: Class<*>?,
         blurUtils: Class<*>?,
@@ -201,7 +213,10 @@ class DockHook {
                 val instance = chain.thisObject
                     ?: return@intercept result
                 // 执行 setDockerBackground
-                instance.callAnyMethod<Unit>(methodName = "setDockerBackground")
+                instance.callAnyMethod<Unit>(
+                    name = "setDockerBackground",
+                    classLoader = param.classLoader
+                )
                 log(
                     module = module, tag = DOCK_BKG,
                     message = "✅ 成功强制在重载时执行 setDockerBackground"
@@ -227,7 +242,7 @@ class DockHook {
         classLoader: ClassLoader,
         blurUtils: Class<*>?
     ) {
-        // 这里对 BlurRadius 进行了傻逼般的硬编码
+        /*// 这里对 BlurRadius 进行了傻逼般的硬编码
         // hook toUXRadius 方法取消硬编码
         val toUXRadius = blurUtils?.getDeclaredMethod(
             "toUXRadius",
@@ -249,10 +264,10 @@ class DockHook {
                 )
             }
             return@intercept result
-        }
+        }*/
 
         // hook 模糊配置方法
-        val setParamsMethod = blurUtils.getDeclaredMethod(
+        val setParamsMethod = blurUtils?.getDeclaredMethod(
             "setBlurParams",
             Int::class.javaPrimitiveType,
             Int::class.javaPrimitiveType,

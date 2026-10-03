@@ -26,25 +26,16 @@ class DrawerHook {
         val baseAdapterClass = loadClass(
             name = "com.android.launcher3.allapps.BaseAllAppsAdapter",
             loader = classLoader
-        ) ?: return log(
-            module = module, tag = DRAWER_TAG,
-            message = "❌ 未获取到 BaseAllAppsAdapter 类"
         )
         // 加载 BubbleTextView
         val bubbleTextViewClass = loadClass(
             name = "com.android.launcher3.BubbleTextView",
             loader = classLoader
-        ) ?: return log(
-            module = module, tag = DRAWER_TAG,
-            message = "❌ 未获取到 BubbleTextView 类"
         )
         // 找到内部类 ViewHolder
         val viewHolder = loadClass(
-            name = "com.android.launcher3.allapps.BaseAllAppsAdapter\$ViewHolder",
+            name = $$"com.android.launcher3.allapps.BaseAllAppsAdapter$ViewHolder",
             loader = classLoader
-        ) ?: return log(
-            module = module, tag = DRAWER_TAG,
-            message = "❌ 未获取到 BaseAllAppsAdapter\$ViewHolder 类"
         )
         // 匹配 onBindViewHolder 方法
         val onBindViewMethod = baseAdapterClass.getDeclaredMethod(
@@ -65,9 +56,21 @@ class DrawerHook {
             // 如果是 BubbleTextView，直接执行操作
             if (bubbleTextViewClass.isInstance(itemView)) {
                 itemView.apply {
-                    callAnyMethod<Unit>("setText", "")
-                    callAnyMethod<Unit>("setMaxLines", 0)
-                    callAnyMethod<Unit>("setCompoundDrawablePadding", 0)
+                    callAnyMethod<Unit>(
+                        name = "setText",
+                        params = arrayOf(""),
+                        classLoader = classLoader
+                    )
+                    callAnyMethod<Unit>(
+                        name = "setMaxLines",
+                        params = arrayOf(0),
+                        classLoader = classLoader
+                    )
+                    callAnyMethod(
+                        name = "setCompoundDrawablePadding",
+                        params = arrayOf(0),
+                        classLoader = classLoader
+                    )
                 }
                 log(
                     module = module, tag = DRAWER_TAG,

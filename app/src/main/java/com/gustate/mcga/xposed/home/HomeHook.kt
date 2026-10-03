@@ -1,19 +1,44 @@
+/**
+ * MCGA (Make Color Great Again) - A Free and Open-Source Xposed Module for ColorOS Users
+ *
+ * Copyright (C) 2026 Zhuangzhi Meng (Gustate XiaoMeng)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.gustate.mcga.xposed.home
 
 import android.content.SharedPreferences
 import com.gustate.mcga.data.keys.HomeKeys.CLEAR_ALL_BUTTON
-import com.gustate.mcga.data.keys.HomeKeys.DOCK_BLUR_RADIUS
-import com.gustate.mcga.data.keys.HomeKeys.DOCK_CORNER_RADIUS
-import com.gustate.mcga.data.keys.HomeKeys.ENABLE_DOCK_BKG
-import com.gustate.mcga.data.keys.HomeKeys.ENABLE_DOCK_BLUR
 import com.gustate.mcga.data.keys.HomeKeys.HIDE_DRAWER_NAME
+import com.gustate.mcga.data.setting.home.group.listenDockConfig
+import com.gustate.mcga.data.setting.home.group.listenHomeBlurConfig
+import com.gustate.mcga.data.setting.home.group.readDockConfig
+import com.gustate.mcga.data.setting.home.group.readHomeBlurConfig
+import com.gustate.mcga.xposed.base.HookContext
 import com.gustate.mcga.xposed.home.feature.DockHook
 import com.gustate.mcga.xposed.home.feature.DrawerHook
+import com.gustate.mcga.xposed.home.feature.HomeBlurHook
+import com.gustate.mcga.xposed.home.feature.HomeDockHook
 import com.gustate.mcga.xposed.home.feature.RecentsHook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
 object HomeHook {
+
+
+    const val HOME_DOCK = "桌面 Dock 栏"
+    const val HOME_BLUR = "桌面高斯模糊"
 
     // 实例化相关 Feature 类
     private val dockHook = DockHook()
@@ -52,7 +77,7 @@ object HomeHook {
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
-        val enableDockBkg = prefs.getBoolean(ENABLE_DOCK_BKG, false)
+        /*val enableDockBkg = prefs.getBoolean(ENABLE_DOCK_BKG, false)
         if (enableDockBkg) {
             val enableDockBlur = prefs.getBoolean(ENABLE_DOCK_BLUR, true)
             val blurRadius = prefs.getInt(DOCK_BLUR_RADIUS, 800)
@@ -63,6 +88,38 @@ object HomeHook {
                 enableDockBlur = enableDockBlur,
                 blurRadius = blurRadius,
                 cornerRadius = cornerRadius
+            )
+        }*/
+        val homeBlurHook = HomeBlurHook(
+            hookContext = HookContext(
+                module = module,
+                param = param,
+                classLoader = param.classLoader
+            )
+        )
+        homeBlurHook.install(
+            config = prefs
+                .readHomeBlurConfig()
+        )
+        prefs.listenHomeBlurConfig { newConfig ->
+            homeBlurHook.update(
+                config = newConfig
+            )
+        }
+        val dockHook = HomeDockHook(
+            hookContext = HookContext(
+                module = module,
+                param = param,
+                classLoader = param.classLoader
+            )
+        )
+        dockHook.install(
+            config = prefs
+                .readDockConfig()
+        )
+        prefs.listenDockConfig { newConfig ->
+            dockHook.update(
+                config = newConfig
             )
         }
     }
