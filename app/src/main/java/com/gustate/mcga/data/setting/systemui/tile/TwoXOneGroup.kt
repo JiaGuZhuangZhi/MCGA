@@ -5,6 +5,8 @@ import com.gustate.mcga.R
 import com.gustate.mcga.data.setting.base.BooleanSetting
 import com.gustate.mcga.data.setting.base.ColorSetting
 import com.gustate.mcga.data.setting.base.FloatSetting
+import com.gustate.mcga.data.setting.base.SettingExt.getValue
+import com.gustate.mcga.data.setting.base.SettingExt.listenConfig
 import com.gustate.mcga.data.setting.base.SettingGroup
 
 /**
@@ -136,59 +138,53 @@ private object QsTwoXOneTileActiveDesColor : ColorSetting(
 )
 
 /**
- * 2*1 磁贴设置的解析结果
- * key/default 只在本文件维护一份，对外不再暴露任何 key 字符串
+ * 从 SharedPreferences 读取 2*1 磁贴的完整配置
+ * 并填充到 [TwoXOneConfig] 中
  */
-data class TwoXOneConfig(
-    val enableCustomQsResizeableTile: Boolean,
-    val qsResizeableTileCornerRadius: Float,
-    val qsTwoXOneTileFillStateFullBkg: Boolean,
-    val qsTwoXOneTileHideIconBkg: Boolean,
-    val qsTwoXOneTileIconSize: Float,
-    val qsTwoXOneTileInactiveTitleColor: Int,
-    val qsTwoXOneTileActiveTitleColor: Int,
-    val qsTwoXOneTileInactiveDesColor: Int,
-    val qsTwoXOneTileActiveDesColor: Int
+fun SharedPreferences.readTwoXOneConfig(): TwoXOneConfig = TwoXOneConfig(
+    enableCustomQsResizeableTile =
+        getValue(setting = EnableCustomQsResizeableTile),
+    qsResizeableTileCornerRadius =
+        getValue(setting = QsResizeableTileCornerRadius),
+    qsTwoXOneTileFillStateFullBkg =
+        getValue(setting = QsTwoXOneTileFillStateFullBkg),
+    qsTwoXOneTileHideIconBkg =
+        getValue(setting = QsTwoXOneTileHideIconBkg),
+    qsTwoXOneTileIconSize =
+        getValue(setting = QsTwoXOneTileIconSize),
+    qsTwoXOneTileInactiveTitleColor =
+        getValue(setting = QsTwoXOneTileInactiveTitleColor),
+    qsTwoXOneTileActiveTitleColor =
+        getValue(setting = QsTwoXOneTileActiveTitleColor),
+    qsTwoXOneTileInactiveDesColor =
+        getValue(setting = QsTwoXOneTileInactiveDesColor),
+    qsTwoXOneTileActiveDesColor =
+        getValue(setting = QsTwoXOneTileActiveDesColor)
 )
 
 /**
- * 从 SharedPreferences 读取 2*1 磁贴的完整配置
+ * 监听 2*1 磁贴配置变化
+ * @param onChanged 配置变化回调
+ * @return [SharedPreferences.OnSharedPreferenceChangeListener]
  */
-fun SharedPreferences.readTwoXOneConfig(): TwoXOneConfig = TwoXOneConfig(
-    enableCustomQsResizeableTile = getBoolean(
-        EnableCustomQsResizeableTile.key,
-        EnableCustomQsResizeableTile.default
-    ),
-    qsResizeableTileCornerRadius = getFloat(
-        QsResizeableTileCornerRadius.key,
-        QsResizeableTileCornerRadius.default
-    ),
-    qsTwoXOneTileFillStateFullBkg = getBoolean(
-        QsTwoXOneTileFillStateFullBkg.key,
-        QsTwoXOneTileFillStateFullBkg.default
-    ),
-    qsTwoXOneTileHideIconBkg = getBoolean(
-        QsTwoXOneTileHideIconBkg.key,
-        QsTwoXOneTileHideIconBkg.default
-    ),
-    qsTwoXOneTileIconSize = getFloat(
-        QsTwoXOneTileIconSize.key,
-        QsTwoXOneTileIconSize.default
-    ),
-    qsTwoXOneTileInactiveTitleColor = getInt(
-        QsTwoXOneTileInactiveTitleColor.key,
-        QsTwoXOneTileInactiveTitleColor.default
-    ),
-    qsTwoXOneTileActiveTitleColor = getInt(
-        QsTwoXOneTileActiveTitleColor.key,
-        QsTwoXOneTileActiveTitleColor.default
-    ),
-    qsTwoXOneTileInactiveDesColor = getInt(
-        QsTwoXOneTileInactiveDesColor.key,
-        QsTwoXOneTileInactiveDesColor.default
-    ),
-    qsTwoXOneTileActiveDesColor = getInt(
-        QsTwoXOneTileActiveDesColor.key,
-        QsTwoXOneTileActiveDesColor.default
-    )
+fun SharedPreferences.listenTwoXOneConfig(
+    onChanged: (TwoXOneConfig) -> Unit
+): SharedPreferences.OnSharedPreferenceChangeListener =
+    listenConfig(group = TwoXOneGroup) {
+        onChanged(readTwoXOneConfig())
+    }
+
+/**
+ * 2*1 磁贴设置的解析结果
+ */
+data class TwoXOneConfig(
+    val enableCustomQsResizeableTile: Boolean?,
+    val qsResizeableTileCornerRadius: Float?,
+    val qsTwoXOneTileFillStateFullBkg: Boolean?,
+    val qsTwoXOneTileHideIconBkg: Boolean?,
+    val qsTwoXOneTileIconSize: Float?,
+    val qsTwoXOneTileInactiveTitleColor: Int?,
+    val qsTwoXOneTileActiveTitleColor: Int?,
+    val qsTwoXOneTileInactiveDesColor: Int?,
+    val qsTwoXOneTileActiveDesColor: Int?
 )
