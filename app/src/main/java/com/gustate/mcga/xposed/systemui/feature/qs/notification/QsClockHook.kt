@@ -56,6 +56,7 @@ class QsClockHook {
 
             modifyClockScale(
                 module = module,
+                param = param,
                 fakeControllerClazz = fakeControllerClazz,
                 simpleHeaderClazz = simpleHeaderClazz,
                 clockScaleMultiplier = clockScaleMultiplier
@@ -86,9 +87,11 @@ class QsClockHook {
     /**
      * Hook updateQSClockScale，在原始缩放基础上叠加自定义倍数，
      * 并在缩放完成后一次性修正 pivot 至视图中心。
+     * @param param 软件包加载参数
      */
     private fun modifyClockScale(
         module: XposedModule,
+        param: XposedModuleInterface.PackageReadyParam,
         fakeControllerClazz: Class<*>,
         simpleHeaderClazz: Class<*>,
         clockScaleMultiplier: Float
@@ -114,7 +117,10 @@ class QsClockHook {
 
                     // 缩放写入后，一次性修正 pivot，不挂持续监听
                     val header = controller.getAnyField<Any>("oplusQSSimpleHeader")
-                    val clockView = header.callAnyMethod<View>("getClockView")
+                    val clockView = header.callAnyMethod<View>(
+                        name = "getClockView",
+                        classLoader = param.classLoader
+                    )
                     Handler(Looper.getMainLooper()).post {
                         if (clockView.width > 0 && clockView.height > 0) {
                             clockView.pivotX = clockView.width / 2f

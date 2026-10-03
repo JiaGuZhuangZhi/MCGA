@@ -1,9 +1,26 @@
+/**
+ * MCGA (Make Color Great Again) - A Free and Open-Source Xposed Module for ColorOS Users
+ *
+ * Copyright (C) 2026 Zhuangzhi Meng (Gustate XiaoMeng)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.gustate.mcga.xposed.systemui.feature
 
 import android.content.Context
 import android.util.Log
 import android.view.View
-import androidx.annotation.ColorInt
 import com.gustate.mcga.utils.LogUtils.log
 import com.gustate.mcga.utils.RootUtils
 import com.gustate.mcga.utils.ViewUtils.dpToPx
@@ -17,7 +34,6 @@ import com.gustate.mcga.xposed.helper.ContextHelper
 import com.gustate.mcga.xposed.systemui.feature.qs.SmoothRoundHook
 import com.gustate.mcga.xposed.systemui.feature.qs.tile.MediaTileHook
 import com.gustate.mcga.xposed.systemui.feature.qs.tile.SliderTileHook
-import com.gustate.mcga.xposed.systemui.feature.qs.tile.TwoXOneTileHook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
@@ -32,7 +48,7 @@ class QSTileHook {
         const val QS_TILE_MEDIA_LOG = "控制中心媒体磁贴"
     }
 
-    private val twoXOneTileHook = TwoXOneTileHook()
+    //private val twoXOneTileHook = TwoXOneTileHook()
     private val sliderTileHook = SliderTileHook()
     private val mediaTileHook = MediaTileHook()
 
@@ -94,8 +110,10 @@ class QSTileHook {
                 name = "com.oplus.systemui.qs.base.res.util.QSConstant",
                 loader = classLoader
             )
-            val getTileOutline = sepQSResPoolClazz
-                .getAnyMethod(methodName = "getTileOutline")
+            val getTileOutline = sepQSResPoolClazz.getAnyMethod(
+                name = "getTileOutline",
+                classLoader = classLoader
+            )
             module.hook(getTileOutline).intercept { chain ->
                 try {
                     val context = ContextHelper.getContext(classLoader = classLoader)
@@ -103,19 +121,21 @@ class QSTileHook {
                     val outline = qsConstantClazz.callStaticMethod<Any>(
                         name = "getSmoothRoundRectOutlineProvider",
                         params = arrayOf(context, cornerRadiusPx),
-                        paramsType = arrayOf(
+                        paramTypes = arrayOf(
                             Context::class.java,
                             Float::class.javaPrimitiveType
-                        )
+                        ),
+                        classLoader = classLoader
                     )
                     val tileOutlineStateFlow = sepQSResPoolClazz
-                        .getStaticField<Any>(fieldName = "_tileOutline")
+                        .getStaticField<Any>(name = "_tileOutline")
                     tileOutlineStateFlow.callAnyMethod<Any>(
                         name = "setValue",
                         params = arrayOf(outline),
-                        paramsType = arrayOf(
+                        paramTypes = arrayOf(
                             Any::class.java
-                        )
+                        ),
+                        classLoader = classLoader
                     )
                     log(
                         module = module, tag = QS_TILE_1X1_LOG,
@@ -164,7 +184,6 @@ class QSTileHook {
                 val view = chain.thisObject
                 val context = view
                     .getAnyField<Context>("mContext")
-                    ?: return@intercept chain.proceed()
                 val radiusPx = bkgCornerRadius.dpToPx(context)
                 radiusPx
             }
@@ -256,7 +275,7 @@ class QSTileHook {
         }
     }
 
-    /**
+    /*/**
      * Hook 控制中心 2*1 磁贴的综合入口
      * @param module 当前 XposedModule 实例
      * @param param 软件包加载参数
@@ -303,7 +322,7 @@ class QSTileHook {
             inactiveTitleColor, inactiveDesColor,
             activeTitleColor, activeDesColor
         )
-    }
+    }*/
 
     /**
      * 修改控制中心拖动条磁贴圆角半径

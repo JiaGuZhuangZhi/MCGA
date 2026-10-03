@@ -1,3 +1,21 @@
+/**
+ * MCGA (Make Color Great Again) - A Free and Open-Source Xposed Module for ColorOS Users
+ *
+ * Copyright (C) 2026 Zhuangzhi Meng (Gustate XiaoMeng)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.gustate.mcga.xposed.systemui
 
 import android.content.SharedPreferences
@@ -5,13 +23,16 @@ import com.gustate.mcga.data.keys.SystemUIKeys
 import com.gustate.mcga.data.keys.SystemUIKeys.ENABLE_CUSTOM_QS_PANEL_LAYOUT
 import com.gustate.mcga.data.keys.SystemUIKeys.QS_PANEL_CELL_HEIGHT
 import com.gustate.mcga.data.keys.SystemUIKeys.QS_PANEL_STATUS_BAR_MARGIN_TOP
+import com.gustate.mcga.data.setting.systemui.tile.listenTwoXOneConfig
 import com.gustate.mcga.data.setting.systemui.tile.readTwoXOneConfig
+import com.gustate.mcga.xposed.base.HookContext
 import com.gustate.mcga.xposed.systemui.feature.ControlPanelHook
 import com.gustate.mcga.xposed.systemui.feature.PanoramicHook
 import com.gustate.mcga.xposed.systemui.feature.QSTileHook
 import com.gustate.mcga.xposed.systemui.feature.QsDetailHook
 import com.gustate.mcga.xposed.systemui.feature.qs.notification.NotificationHook
 import com.gustate.mcga.xposed.systemui.feature.qs.notification.QsClockHook
+import com.gustate.mcga.xposed.systemui.feature.qs.tile.TwoXOneTileHook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
@@ -126,7 +147,19 @@ object SystemuiHook {
         param: XposedModuleInterface.PackageReadyParam,
         prefs: SharedPreferences
     ) {
+        val hook = TwoXOneTileHook(
+            hookContext = HookContext(
+                module = module,
+                param = param,
+                classLoader = param.classLoader
+            )
+        )
         val config = prefs.readTwoXOneConfig()
+        hook.install(config = config)
+        prefs.listenTwoXOneConfig { newConfig ->
+            hook.update(config = newConfig)
+        }
+        /*val config = prefs.readTwoXOneConfig()
         if (config.enableCustomQsResizeableTile) {
             qsTileHook.hookTwoXOneTile(
                 module = module,
@@ -140,7 +173,7 @@ object SystemuiHook {
                 activeTitleColor = config.qsTwoXOneTileActiveTitleColor,
                 activeDesColor = config.qsTwoXOneTileActiveDesColor
             )
-        }
+        }*/
     }
 
     /**

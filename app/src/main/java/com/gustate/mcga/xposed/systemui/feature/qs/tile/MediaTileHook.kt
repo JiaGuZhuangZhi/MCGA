@@ -147,7 +147,7 @@ class MediaTileHook {
                 val blurConfig = blurProxy
                     .getAnyField<Any>(name = "blurConfig")
                 blurConfig.setAnyField(
-                    fieldName = "blurRadius",
+                    name = "blurRadius",
                     value = 800
                 )
                 log(

@@ -1,10 +1,5 @@
 package com.gustate.mcga.xposed.systemui.feature.qs
 
-import android.content.Context
-import com.gustate.mcga.utils.LogUtils.log
-import com.gustate.mcga.xposed.helper.ClassHelper.callAnyMethod
-import com.gustate.mcga.xposed.helper.ClassHelper.getAnyMethod
-import com.gustate.mcga.xposed.helper.ClassHelper.loadClass
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
@@ -21,7 +16,7 @@ class SmoothRoundHook {
         module: XposedModule,
         param: XposedModuleInterface.PackageReadyParam,
     ) {
-        try {
+        /*try {
             val classLoader = param.classLoader
             val oplusQsSmoothRoundUtilClass = loadClass(
                 name = "com.oplusos.systemui.common.util." +
@@ -62,7 +57,7 @@ class SmoothRoundHook {
                 message = "❌ 平滑圆角大小限制解除失败",
                 throwable = e
             )
-        }
+        }*/
     }
 
 }

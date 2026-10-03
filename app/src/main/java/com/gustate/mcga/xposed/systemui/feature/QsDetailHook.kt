@@ -39,7 +39,7 @@ class QsDetailHook {
         val viewModelClass = loadClass(
             "com.oplus.systemui.qs.detail.viewmodel.QSDetailContainerViewModel",
             param.classLoader
-        ) ?: return
+        )
 
         try {
             // 获取 getBackground(View) 方法
@@ -143,18 +143,38 @@ class QsDetailHook {
 
         // 3. 构造 BlurMixMulti
         val blurMixMultiClass = classLoader.loadClass(
-            "com.oplusos.systemui.common.blurability.BlurMixConfig\$BlurMixMulti"
+            $$"com.oplusos.systemui.common.blurability.BlurMixConfig$BlurMixMulti"
         )
         val blurMixMulti = blurMixMultiClass
             .getConstructor(mixColorClass, mixColorClass)
             .newInstance(foregroundMix, backgroundMix)
 
         // 使用你的 ClassHelper.setAnyField 暴力注入
-        blurConfig.callAnyMethod<Unit>("setBlurRadius", blurRadius)
-        blurConfig.callAnyMethod<Unit>("setCornerRadius", cornerRadiusPx)
-        blurConfig.callAnyMethod<Unit>("setPlatformMixConfig", blurMixMulti)
-        blurConfig.callAnyMethod<Unit>("setRadiusWeight", 1.0f)
-        blurConfig.callAnyMethod<Unit>("setEnableStaticBlurCorner", true)
+        blurConfig.callAnyMethod<Unit>(
+            name = "setBlurRadius",
+            params = arrayOf(blurRadius),
+            classLoader = classLoader
+        )
+        blurConfig.callAnyMethod<Unit>(
+            name = "setCornerRadius",
+            params = arrayOf(cornerRadiusPx),
+            classLoader = classLoader
+        )
+        blurConfig.callAnyMethod<Unit>(
+            name = "setPlatformMixConfig",
+            params = arrayOf(blurMixMulti),
+            classLoader = classLoader
+        )
+        blurConfig.callAnyMethod<Unit>(
+            name = "setRadiusWeight",
+            params = arrayOf(1.0f),
+            classLoader = classLoader
+        )
+        blurConfig.callAnyMethod<Unit>(
+            name = "setEnableStaticBlurCorner",
+            params = arrayOf(true),
+            classLoader = classLoader
+        )
 
         // 4. ViewBlurProxy
         val viewBlurProxyClass = classLoader.loadClass(
@@ -174,8 +194,8 @@ class QsDetailHook {
 
         // 设置模糊类型为 PlatformStatic
         val blurTypeClass = classLoader.loadClass(
-            "com.oplusos.systemui.common.blurability.ViewBlurProxy\$BlurType" +
-                    "\$BlurTypePlatformStatic"
+            $$"com.oplusos.systemui.common.blurability.ViewBlurProxy$BlurType" +
+                    $$"$BlurTypePlatformStatic"
         )
         val blurTypeInstance = blurTypeClass.getStaticField<Any>("INSTANCE")
         viewBlurProxy.setAnyField("blurType", blurTypeInstance)
