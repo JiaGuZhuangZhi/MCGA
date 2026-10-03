@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gustate.mcga.data.setting.aod.AodPage
 import com.gustate.mcga.data.setting.home.HomePage
+import com.gustate.mcga.data.setting.home.group.HomeBlurPage
 import com.gustate.mcga.data.setting.search.SearchPage
 import com.gustate.mcga.data.setting.systemui.SystemuiPage
 import com.gustate.mcga.data.setting.systemui.tile.TilePage
@@ -58,6 +59,7 @@ fun MainNavHost(
 
 val allPages = listOf(
     HomePage,
+    HomeBlurPage,
     WalletPage,
     SearchPage,
     SystemuiPage,
