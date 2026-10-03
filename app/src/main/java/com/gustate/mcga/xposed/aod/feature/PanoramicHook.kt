@@ -32,11 +32,12 @@ class PanoramicHook {
                 loader = param.classLoader
             )
             val method = settingsUtilsClass.getAnyMethod(
-                methodName = "getKeyAodAllDaySupportSettings",
-                parameterTypes = arrayOf(
+                name = "getKeyAodAllDaySupportSettings",
+                paramTypes = arrayOf(
                     Context::class.java,
                     Int::class.javaPrimitiveType
-                )
+                ),
+                classLoader = param.classLoader
             )
             // 拦截并强制返回 1
             module.hook(method).intercept {

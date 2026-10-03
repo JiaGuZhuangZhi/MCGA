@@ -27,8 +27,9 @@ class PanoramicHook {
         )
         // Hook getInstance 方法
         val getInstanceMethod = clazz.getAnyMethod(
-            methodName = "getInstance",
-            parameterTypes = arrayOf(Context::class.java)
+            name = "getInstance",
+            paramTypes = arrayOf(Context::class.java),
+            classLoader = param.classLoader
         )
         module.hook(getInstanceMethod).intercept { chain ->
             // 执行原逻辑
@@ -37,11 +38,11 @@ class PanoramicHook {
                 try {
                     // 反射修改字段
                     instance.setAnyField(
-                        fieldName = "isSupportPanoramicAllDay",
+                        name = "isSupportPanoramicAllDay",
                         value = true
                     )
                     instance.setAnyField(
-                        fieldName = "isSupportPanoramicAllDayByPanelFeature",
+                        name = "isSupportPanoramicAllDayByPanelFeature",
                         value = true
                     )
                 } catch (e: Exception) {
