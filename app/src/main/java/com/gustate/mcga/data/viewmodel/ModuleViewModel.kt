@@ -13,7 +13,6 @@ import com.gustate.mcga.data.model.RootManager
 import com.gustate.mcga.data.state.ModuleUiState
 import com.gustate.mcga.utils.CommonUtils
 import com.gustate.mcga.utils.RootUtils
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -66,8 +65,8 @@ class ModuleViewModel(context: Application) : AndroidViewModel(application = con
                 }
             }
         }
-        _repo.onActiveChanged = { active ->
-            viewModelScope.launch(context = Dispatchers.Main) {
+        viewModelScope.launch {
+            _repo.isActive.collect { active ->
                 _uiState.update { state ->
                     state.copy(
                         isModuleActive = active,
